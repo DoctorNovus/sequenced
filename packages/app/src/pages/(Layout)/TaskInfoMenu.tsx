@@ -50,6 +50,7 @@ export default function TaskInfoMenu({
 
   const initialData: Task = {
     ...createInitialTaskData(),
+    id: createID(20),
     date: new Date(appData.activeDate),
   };
 

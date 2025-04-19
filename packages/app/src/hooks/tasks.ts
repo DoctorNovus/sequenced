@@ -74,9 +74,12 @@ export async function loadTasks(): Promise<Task[]> {
 }
 
 /* Loads tasks and finds the task with given id */
-export async function loadTaskById(id: string): Promise<Task | undefined> {
+export async function loadTaskById(id: string): Promise<Task | Partial<Task>> {
   const tasks = await loadTasks();
-  return tasks.find((task) => task.id == id);
+  const task = tasks.find((task) => task.id == id);
+
+  if (!task) return {};
+  return task;
 }
 
 /* returns query data */
