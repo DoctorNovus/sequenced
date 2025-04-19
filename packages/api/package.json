@@ -1,0 +1,33 @@
+{
+  "name": "@sequenced_app/api",
+  "main": "dist/index.js",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20",
+    "npm": ">=9"
+  },
+  "scripts": {
+    "build": "tsc && firefly build",
+    "start": "firefly start",
+    "dev": "firefly start --dev",
+    "lint": "firefly lint"
+  },
+  "dependencies": {
+    "@outwalk/firefly": "^0.12.1",
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.1",
+    "bcrypt": "^5.1.1",
+    "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "mongoose": "^8.11.0",
+    "mongoose-lean-id": "^1.0.0",
+    "mongoose-lean-virtuals": "^1.1.0",
+    "typescript": "^5.7.3"
+  }
+}
