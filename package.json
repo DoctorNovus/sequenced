@@ -1,19 +1,7 @@
 {
   "name": "sequenced",
-  "type": "module",
-  "version": "1.0.0",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "private": true,
   "workspaces": [
-    "frontend",
-    "backend",
     "packages/*"
-  ],
-  "dependencies": {
-    "@types/express": "^5.0.0",
-    "express-rate-limit": "^7.5.0",
-    "react-router": "^7.1.1",
-    "vite-plugin-pwa": "^0.21.1"
-  }
+  ]
 }
