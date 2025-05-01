@@ -14,6 +14,7 @@ database.plugin(import("mongoose-lean-id"));
 /* setup the platform and global middleware */
 const platform = new ExpressPlatform();
 platform.use(cors({ origin: [process.env.APP_URL], credentials: true }));
+platform.set("trust proxy", 1);
 
 platform.use(session({
     name: "authorization",
