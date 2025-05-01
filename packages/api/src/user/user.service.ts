@@ -1,5 +1,5 @@
 import { Injectable } from "@outwalk/firefly";
-import { BadRequest, NotFound } from "@outwalk/firefly/errors";
+import { BadRequest } from "@outwalk/firefly/errors";
 import { User } from "./user.entity";
 import bcrypt from "bcrypt";
 
