@@ -16,14 +16,14 @@ export class UserService {
 
     async getUserById(id: string): Promise<User> {
         const user = await User.findById(id).lean<User>().exec();
-        if (!user) throw new NotFound("The user could not be found.", { id });
+        // if (!user) throw new NotFound("The user could not be found.", { id });
 
         return user;
     }
 
     async getUserByEmail(email: string): Promise<User> {
         const user = await User.findOne({ email }).lean<User>().exec();
-        if (!user) throw new NotFound("The user could not be found.", { email });
+        // if (!user) throw new NotFound("The user could not be found.", { email });
 
         return user;
     }
