@@ -1,5 +1,3 @@
-import { CapacitorElectronConfig } from "@capacitor-community/electron";
-
 const config = {
   appId: "com.ottegi.sequenced-app",
   appName: "Sequenced",
@@ -7,16 +5,9 @@ const config = {
   server: {
     androidScheme: "https",
   },
-};
-
-const configElectron = {};
-
-const configGlobal: CapacitorElectronConfig = {
-  ...config,
-  electron: configElectron,
   plugins: {
     LocalNotifications: {
-      smallIcon: "icon",
+      smallIcon: "icon", 
       iconColor: "#307acf",
       sound: "beep.wav",
     },
@@ -26,4 +17,4 @@ const configGlobal: CapacitorElectronConfig = {
   },
 };
 
-export default configGlobal;
+export default config;
