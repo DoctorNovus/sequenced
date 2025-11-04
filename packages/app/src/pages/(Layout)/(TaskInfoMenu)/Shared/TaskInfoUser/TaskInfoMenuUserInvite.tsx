@@ -7,9 +7,10 @@ export default function TaskInfoMenuUserInvite({ task, setStatus }) {
     const user = useUser();
 
     const inviteUser = async () => {
-        const invitee = document.getElementById("user-invite-email").value;
+        const invitee = document.getElementById("user-invite-email");
+        if (!invitee || !invitee.value) return;
 
-        if (invitee == user.data.email) {
+        if (invitee.value == user.data.email) {
             setStatus({ status: "Error", message: "You cannot invite yourself." });
             return;
         }
@@ -18,13 +19,13 @@ export default function TaskInfoMenuUserInvite({ task, setStatus }) {
             method: "POST",
             body: {
                 task,
-                email: invitee
+                email: invitee.value
             }
         });
 
         if (resp.ok) {
             setStatus({ status: "Success", message: "User Invited." });
-            document.getElementById("user-invite-email").value = "";
+            invitee.value = "";
             await queryClient.invalidateQueries({ queryKey: ["tasks", task.id, "users"] });
             return;
         }

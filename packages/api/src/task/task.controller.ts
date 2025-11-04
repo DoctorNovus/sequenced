@@ -24,6 +24,7 @@ export class TaskController {
 
     @Get("/:id/users")
     async getUsers({ params }: Request): Promise<User[]> {
+        if (!params || !params.id) return null;
         return this.taskService.getUsersByTaskId(params.id);
     }
 
@@ -71,6 +72,7 @@ export class TaskController {
     @Post("/invite")
     async inviteUser({ session, body }: Request): Promise<{ success: boolean }> {
         const user = await this.userService.getUserByEmail(body.email);
+        if (!user) throw new BadRequest("User does not exist.");
         if (user.id == session.user.id) throw new BadRequest("Cannot add yourself.");
 
         await this.taskService.updateTask(body.task.id, { $push: { users: user.id } });

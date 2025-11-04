@@ -97,6 +97,9 @@ export class TaskService {
     }
 
     async getUsersByTaskId(id: string): Promise<User[]> {
-        return (await Task.findById(id).select("users").populate("users").exec()).users;
+        if (!id) return null;
+        const task = await Task.findById(id);
+        if (!task) return null;
+        return (task.select("users").populate("users").exec()).users;
     }
 }

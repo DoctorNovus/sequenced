@@ -21,6 +21,7 @@ export class AuthController {
         const { email, password } = req.body;
 
         const user = await this.userService.getUserByEmail(email);
+        if (!user) throw new Unauthorized("Account not found. Please register an account.");
 
         if (!(await this.userService.validatePassword(user.id, password))) {
             throw new Unauthorized("Incorrect Email/Password Combo.");
@@ -44,7 +45,7 @@ export class AuthController {
         return user;
     }
 
-    @Post("/login-as-user")
+    @Post("/loginAsUser")
     async loginAsUser(req: Request): Promise<User> {
         const { id } = req.body;
 
