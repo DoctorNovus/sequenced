@@ -33,7 +33,7 @@ export default function TaskInfoMenuUser({ data }) {
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    {users.data.users.filter((user) => user.email != host.data.email).map((user, key) => (
+                    {users.data && users.data.users && users.data.users.filter((user) => user.email != host.data.email).map((user, key) => (
                         <div key={key} className="flex flex-row justify-between gap-2">
                             <span className="w-full border border-black shadow-md px-2 py-1 rounded-md">{user.email}</span>
                             <MinusIcon className="w-8 h-8 fill-red-500" onClick={async () => {
