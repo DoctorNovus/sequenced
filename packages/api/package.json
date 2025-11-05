@@ -4,8 +4,8 @@
   "type": "module",
   "private": true,
   "engines": {
-    "node": ">=20",
-    "npm": ">=9"
+    "node": ">=22",
+    "npm": ">=11"
   },
   "scripts": {
     "build": "tsc && firefly build",
@@ -14,7 +14,7 @@
     "lint": "firefly lint"
   },
   "dependencies": {
-    "@outwalk/firefly": "^0.12.1",
+    "@outwalk/firefly": "^0.13.2",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",

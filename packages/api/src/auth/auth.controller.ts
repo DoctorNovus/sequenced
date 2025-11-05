@@ -14,7 +14,6 @@ export class AuthController {
     @Get("/")
     async getAuth({ session }: Request): Promise<{ message: string }> {
         if (!session.user) throw new Unauthorized("Not Logged In");
-        console.log("TEST");
         await sendToWebhook(`${session.user.id} (${session.user.first}) has logged in.`);
         return { message: "Logged In" };
     }
