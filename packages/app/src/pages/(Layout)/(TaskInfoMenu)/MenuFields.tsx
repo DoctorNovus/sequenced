@@ -97,7 +97,7 @@ export default function MenuFields({ type, isDeleting, tempData, setTempData, se
 
             {type == "edit" && <TaskInfoMenuUser data={tempData} />}
 
-            <TaskInfoMenuSelect
+            {/* <TaskInfoMenuSelect
                 name="Remind Me"
                 value={tempData.reminder}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,7 +129,7 @@ export default function MenuFields({ type, isDeleting, tempData, setTempData, se
                     { name: "Every 2 Weeks", value: "bi-weekly" },
                     { name: "Every Month", value: "monthly" },
                 ]}
-            />
+            /> */}
 
             <TaskInfoMenuItem
                 name="Priority"
