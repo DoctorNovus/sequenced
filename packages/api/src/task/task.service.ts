@@ -85,13 +85,21 @@ export class TaskService {
     }
 
     async getTasksOverdue(userId: string): Promise<Task[]> {
-        const format = { $lt: new Date(), $gt: new Date(0) };
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        return Task.find({ users: userId, date: format, done: false })
+        const tasks = await Task.find({ users: userId, done: false })
             .populate("subtasks")
             .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
+
+        return tasks.filter((task) => {
+            if (!task.date) return false;
+            const taskDate = new Date(task.date);
+            if (Number.isNaN(taskDate.getTime())) return false;
+            return taskDate < today;
+        });
     }
 
     async getTasksIncomplete(userId: string): Promise<Task[]> {

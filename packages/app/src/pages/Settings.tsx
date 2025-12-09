@@ -4,6 +4,7 @@ import {
   setDailyReminders,
   scheduleNotification,
 } from "@/utils/notifs";
+import { Capacitor } from "@capacitor/core";
 
 import { Settings, getSettings, setSettings } from "@/hooks/settings";
 import { PendingLocalNotificationSchema } from "@capacitor/local-notifications";
@@ -98,6 +99,24 @@ export default function SettingsPage() {
     Logger.log("Scheduled test notification for", fireAt.toISOString());
   };
 
+  const openStoreReview = () => {
+    const APP_STORE_ID = "6478198104";
+    const PLAY_STORE_ID = "com.ottegi.sequenced";
+    const platform = Capacitor.getPlatform();
+
+    if (platform === "ios") {
+      window.open(`itms-apps://apps.apple.com/app/id${APP_STORE_ID}?action=write-review`, "_system");
+      return;
+    }
+
+    if (platform === "android") {
+      window.open(`market://details?id=${PLAY_STORE_ID}`, "_system");
+      return;
+    }
+
+    window.open(`https://apps.apple.com/app/id${APP_STORE_ID}?action=write-review`, "_blank");
+  };
+
   return (
     <div className="flex flex-col w-full h-full px-3 md:px-6 lg:px-10 py-4 gap-4 items-center">
       <div className="w-full max-w-3xl">
@@ -139,6 +158,82 @@ export default function SettingsPage() {
 
         <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
           <UserLogin />
+        </div>
+
+        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+          <div className="flex flex-col gap-3">
+            <h2 className="text-lg font-semibold text-slate-900">Support Sequenced</h2>
+            <p className="text-sm text-slate-600">
+              I want to keep Sequenced free for everyone. If you’d like to help, consider a Ko-fi donation.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <a
+                href="https://ko-fi.com/DoctorNovus"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex w-fit items-center gap-2 rounded-lg bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition"
+              >
+                <span className="text-lg">☕</span>
+                Donate on Ko-fi
+              </a>
+              <a
+                href="#review"
+                className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openStoreReview();
+                }}
+              >
+                <span className="text-lg"></span>
+                Review on App Store
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+          <div className="flex flex-col gap-3">
+            <h2 className="text-lg font-semibold text-slate-900">Follow Ottegi</h2>
+            <p className="text-sm text-slate-600">Stay up to date with releases and progress.</p>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="https://twitter.com/OttegiLLC"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                aria-label="Ottegi on X"
+              >
+                <span className="text-lg">𝕏</span>
+              </a>
+              <a
+                href="https://www.instagram.com/OttegiLLC"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                aria-label="Ottegi on Instagram"
+              >
+                <span className="text-lg">📸</span>
+              </a>
+              <a
+                href="https://www.linkedin.com/company/ottegi"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                aria-label="Ottegi on LinkedIn"
+              >
+                <span className="text-lg">in</span>
+              </a>
+              <a
+                href="https://www.facebook.com/OttegiLLC"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                aria-label="Ottegi on Facebook"
+              >
+                <span className="text-lg">f</span>
+              </a>
+            </div>
+          </div>
         </div>
 
         <DeveloperSettings>

@@ -37,8 +37,16 @@ export class MetricsService {
     }
 
     async getTaskOverdueCount(userId: string): Promise<{ count: number }> {
-        const format = { $lt: new Date(), $gt: new Date(0) };
-        const count = await Task.countDocuments({ users: userId, date: format, done: false }).exec();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const tasks = await Task.find({ users: userId, done: false }).lean<Task[]>().exec();
+        const count = tasks.filter((task) => {
+            if (!task.date) return false;
+            const taskDate = new Date(task.date);
+            if (Number.isNaN(taskDate.getTime())) return false;
+            return taskDate < today;
+        }).length;
 
         return { count };
     }
