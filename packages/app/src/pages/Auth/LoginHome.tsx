@@ -7,7 +7,7 @@ export default function LoginHome() {
     const navigate = useNavigate();
 
     return (
-        <div className="relative flex w-full items-center justify-center bg-gradient-to-b from-accent-blue-50 via-white to-accent-white-50 px-5 py-8">
+        <div className="relative flex w-full h-screen items-center justify-center bg-gradient-to-b from-accent-blue-50 via-white to-accent-white-50 px-5 py-8">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,rgba(48,122,207,0.1),transparent_35%),radial-gradient(circle_at_90%_0%,rgba(48,122,207,0.08),transparent_30%)]" />
             <div className="relative z-10 flex w-full max-w-md flex-col gap-6 rounded-3xl bg-white/90 p-6 shadow-2xl ring-1 ring-accent-blue/10 backdrop-blur">
                 <div className="flex flex-row items-center gap-4">
