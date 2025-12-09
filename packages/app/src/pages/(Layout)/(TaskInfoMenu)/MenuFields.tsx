@@ -7,7 +7,7 @@ import TaskInfoMenuUser from "./Shared/TaskInfoUser/TaskInfoMenuUser";
 
 export default function MenuFields({ type, isDeleting, tempData, setTempData, setIsOpen, changeAppDate, changeTempAppDate, appData, setAppData }) {
     return (
-        <div className={`flex flex-col gap-3 ${isDeleting && "blur-sm"}`}>
+        <div className={`flex flex-col gap-4 ${isDeleting && "blur-sm"}`}>
             <TaskInfoMenuItem
                 name="Name"
                 value={tempData?.title}

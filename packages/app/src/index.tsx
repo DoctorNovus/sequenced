@@ -44,9 +44,7 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route path="/auth" element={<Login />} />
-              <Route path="/auth/login" element={<LoginUser />} />
-              <Route path="/auth/register" element={<RegisterUser />} />
+
 
               <Route index element={<Home />} />
               <Route path="/tasks" element={<Task />} />
@@ -54,6 +52,9 @@ export default function App() {
               <Route path="*" element={<NoPage />} />
 
             </Route>
+            <Route path="/auth" element={<Login />} />
+            <Route path="/auth/login" element={<LoginUser />} />
+            <Route path="/auth/register" element={<RegisterUser />} />
           </Routes>
         </BrowserRouter>
       </AppContext.Provider>

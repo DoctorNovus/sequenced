@@ -26,7 +26,6 @@ export default function ActiveCalendar({ skeleton }: ActiveCalendarProps) {
             <div className="flex items-center gap-3">
               <img src={CalendarIcon} className="h-6 w-6" />
               <div className="flex flex-col">
-                <span className="text-xs uppercase tracking-[0.18em] text-slate-500">Schedule</span>
                 <span className="text-lg font-semibold text-slate-900">This Week</span>
               </div>
             </div>
@@ -114,9 +113,8 @@ export default function ActiveCalendar({ skeleton }: ActiveCalendarProps) {
       <div className="rounded-3xl bg-white/80 p-4 shadow-xl ring-1 ring-accent-blue/10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={CalendarIcon} className="h-6 w-6" />
-            <div className="flex flex-col">
-              <span className="text-xs uppercase tracking-[0.18em] text-slate-500">Schedule</span>
+            {/* <img src={CalendarIcon} className="h-6 w-6" /> */}
+            <div className="flex flex-col justify-center">
               <span className="text-lg font-semibold text-slate-900">This Week</span>
             </div>
           </div>

@@ -14,10 +14,10 @@ export function NavBar() {
   const [isAdding, setIsAdding] = useState(false);
 
   const renderBar = (isInteractive: boolean) => (
-    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4">
-      <div className="pointer-events-auto nav-pad w-full max-w-3xl rounded-3xl bg-white/90 backdrop-blur-xl shadow-[0_20px_60px_rgba(48,122,207,0.18)] ring-1 ring-accent-blue/15 border border-white/60">
-        <div className="relative flex items-center justify-between px-4 py-3 md:px-6">
-          <div className="flex flex-1 items-center justify-evenly gap-1 pr-20 md:pr-28">
+    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 md:px-4">
+      <div className="pointer-events-auto nav-pad w-full max-w-2xl rounded-[18px] bg-white/92 ring-1 ring-accent-blue/12 border border-white/70 h-[68px] md:h-[72px] bg-white">
+        <div className="relative flex h-full items-center justify-between px-3 py-2 md:px-5">
+          <div className="flex flex-1 items-center justify-evenly gap-2 md:pr-10">
             <NavItem to="/" title="Home">
               <HomeIcon />
             </NavItem>
@@ -26,19 +26,19 @@ export function NavBar() {
             </NavItem>
           </div>
 
-          <div className="absolute left-1/2 -translate-x-1/2 -translate-y-6">
+          <div className="flex flex-none items-center justify-center px-2">
             <button
               disabled={!isInteractive}
               onClick={isInteractive ? () => setIsAdding(true) : undefined}
-              className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 text-white shadow-xl shadow-accent-blue/30 ring-2 ring-white transition hover:-translate-y-1 hover:scale-[1.02] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 text-white shadow-lg shadow-accent-blue/25 ring-1 ring-white transition hover:-translate-y-1 hover:scale-[1.05] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <div className="flex justify-center items-center w-full h-full p-1 fill-white">
+              <div className="flex justify-center items-center w-full h-full p-2 fill-current">
                 <AddIcon />
               </div>
             </button>
           </div>
 
-          <div className="flex flex-1 items-center justify-evenly gap-1 pl-20 md:pl-28">
+          <div className="flex flex-1 items-center justify-evenly gap-2 md:pl-10">
             <NavItem to="#lists" title="">
               {/* <ListsIcon /> */}
             </NavItem>

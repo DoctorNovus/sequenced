@@ -7,7 +7,7 @@ const Layout = () => {
       <div id="absolute adder">
         <NavBar />
         <div>
-          <div className="pb-40">
+          <div className="">
             <DataContainer />
           </div>
         </div>

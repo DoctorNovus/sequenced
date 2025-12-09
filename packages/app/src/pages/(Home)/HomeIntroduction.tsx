@@ -26,15 +26,12 @@ export default function HomeIntroduction({ skeleton, user, today }: Introduction
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(255,255,255,0.25),transparent_35%)] opacity-80" />
             <div className="absolute -right-6 -bottom-10 h-32 w-32 rounded-full bg-white/10 blur-3xl" />
             <div className="relative flex flex-col gap-3">
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between ">
                     <div className="flex flex-col gap-1">
                         <span className="text-sm uppercase tracking-[0.18em] text-white/70">Today</span>
                         <span className="text-3xl font-semibold">
                             Hello{hasName ? ` ${user.data.first}` : ""}!
                         </span>
-                    </div>
-                    <div className="rounded-2xl bg-white/15 px-3 py-2 text-sm font-semibold text-white/90">
-                        Stay on track
                     </div>
                 </div>
                 <div className="flex items-center gap-3 text-lg text-white/80">

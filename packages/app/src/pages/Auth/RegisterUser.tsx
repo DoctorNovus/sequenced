@@ -38,31 +38,45 @@ export default function RegisterUser() {
     }
 
     return (
-        <div className="w-screen h-screen flex justify-center items-center absolute top-0 left-0 bg-gray-50">
-            <div className="w-full px-10 text-center flex flex-col gap-10">
-                <div className="flex flex-row justify-center items-center relative">
-                    <div className="absolute left-0">
-                        <div className="flex w-8 aspect-square items-center justify-center" onClick={() => navigate("/auth")}>
-                            <ArrowBack />
-                        </div>
-                    </div>
-                    <div className="">
-                        <span className="text-xl">Sign Up</span>
-                    </div>
+        <div className="relative flex w-full items-center justify-center bg-gradient-to-b from-accent-blue-50 via-white to-accent-white-50 px-5 py-8">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_5%_10%,rgba(48,122,207,0.1),transparent_35%),radial-gradient(circle_at_90%_0%,rgba(48,122,207,0.08),transparent_30%)]" />
+            <div className="relative z-10 w-full max-w-md rounded-3xl bg-white/90 p-6 shadow-2xl ring-1 ring-accent-blue/10 backdrop-blur">
+                <div className="flex flex-row items-center justify-between mb-4">
+                    <button
+                        type="button"
+                        className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-blue-50 text-accent-blue"
+                        onClick={() => navigate("/auth")}
+                    >
+                        <ArrowBack />
+                    </button>
+                    <span className="text-lg font-semibold text-slate-900">Sign Up</span>
+                    <div className="w-10" />
                 </div>
-                <form className="flex flex-col items-start gap-5" onSubmit={(e) => registerUser(e)}>
+                <form className="flex flex-col gap-5" onSubmit={(e) => registerUser(e)}>
                     <div className="w-full flex flex-col gap-4">
-                        <input required className="w-full border-b bg-transparent py-2 px-1 text-lg" placeholder="First Name" />
-                        <input required className="w-full border-b bg-transparent py-2 px-1 text-lg" placeholder="Last Name" />
-                        <input required className="w-full border-b bg-transparent py-2 px-1 text-lg" placeholder="Email Address" />
-                        <input required className="w-full border-b bg-transparent py-2 px-1 text-lg" placeholder="Password" />
+                        <label className="flex flex-col text-left text-sm font-semibold text-slate-600">
+                            First Name
+                            <input required className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-none" placeholder="First Name" />
+                        </label>
+                        <label className="flex flex-col text-left text-sm font-semibold text-slate-600">
+                            Last Name
+                            <input required className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-none" placeholder="Last Name" />
+                        </label>
+                        <label className="flex flex-col text-left text-sm font-semibold text-slate-600">
+                            Email
+                            <input required className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-none" placeholder="Email Address" />
+                        </label>
+                        <label className="flex flex-col text-left text-sm font-semibold text-slate-600">
+                            Password
+                            <input required type="password" className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-none" placeholder="Password" />
+                        </label>
                     </div>
-                    <label htmlFor="terms-policy" className="w-full flex items-center text-left gap-2 rounded-md">
-                        <input id="terms-policy" required type="checkbox" className="w-6 h-6 aspect-square border border-accent-blue" />
+                    <label htmlFor="terms-policy" className="w-full flex items-center text-left gap-2 rounded-md text-sm text-slate-600">
+                        <input id="terms-policy" required type="checkbox" className="w-5 h-5 aspect-square rounded-md border border-accent-blue/50" />
                         <span>By continuing, you agree to our <a href="https://www.ottegi.com/privacy" target="_blank" className="text-accent-blue underline">Privacy Policy</a>.</span>
                     </label>
-                    {status.length > 0 && <span className="text-red-500">{status}</span>}
-                    <button type="submit" className="w-full shadow-md border py-2 bg-accent-blue text-accent-white rounded-md my-4 text-xl uppercase">Get Started</button>
+                    {status.length > 0 && <span className="text-red-500 text-sm">{status}</span>}
+                    <button type="submit" className="w-full rounded-xl bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 py-3 text-lg font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:translate-y-[-1px]">Get Started</button>
                 </form>
             </div>
         </div>

@@ -18,23 +18,32 @@ export default function UserLogin() {
     }
 
     return (
-        <div>
-            {user.isLoading && <></>}
+        <div className="flex flex-col gap-2">
+            {user.isLoading && <span className="text-slate-500 text-sm">Loading user...</span>}
             {user.isSuccess && (
-                <div className="flex flex-col gap-2">
-                    <h1 className="text-lg">Sync Status</h1>
+                <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                        <h1 className="text-lg font-semibold text-slate-900">Sync Status</h1>
+                        <span className="text-xs rounded-full bg-accent-blue-50 px-2 py-1 text-accent-blue-700">
+                            {user.data?.id ? "Signed in" : "Signed out"}
+                        </span>
+                    </div>
                     {
                         user.data?.id ?
                             (
-                                <div className="flex flex-col gap-2">
-                                    <div>Logged in as {user.data.email}</div>
-                                    <button onClick={logoutUser} className="px-4 py-2 bg-accent-blue text-white">Sign Out</button>
+                                <div className="flex flex-col gap-2 rounded-xl border border-accent-blue/15 bg-accent-blue-50/50 px-3 py-2">
+                                    <div className="text-slate-700 text-sm">Logged in as <span className="font-semibold">{user.data.email}</span></div>
+                                    <button onClick={logoutUser} className="self-start rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition">
+                                        Sign Out
+                                    </button>
                                 </div>
                             ) :
                             (
-                                <div className="flex flex-col gap-2 justify-center" onClick={() => navigate("/auth")}>
-                                    <span>Logged Out.</span>
-                                    <button className="w-16 h-8 bg-accent-blue rounded-md">Sign In</button>
+                                <div className="flex flex-col gap-2 rounded-xl border border-dashed border-accent-blue/30 px-3 py-2">
+                                    <span className="text-slate-600 text-sm">Not signed in.</span>
+                                    <button className="w-fit rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition" onClick={() => navigate("/auth")}>
+                                        Sign In
+                                    </button>
                                 </div>
                             )
                     }

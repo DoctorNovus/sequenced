@@ -23,7 +23,7 @@ export default function Task() {
   if (tasks.isLoading) {
     return (
       <div className="w-full h-full text-accent-black">
-        <div className="h-full pb-12">
+        <div className="h-full">
           <div className="flex flex-col items-center gap-4 px-1 md:px-2">
             <ActiveCalendar skeleton="true" />
             <DayTasks skeleton="true" />
@@ -39,7 +39,7 @@ export default function Task() {
 
   return (
     <div className="w-full h-full text-accent-black">
-      <div className="h-full pb-12">
+      <div className="h-full">
         <div className="flex flex-col items-center gap-4 px-1 md:px-2">
           <ActiveCalendar />
           <DayTasks

@@ -1,8 +1,12 @@
 import InputToggle from "@/components/inputs/InputToggle";
-import { formatDateTime } from "@/utils/date";
 import { Settings } from "@/hooks/settings";
 
-export default function DailyNotifications(tempSettings, UpdateSettings) {
+type DailyNotificationsProps = {
+    tempSettings: Partial<Settings>;
+    UpdateSettings: (value: Partial<Settings>) => void;
+};
+
+export default function DailyNotifications({ tempSettings, UpdateSettings }: DailyNotificationsProps) {
     return (
         <InputToggle
             title="Daily Notifications"

@@ -87,18 +87,20 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full px-2 py-4 gap-2 items-center">
-      <div className="w-full justify-center text-center">
-        <h1 className="text-2xl">Settings</h1>
-      </div>
-      <div className="w-3/4 py-2">
+    <div className="flex flex-col w-full h-full px-3 md:px-6 lg:px-10 py-4 gap-4 items-center">
+      <div className="w-full max-w-3xl">
         <div className="flex flex-col gap-2">
-          <DailyNotifications tempSettings={tempSettings} UpdateSettings={UpdateSettings} />
-          <UserLogin />
-          {tempSettings.sendDailyReminders && (
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-col gap-1">
-                <label className="text-lg">Send Daily Time</label>
+          <h1 className="text-2xl font-semibold text-slate-900">Settings</h1>
+          <p className="text-sm text-slate-600">Control reminders, account status, and developer tools.</p>
+        </div>
+      </div>
+      <div className="w-full max-w-3xl flex flex-col gap-4">
+        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+          <div className="flex flex-col gap-2">
+            <DailyNotifications tempSettings={tempSettings} UpdateSettings={UpdateSettings} />
+            {tempSettings.sendDailyReminders && (
+              <div className="flex flex-col gap-2 rounded-xl border border-accent-blue/15 bg-accent-blue-50/40 px-3 py-3">
+                <label className="text-sm font-semibold text-slate-700">Send Daily Time</label>
                 <input
                   type="time"
                   value={tempSettings.sendDailyRemindersTime || "08:00"}
@@ -107,22 +109,22 @@ export default function SettingsPage() {
                     UpdateSettings({ sendDailyRemindersTime: newTime });
                     UpdateTime(newTime);
                   }}
-                  className="text-accent-white bg-transparent border border-accent-white px-1 py-1 dark:[color-scheme:dark]"
+                  className="w-fit rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm text-slate-800 shadow-inner focus:border-accent-blue focus:outline-none dark:[color-scheme:dark]"
                 />
               </div>
-              {/* <InputToggle
-                title="Send Daily w/ 0 Tasks"
-                defaultValue={tempSettings.sendDailyRemindersOverride}
-                onChange={(val: boolean) =>
-                  UpdateSettings({ sendDailyRemindersOverride: val })
-                }
-              /> */}
-            </div>
-          )}
-          <DeveloperSettings>
-            <ControllerUser />
-          </DeveloperSettings>
+            )}
+          </div>
         </div>
+
+        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+          <UserLogin />
+        </div>
+
+        <DeveloperSettings>
+          <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+            <ControllerUser />
+          </div>
+        </DeveloperSettings>
       </div>
     </div>
   );
