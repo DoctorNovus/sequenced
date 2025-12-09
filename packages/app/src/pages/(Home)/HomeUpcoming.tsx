@@ -1,5 +1,7 @@
 import { TaskItem } from "@/components/task/TaskItem"
 import { useTasksIncomplete } from "@/hooks/tasks";
+import { useNavigate } from "react-router-dom";
+import { useApp } from "@/hooks/app";
 
 interface UpcomingParams {
     skeleton?: boolean;
@@ -7,6 +9,17 @@ interface UpcomingParams {
 
 export default function HomeUpcoming({ skeleton }: UpcomingParams) {
     const incomplete = useTasksIncomplete();
+    const navigate = useNavigate();
+    const [appData, setAppData] = useApp();
+
+    const openTaskInTasks = (task) => {
+        setAppData({
+            ...appData,
+            activeTask: task,
+            activeDate: task?.date ? new Date(task.date) : appData.activeDate,
+        });
+        navigate("/tasks");
+    };
 
     if (skeleton)
         return (
@@ -38,7 +51,11 @@ export default function HomeUpcoming({ skeleton }: UpcomingParams) {
                 {incomplete.isSuccess && incomplete.data.map((task, key) => {
                     return (
                         <li key={key} className="w-full h-full">
-                            <TaskItem item={task} taskFilter="all" />
+                            <TaskItem
+                                item={task}
+                                taskFilter="all"
+                                setIsInspecting={() => openTaskInTasks(task)}
+                            />
                         </li>
                     )
                 })}

@@ -42,12 +42,25 @@ export default function CalendarItem({ skeleton, date }: {skeleton?: boolean, da
     }
   }
 
-  let currentDate = new Date().getDate();
+  const today = new Date();
+  const isToday = today.toDateString() === date.toDateString();
+  const isActive = appData.activeDate?.toDateString?.() === date.toDateString();
+
+  const baseClasses =
+    "p-3 rounded-full w-10 h-10 flex justify-center text-center items-center transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-blue-600";
+  const activeClasses =
+    "bg-accent-blue-700 text-white ring-2 ring-accent-blue-300 shadow-md";
+  const todayClasses =
+    "bg-accent-blue-50 text-accent-blue-700 border border-accent-blue/30";
 
   return (
-    <div onClick={(e) => changeDate(date, e)}
-      className={`hover:bg-accent-white ${date.getDate() == currentDate && "bg-accent-blue-600 text-accent-white"} ${appData.activeDate.getDate() == date.getDate() && "border border-solid border-blue-500"} p-3 rounded-full w-10 h-10 flex justify-center text-center items-center`}>
-      <span className="text-lg">{date.getDate()}</span>
-    </div>
+    <button
+      type="button"
+      onClick={(e) => changeDate(date, e)}
+      aria-pressed={isActive}
+      className={`${baseClasses} ${isActive ? activeClasses : ""} ${!isActive && isToday ? todayClasses : ""}`}
+    >
+      <span className="text-lg font-semibold">{date.getDate()}</span>
+    </button>
   )
 }

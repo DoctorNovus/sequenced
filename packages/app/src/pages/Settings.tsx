@@ -91,7 +91,7 @@ export default function SettingsPage() {
       <div className="w-full max-w-3xl">
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold text-slate-900">Settings</h1>
-          <p className="text-sm text-slate-600">Control reminders, account status, and developer tools.</p>
+          <p className="text-sm text-slate-600">Control reminders, account status, and other settings.</p>
         </div>
       </div>
       <div className="w-full max-w-3xl flex flex-col gap-4">

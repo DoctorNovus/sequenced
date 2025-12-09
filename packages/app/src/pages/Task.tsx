@@ -20,6 +20,20 @@ export default function Task() {
   if (tasks.isError)
     Logger.logError(tasks.error.message);
 
+  useEffect(() => {
+    if (appData.activeTask && !isInspecting) {
+      setIsInspecting(true);
+
+      if (appData.activeTask.date) {
+        const targetDate = new Date(appData.activeTask.date);
+        setAppData({
+          ...appData,
+          activeDate: targetDate,
+        });
+      }
+    }
+  }, [appData, isInspecting, setAppData]);
+
   if (tasks.isLoading) {
     return (
       <div className="w-full h-full text-accent-black">
