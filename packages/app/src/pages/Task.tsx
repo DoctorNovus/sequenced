@@ -38,7 +38,7 @@ export default function Task() {
     return (
       <div className="w-full h-full text-accent-black">
         <div className="h-full">
-          <div className="flex flex-col items-center gap-4 px-1 md:px-2">
+          <div className="flex flex-col items-center gap-4 px-3 md:px-6">
             <ActiveCalendar skeleton="true" />
             <DayTasks skeleton="true" />
             <TaskContainer title="All Tasks" skeleton="true" />
@@ -54,19 +54,21 @@ export default function Task() {
   return (
     <div className="w-full h-full text-accent-black">
       <div className="h-full">
-        <div className="flex flex-col items-center gap-4 px-1 md:px-2">
-          <ActiveCalendar />
-          <DayTasks
-            setIsInspecting={setIsInspecting}
-            tasks={tasks}
-          />
-          <TaskContainer
-            identifier="all"
-            setIsInspecting={setIsInspecting}
-            title="All Tasks"
-            tasks={tasks}
-            activeFilter="dailyTasks"
-          />
+        <div className="flex w-full justify-center">
+          <div className="flex w-full max-w-4xl flex-col items-center gap-4 px-3 md:px-6">
+            <ActiveCalendar />
+            <DayTasks
+              setIsInspecting={setIsInspecting}
+              tasks={tasks}
+            />
+            <TaskContainer
+              identifier="all"
+              setIsInspecting={setIsInspecting}
+              title="All Tasks"
+              tasks={tasks}
+              activeFilter="dailyTasks"
+            />
+          </div>
         </div>
         <div>
           <TaskInfoMenu

@@ -14,9 +14,14 @@ import UserLogin from "./(Settings)/UserLogin";
 import { Logger } from "@/utils/logger";
 import DeveloperSettings from "./(Settings)/DeveloperSettings";
 import ControllerUser from "./(Settings)/ControlledUser";
+import { useTasks, useDeleteTask } from "@/hooks/tasks";
 
 export default function SettingsPage() {
   const [tempSettings, setTempSettings] = useState<Settings>({});
+  const tasks = useTasks();
+  const { mutateAsync: deleteTask } = useDeleteTask();
+  const [cleanupInterval, setCleanupInterval] = useState<string>("30");
+  const [cleanupStatus, setCleanupStatus] = useState<string>("");
 
   useEffect(() => {
     getSettings().then(async (tempSettings) => {
@@ -48,6 +53,43 @@ export default function SettingsPage() {
     }
 
     return undefined;
+  };
+
+  const getCompletedTasks = () => {
+    if (!tasks.isSuccess) return [];
+    const now = new Date();
+    const thresholdDays = parseInt(cleanupInterval);
+    const cutoff =
+      isNaN(thresholdDays) || cleanupInterval === "all"
+        ? null
+        : new Date(now.getTime() - thresholdDays * 24 * 60 * 60 * 1000);
+
+    return tasks.data.filter((task) => {
+      const isCompleted =
+        task.done === true ||
+        (Array.isArray(task.done) && task.done.length > 0);
+
+      if (!isCompleted) return false;
+
+      if (!cutoff) return true;
+
+      const taskDate = new Date(task.date);
+      return !isNaN(taskDate.getTime()) && taskDate < cutoff;
+    });
+  };
+
+  const handleCleanup = async () => {
+    const toDelete = getCompletedTasks();
+    if (toDelete.length === 0) {
+      setCleanupStatus("No completed tasks to delete.");
+      return;
+    }
+
+    setCleanupStatus(`Deleting ${toDelete.length} tasks...`);
+    for (const task of toDelete) {
+      await deleteTask(task);
+    }
+    setCleanupStatus(`Deleted ${toDelete.length} tasks.`);
   };
 
   const UpdateTime = async (newTime: string) => {
@@ -118,7 +160,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full px-3 md:px-6 lg:px-10 py-4 gap-4 items-center">
+    <div className="flex flex-col w-full h-full px-3 md:px-6 lg:px-10 py-4 pb-28 gap-4 items-center overflow-y-auto">
       <div className="w-full max-w-3xl">
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold text-slate-900">Settings</h1>
@@ -153,6 +195,58 @@ export default function SettingsPage() {
                 Test
               </button>
             </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+          <div className="flex flex-col gap-3">
+            <h2 className="text-lg font-semibold text-slate-900">Feedback</h2>
+            <p className="text-sm text-slate-600">Spot an issue or have an idea? Drop us a note.</p>
+            <button
+              type="button"
+              className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+              onClick={() => window.open("mailto:sequenced@ottegi.com?subject=Sequenced%20Feedback", "_self")}
+            >
+              <span className="text-lg">✉️</span>
+              Email sequenced@ottegi.com
+            </button>
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+          <div className="flex flex-col gap-3">
+            <h2 className="text-lg font-semibold text-slate-900">Delete Completed Tasks</h2>
+            <p className="text-sm text-slate-600">
+              Remove completed tasks older than a selected window.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="text-sm font-semibold text-slate-700">Interval</label>
+              <select
+                className="rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm shadow-inner focus:border-accent-blue focus:outline-none"
+                value={cleanupInterval}
+                onChange={(e) => setCleanupInterval(e.target.value)}
+              >
+                <option value="7">Older than 7 days</option>
+                <option value="30">Older than 30 days</option>
+                <option value="90">Older than 90 days</option>
+                <option value="all">All completed tasks</option>
+              </select>
+              <span className="text-sm text-slate-600">
+                {getCompletedTasks().length} ready to delete
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                className="rounded-lg bg-red-500 text-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-px transition disabled:opacity-60"
+                onClick={handleCleanup}
+                disabled={tasks.isLoading || tasks.isFetching}
+              >
+                Delete completed tasks
+              </button>
+              {tasks.isLoading && <span className="text-sm text-slate-500">Loading tasks...</span>}
+            </div>
+            {cleanupStatus && <span className="text-sm text-slate-600">{cleanupStatus}</span>}
           </div>
         </div>
 
