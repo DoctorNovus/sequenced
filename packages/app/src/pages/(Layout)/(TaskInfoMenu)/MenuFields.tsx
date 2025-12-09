@@ -72,22 +72,38 @@ export default function MenuFields({ type, isDeleting, tempData, setTempData, se
                 <button
                     onClick={() => {
                         const noDate = new Date(0);
+                        const isRemoving = tempData.date.getTime() != 0;
 
-                        setAppData({
-                            ...appData,
-                            storedDate: appData.activeDate,
-                            activeDate: noDate
-                        });
-                        
-                        setTempData({
-                            ...tempData,
-                            date: noDate
-                        });
+                        if (isRemoving) {
+                            // Remove the due date but remember the previous active date
+                            setAppData({
+                                ...appData,
+                                storedDate: tempData.date,
+                            });
+
+                            setTempData({
+                                ...tempData,
+                                date: noDate
+                            });
+                        } else {
+                            // Restore due date to a sensible default (storedDate or today)
+                            const restoredDate = appData.storedDate ?? new Date();
+
+                            setAppData({
+                                ...appData,
+                                activeDate: restoredDate,
+                                storedDate: undefined
+                            });
+
+                            setTempData({
+                                ...tempData,
+                                date: restoredDate
+                            });
+                        }
                     }}
-                    className={`px-2 py-2 ${tempData.date.getTime() != 0 &&
-                        "bg-accent-red-500 hover:bg-accent-red-600 text-accent-white"
-                        } ${tempData.date.getTime() == 0 &&
-                        "bg-accent-blue hover:bg-accent-blue-600 text-accent-white"
+                    className={`px-2 py-2 ${tempData.date.getTime() != 0
+                        ? "bg-accent-red-500 hover:bg-accent-red-600 text-accent-white"
+                        : "bg-accent-blue hover:bg-accent-blue-600 text-accent-white"
                         } w-40 text-center rounded-md`}
                 >
                     {tempData.date.getTime() != 0 && "Remove Due Date"}

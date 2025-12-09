@@ -99,10 +99,12 @@ export class TaskService {
 
     async getUsersByTaskId(id: string): Promise<User[] | null> {
         if (!id) return null;
-        const task = await Task.findById(id);
-        if (!task) return null;
+        const populated = await Task.findById(id)
+            .select("users")
+            .populate("users")
+            .lean<{ users: User[] }>()
+            .exec();
 
-        const populated = await task.select("users").populate("users").exec();
-        return (populated?.users as User[]) ?? [];
+        return populated?.users ?? [];
     }
 }
