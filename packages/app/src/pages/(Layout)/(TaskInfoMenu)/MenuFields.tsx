@@ -99,14 +99,13 @@ export default function MenuFields({ type, isDeleting, tempData, setTempData, se
                     )}
 
                     {/* TODO: Make Component [DELETE DUE DATE] */}
-                    <div className={`my-2`}>
+                    <div className="my-2 flex">
                         <button
                             onClick={() => {
                                 const noDate = new Date(0);
                                 const isRemoving = tempData.date.getTime() != 0;
 
                                 if (isRemoving) {
-                                    // Remove the due date but remember the previous active date
                                     setAppData({
                                         ...appData,
                                         storedDate: tempData.date,
@@ -117,7 +116,6 @@ export default function MenuFields({ type, isDeleting, tempData, setTempData, se
                                         date: noDate
                                     });
                                 } else {
-                                    // Restore due date to a sensible default (storedDate or today)
                                     const restoredDate = appData.storedDate ?? new Date();
 
                                     setAppData({
@@ -132,10 +130,10 @@ export default function MenuFields({ type, isDeleting, tempData, setTempData, se
                                     });
                                 }
                             }}
-                            className={`px-2 py-2 ${tempData.date.getTime() != 0
-                                ? "bg-accent-red-500 hover:bg-accent-red-600 text-accent-white"
-                                : "bg-accent-blue hover:bg-accent-blue-600 text-accent-white"
-                                } w-40 text-center rounded-md`}
+                            className={`w-40 text-center rounded-xl px-3 py-2 text-sm font-semibold shadow-sm transition ${tempData.date.getTime() != 0
+                                ? "bg-accent-red-500 text-white hover:-translate-y-px"
+                                : "bg-accent-blue text-white hover:-translate-y-px"
+                                }`}
                         >
                             {tempData.date.getTime() != 0 && "Remove Due Date"}
                             {tempData.date.getTime() == 0 && "Add Due Date"}
