@@ -53,7 +53,7 @@ export default function Task() {
 
   return (
     <div className="w-full h-full text-accent-black">
-      <div className="h-full">
+      <div className="h-full pb-28">
         <div className="flex w-full justify-center">
           <div className="flex w-full max-w-4xl flex-col items-center gap-4 px-3 md:px-6">
             <ActiveCalendar />
