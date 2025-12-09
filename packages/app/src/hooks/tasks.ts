@@ -13,6 +13,16 @@ import { CountData } from "@backend/metrics/metrics.service";
 
 import { getSync } from "./settings";
 import { fetchData } from "@/utils/data";
+import { formatDateTime } from "@/utils/date";
+
+const serializeTask = (task: Partial<Task>) => {
+  const data: any = { ...task };
+  if (task.date instanceof Date) {
+    const offsetDate = new Date(task.date.getTime() - task.date.getTimezoneOffset() * 60000);
+    data.date = formatDateTime(offsetDate);
+  }
+  return data;
+};
 
 export function createInitialTaskData(): Task {
   return {
@@ -167,7 +177,7 @@ export function useAddTask(): UseMutationResult<void, Error, Task, unknown> {
   const mutationFn = async (task: Task) => {
     await fetchData("/task", {
       method: "POST",
-      body: task
+      body: serializeTask(task)
     });
   };
 
@@ -181,7 +191,7 @@ export function useAddTask(): UseMutationResult<void, Error, Task, unknown> {
 export async function addTasksBulk(tasks: Partial<Task>[]) {
   await fetchData("/task/bulk", {
     method: "POST",
-    body: { tasks }
+    body: { tasks: tasks.map((t) => serializeTask(t)) }
   });
 }
 
@@ -207,7 +217,7 @@ export function useUpdateTask(): UseMutationResult<
   const mutationFn = async ({ id, data }: { id: string; data: Object }) => {
     await fetchData("/task", {
       method: "PATCH",
-      body: data
+      body: serializeTask(data as Partial<Task>)
     });
   };
 

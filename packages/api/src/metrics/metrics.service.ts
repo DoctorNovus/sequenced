@@ -44,7 +44,8 @@ export class MetricsService {
         const count = tasks.filter((task) => {
             if (!task.date) return false;
             const taskDate = new Date(task.date);
-            if (Number.isNaN(taskDate.getTime())) return false;
+            const time = taskDate.getTime();
+            if (Number.isNaN(time) || time <= 0) return false;
             return taskDate < today;
         }).length;
 

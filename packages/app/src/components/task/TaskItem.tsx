@@ -26,7 +26,7 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
               <div className="w-full flex flex-row items-center justify-between">
                 <TaskItemTitle text="Loading..." />
               </div>
-              <div className="w-fit flex flex-row flex-end items-center justify-start px-3">
+              <div className="w-fit flex flex-row flex-end items-center justify-start px-2">
                 <div className="w-full h-full flex items-center justify-evenly">
                   <TaskItemDate task={item} />
                 </div>
@@ -191,7 +191,7 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
                 </div>
               )}
             </div>
-            <div className="w-fit flex flex-row flex-end items-center justify-start px-3">
+            <div className="w-fit flex flex-row flex-end items-center justify-start px-2">
               <div className="w-full h-full flex items-center justify-evenly">
                 <TaskItemDate task={item} />
               </div>

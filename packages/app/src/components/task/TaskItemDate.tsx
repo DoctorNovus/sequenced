@@ -27,28 +27,25 @@ export default function TaskItemDate({ task }: { task: Task }) {
 
     if (checkedDate.getTime() == 0) return;
 
-    const relative = checkedDate.getDate() - today.getDate();
+    const diffMs = checkedDate.getTime() - today.getTime();
+    const diffMinutes = Math.round(diffMs / (1000 * 60));
+    const diffHours = Math.round(diffMs / (1000 * 60 * 60));
 
-    if (relative >= 0 && relative <= 1) {
-      const hourDifference = checkedDate.getHours() - today.getHours();
-      const minuteDifference = checkedDate.getMinutes() - today.getMinutes();
+    if (diffMs > -24 * 60 * 60 * 1000 && diffMs < 24 * 60 * 60 * 1000) {
+      // within 24 hours
+      if (diffHours >= 1) return `${diffHours} hour${diffHours === 1 ? "" : "s"}`;
+      if (diffHours <= -1) return `${Math.abs(diffHours)} hour${Math.abs(diffHours) === 1 ? "" : "s"} ago`;
 
-      if (relative == 1) {
-        return `Tomorrow`;
-      } else {
-        if (hourDifference == 0)
-          if (minuteDifference < 0) return `${minuteDifference * -1} mins ago`;
-          else return `${minuteDifference} mins`;
+      if (diffMinutes >= 1) return `${diffMinutes} min${diffMinutes === 1 ? "" : "s"}`;
+      if (diffMinutes <= -1) return `${Math.abs(diffMinutes)} min${Math.abs(diffMinutes) === 1 ? "" : "s"} ago`;
 
-        if (hourDifference < 0) return `${hourDifference * -1} hours ago`;
-        return `${hourDifference} hours`;
-      }
-    } else {
-      return `${formatDigits(checkedDate.getMonth() + 1, 2)}/${formatDigits(
-        checkedDate.getDate(),
-        2
-      )}`;
+      return "Now";
     }
+
+    return `${formatDigits(checkedDate.getMonth() + 1, 2)}/${formatDigits(
+      checkedDate.getDate(),
+      2
+    )}`;
   };
 
   return (
