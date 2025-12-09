@@ -59,6 +59,18 @@ export class TaskController {
         return this.taskService.addTask({ ...body, users: [session.user.id] });
     }
 
+    @Post("/bulk")
+    async addTasks({ session, body }: Request): Promise<Task[]> {
+        const tasks = Array.isArray(body?.tasks) ? body.tasks : [];
+        const mapped = tasks.map((task: Task) => ({
+            ...task,
+            users: [session.user.id],
+            date: task.date ? task.date : new Date().toString(),
+        }));
+
+        return this.taskService.addTasks(mapped);
+    }
+
     @Patch()
     async updateTask({ body }: Request): Promise<Task | null> {
         return this.taskService.updateTask(body.id, body);

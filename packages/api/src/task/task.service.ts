@@ -11,6 +11,10 @@ export class TaskService {
         return Task.create(data);
     }
 
+    async addTasks(data: Partial<Task>[]): Promise<Task[]> {
+        return Task.insertMany(data);
+    }
+
     async updateTask(id: string, data: Partial<Task> | UpdateQuery<Task>): Promise<Task | null> {
         return Task.findByIdAndUpdate(id, data).lean<Task>().exec();
     }

@@ -178,6 +178,23 @@ export function useAddTask(): UseMutationResult<void, Error, Task, unknown> {
   return useMutation({ mutationFn, onSuccess });
 }
 
+export async function addTasksBulk(tasks: Partial<Task>[]) {
+  await fetchData("/task/bulk", {
+    method: "POST",
+    body: { tasks }
+  });
+}
+
+export function useAddTasksBulk(): UseMutationResult<void, Error, Partial<Task>[], unknown> {
+  const queryClient = useQueryClient();
+
+  const onSuccess = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["tasks"] });
+  };
+
+  return useMutation({ mutationFn: addTasksBulk, onSuccess });
+}
+
 /* Updates specific task */
 export function useUpdateTask(): UseMutationResult<
   void,

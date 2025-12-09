@@ -5,6 +5,7 @@ export interface TaskInfoMenuItemOptions {
   name: string;
   value: any;
   onChange: ChangeEventHandler<any> | undefined;
+  placeholder?: string;
 }
 
 export default function TaskInfoMenuItem({
@@ -12,6 +13,7 @@ export default function TaskInfoMenuItem({
   type,
   value,
   onChange,
+  placeholder,
 }: TaskInfoMenuItemOptions) {
   let inputPiece = (
     <input
@@ -19,7 +21,7 @@ export default function TaskInfoMenuItem({
       name={name.toLowerCase()}
       type={type}
       className="text-base px-3 py-2 rounded-xl border border-accent-blue/20 bg-white/90 text-slate-900 shadow-inner focus:border-accent-blue focus:outline-none"
-      placeholder={`${name}...`}
+      placeholder={placeholder ?? `${name}...`}
       value={value as any}
       onChange={onChange}
       autoFocus={false}
@@ -32,7 +34,7 @@ export default function TaskInfoMenuItem({
         id={name.toLowerCase()}
         name={name.toLowerCase()}
         className="resize-none text-base px-3 py-2 rounded-xl border border-accent-blue/20 bg-white/90 text-slate-900 shadow-inner focus:border-accent-blue focus:outline-none"
-        placeholder={`${name}...`}
+        placeholder={placeholder ?? `${name}...`}
         value={value as any}
         onChange={onChange}
         autoFocus={false}

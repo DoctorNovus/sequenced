@@ -4,6 +4,7 @@ import {
   Task,
   createInitialTaskData,
   useAddTask,
+  useAddTasksBulk,
   useTaskById,
   useUpdateTask,
 } from "@/hooks/tasks";
@@ -46,6 +47,7 @@ export default function TaskInfoMenu({
   ) => ({ ...data, ...payload });
 
   const { mutate: addTask } = useAddTask();
+  const { mutateAsync: addTasksBulk } = useAddTasksBulk();
   const { mutate: updateTask } = useUpdateTask();
 
   const initialData: Task = {
@@ -55,6 +57,8 @@ export default function TaskInfoMenu({
   };
 
   const [tempData, setTempData] = useReducer(reducer, initialData);
+  const [quickTasksInput, setQuickTasksInput] = useState("");
+  const [isQuickAdd, setIsQuickAdd] = useState(false);
 
   if (type == "edit") {
     if (
@@ -143,6 +147,8 @@ export default function TaskInfoMenu({
 
   const resetForm = () => {
     setTempData({ ...createInitialTaskData(), id: undefined });
+    setQuickTasksInput("");
+    setIsQuickAdd(false);
     setAppData({ ...appData, activeTask: undefined });
     setIsOpen(false);
   };
@@ -195,6 +201,26 @@ export default function TaskInfoMenu({
   };
 
   const submitForm = () => {
+    const quickLines = quickTasksInput
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+
+    if (type === "add" && isQuickAdd && quickLines.length > 0) {
+      const payload = quickLines.map((title) => ({
+        title,
+        date: new Date(appData.activeDate),
+        done: false,
+        repeater: "",
+        reminder: "",
+        priority: 0,
+        subtasks: [],
+      }));
+
+      addTasksBulk(payload).then(() => resetForm());
+      return;
+    }
+
     if (type == "edit") {
       saveAll();
       resetForm();
@@ -245,6 +271,10 @@ export default function TaskInfoMenu({
 
                 tempData={tempData}
                 setTempData={setTempData}
+                quickTasksInput={quickTasksInput}
+                setQuickTasksInput={setQuickTasksInput}
+                isQuickAdd={isQuickAdd}
+                setIsQuickAdd={setIsQuickAdd}
 
                 setIsOpen={setIsOpen}
 
