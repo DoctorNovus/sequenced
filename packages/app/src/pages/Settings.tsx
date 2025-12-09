@@ -2,6 +2,7 @@ import {
   cancelNotification,
   getPending,
   setDailyReminders,
+  scheduleNotification,
 } from "@/utils/notifs";
 
 import { Settings, getSettings, setSettings } from "@/hooks/settings";
@@ -86,6 +87,17 @@ export default function SettingsPage() {
     }
   };
 
+  const TestDaily = async () => {
+    const fireAt = new Date(Date.now() + 3000);
+    await scheduleNotification({
+      id: Math.floor(Math.random() * 2147483647),
+      title: "Sequenced: Test Reminder",
+      body: "This is a test daily notification.",
+      schedule: { at: fireAt },
+    });
+    Logger.log("Scheduled test notification for", fireAt.toISOString());
+  };
+
   return (
     <div className="flex flex-col w-full h-full px-3 md:px-6 lg:px-10 py-4 gap-4 items-center">
       <div className="w-full max-w-3xl">
@@ -113,6 +125,15 @@ export default function SettingsPage() {
                 />
               </div>
             )}
+            <div className="flex justify-start">
+              <button
+                type="button"
+                className="rounded-lg bg-accent-blue text-white px-3 py-2 text-sm font-semibold shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition"
+                onClick={TestDaily}
+              >
+                Test
+              </button>
+            </div>
           </div>
         </div>
 
