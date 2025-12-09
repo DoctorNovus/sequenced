@@ -1,9 +1,11 @@
 {
     "include": ["src"],
     "compilerOptions": {
+        "outDir": "dist",
         "strict": false,
         /* features */
         "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "useDefineForClassFields": true,
         
         /* syntax */
@@ -11,13 +13,15 @@
         "module": "ESNext",
         "lib": ["ES2020"],
         "types": ["./src/index.d.ts"],
+        "jsx": "preserve",
         "skipLibCheck": true,
 
         /* bundler mode */
         "moduleResolution": "Bundler",
         "allowImportingTsExtensions": true,
+        "rewriteRelativeImportExtensions": true,
         "resolveJsonModule": true,
-        "isolatedModules": true,
+        "isolatedModules": false,
         "noEmit": true,
         "allowJs": true,
 

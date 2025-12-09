@@ -1,8 +1,10 @@
-import { Entity, Model, Prop } from "@outwalk/firefly/mongoose";
+import { Entity, Model, Prop } from "@/_lib/mongoose";
 import bcrypt from "bcrypt";
 
 @Entity()
 export class User extends Model {
+
+    id: string;
 
     @Prop({ type: String, required: true })
     first: string;
@@ -17,5 +19,8 @@ export class User extends Model {
     password: string;
 
     @Prop({ type: Boolean, default: false })
-    developer: boolean;    
+    developer: boolean;
+
+    @Prop({ type: Boolean, default: false })
+    synced: boolean;
 }

@@ -14,26 +14,21 @@ export class UserService {
         return User.create(data);
     }
 
-    async getUserById(id: string): Promise<User> {
-        const user = await User.findById(id).lean<User>().exec();
-        // if (!user) throw new NotFound("The user could not be found.", { id });
-
-        return user;
+    async getUserById(id: string): Promise<User | null> {
+        return User.findById(id).lean<User>().exec();
     }
 
-    async getUserByEmail(email: string): Promise<User> {
-        const user = await User.findOne({ email }).lean<User>().exec();
-        // if (!user) throw new NotFound("The user could not be found.", { email });
-
-        return user;
+    async getUserByEmail(email: string): Promise<User | null> {
+        return User.findOne({ email }).lean<User>().exec();
     }
 
-    async updateUser(id: string, data: Partial<User>): Promise<User> {
+    async updateUser(id: string, data: Partial<User>): Promise<User | null> {
         return User.findByIdAndUpdate(id, data).lean<User>().exec();
     }
 
     async validatePassword(id: string, password: string): Promise<boolean> {
         const user = await User.findById(id).select("password").lean<User>().exec();
+        if (!user?.password) return false;
         return bcrypt.compare(password, user.password);
     }
 }

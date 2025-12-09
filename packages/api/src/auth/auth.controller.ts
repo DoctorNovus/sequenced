@@ -57,9 +57,11 @@ export class AuthController {
         const { id } = req.body;
 
         const user = await this.userService.getUserById(req.session.user.id);
-        if (!user.developer) throw new Unauthorized("Not a Developer");
+        if (!user || !user.developer) throw new Unauthorized("Not a Developer");
 
         const controlled = await this.userService.getUserById(id);
+        if (!controlled) throw new Unauthorized("Account not found.");
+
         req.session.user = { id: controlled.id, first: user.first, isControlled: true };
         return controlled;
     }

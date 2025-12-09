@@ -12,17 +12,18 @@ export class UserController {
     userService: UserService;
 
     @Get()
-    async getUser({ session }: Request): Promise<User> {
+    async getUser({ session }: Request): Promise<User | null> {
         return this.userService.getUserById(session.user.id);
     }
 
     @Patch()
-    async updateName({ session, body }: Request): Promise<User> {
+    async updateName({ session, body }: Request): Promise<User | null> {
         return this.userService.updateUser(session.user.id, body);
     }
 
     @Get("/synced")
     async getSynced({ session }: Request): Promise<boolean> {
-        return (await this.userService.getUserById(session.user.id)).synced;
+        const user = await this.userService.getUserById(session.user.id);
+        return user?.synced ?? false;
     }
 }

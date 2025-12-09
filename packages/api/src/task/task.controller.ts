@@ -23,7 +23,7 @@ export class TaskController {
     }
 
     @Get("/:id/users")
-    async getUsers({ params }: Request): Promise<User[]> {
+    async getUsers({ params }: Request): Promise<User[] | null> {
         if (!params || !params.id) return null;
         return this.taskService.getUsersByTaskId(params.id);
     }
@@ -60,12 +60,12 @@ export class TaskController {
     }
 
     @Patch()
-    async updateTask({ body }: Request): Promise<Task> {
+    async updateTask({ body }: Request): Promise<Task | null> {
         return this.taskService.updateTask(body.id, body);
     }
 
     @Delete()
-    async deleteTask({ body }: Request): Promise<Task> {
+    async deleteTask({ body }: Request): Promise<Task | null> {
         return this.taskService.deleteTask(body.id);
     }
 
@@ -82,6 +82,7 @@ export class TaskController {
     @Delete("/:id/users/:email/remove")
     async removeUser({ session, params }: Request): Promise<{ success: boolean }> {
         const user = await this.userService.getUserByEmail(params.email);
+        if (!user) throw new BadRequest("User does not exist.");
         if (user.id == session.user.id) throw new BadRequest("Cannot delete yourself.");
 
         await this.taskService.updateTask(params.id, { $pull: { users: user.id } });

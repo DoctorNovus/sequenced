@@ -1,5 +1,3 @@
-import { useState } from "react";
-import CalendarArrow from "./CalendarArrow";
 import { formatDate, generateWeek } from "@/utils/date";
 import CalendarItem from "./CalendarItem";
 
@@ -7,37 +5,60 @@ import CalendarIcon from "@/assets/calendar.svg";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/16/solid";
 import { useApp } from "@/hooks/app";
 
-export default function ActiveCalendar({ skeleton }) {
+type ActiveCalendarProps = {
+  skeleton?: boolean;
+};
+
+export default function ActiveCalendar({ skeleton }: ActiveCalendarProps) {
   const [appData, setAppData] = useApp();
 
-  const [calendarSize, setCalendarSize] = useState(7);
-  const [activeWeek, setActiveWeek] = useState(0);
-  const [swipeCounter, setSwipeCounter] = useState<number>(0);
+  const shiftWeek = (direction: number) => {
+    const tempDate = new Date(appData.activeDate);
+    tempDate.setDate(tempDate.getDate() + 7 * direction);
+    setAppData({ ...appData, activeDate: tempDate });
+  };
 
   if (skeleton) {
     return (
       <div className="w-full h-full px-2">
-        <div className="w-full flex justify-center my-3">
-          <div className="flex flex-row w-[90%] justify-center">
-            <div className="flex justify-center w-full py-1 border bg-accent-blue shadow-lg rounded-lg hover:bg-accent-blue-600">
-              <input
-                onChange={() => { }}
-                value={formatDate(new Date())}
-                type="date"
-                className="w-full h-full bg-transparent text-accent-black invert px-1 m-0 text-center text-xl"
-              />
+        <div className="rounded-3xl bg-white/80 p-4 shadow-xl ring-1 ring-accent-blue/10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img src={CalendarIcon} className="h-6 w-6" />
+              <div className="flex flex-col">
+                <span className="text-xs uppercase tracking-[0.18em] text-slate-500">Schedule</span>
+                <span className="text-lg font-semibold text-slate-900">This Week</span>
+              </div>
+            </div>
+            <div className="flex w-44 md:w-56 justify-end">
+              <div className="flex w-full items-center rounded-2xl border border-accent-blue/20 bg-accent-blue-50/60 px-2 py-1 shadow-inner">
+                <input
+                  disabled
+                  value={formatDate(new Date())}
+                  type="date"
+                  className="w-full rounded-2xl border-none bg-transparent text-center text-sm font-semibold text-slate-500 focus:outline-none"
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="w-full h-full flex flex-row items-center justify-center">
-          <div className="flex flex-row w-full h-full justify-evenly items-center">
-            <ChevronLeftIcon className="hidden lg:flex w-10 h-10 fill-accent-black-100 hover:fill-accent-black-300" />
-            <div className="w-full md:w-[90%] flex flex-row justify-between px-4">
-              {generateWeek(new Date(), 0).map((date, key) => (
-                <CalendarItem date={date} key={key} />
-              ))}
+          <div className="mt-4 flex flex-row items-center justify-center">
+            <div className="flex flex-row w-full h-full justify-evenly items-center">
+              <div className="hidden lg:flex">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent-blue-50 text-slate-400 shadow-inner" aria-hidden>
+                  <ChevronLeftIcon className="w-6 h-6" />
+                </div>
+              </div>
+              <div className="w-full md:w-[90%] flex flex-row justify-between px-2 md:px-4">
+                {generateWeek(new Date(), 0).map((date, key) => (
+                  <CalendarItem date={date} key={key} />
+                ))}
+              </div>
+              <div className="hidden lg:flex">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent-blue-50 text-slate-400 shadow-inner" aria-hidden>
+                  <ChevronRightIcon className="w-6 h-6" />
+                </div>
+              </div>
             </div>
-            <ChevronRightIcon className="hidden lg:flex w-10 h-10 fill-accent-black-100 hover:fill-accent-black-300" />
           </div>
         </div>
       </div>
@@ -83,60 +104,61 @@ export default function ActiveCalendar({ skeleton }) {
     touchendX = e.changedTouches[0].screenX;
     const direction = checkDirection();
 
-    const tempDate = appData.activeDate;
-
-    if (direction == 1) tempDate.setDate(tempDate.getDate() + 7);
-    else if (direction == -1) tempDate.setDate(tempDate.getDate() - 7);
-
-    setAppData({
-      appData,
-      activeDate: tempDate
-    });
+    if (direction !== 0) {
+      shiftWeek(direction);
+    }
   };
 
   return (
     <div className="w-full h-full px-2">
-      <div className="w-full flex justify-center my-3">
-        <div className="flex flex-row w-[90%] justify-center">
-          <div className="flex justify-center w-full py-1 border bg-accent-blue shadow-lg rounded-lg hover:bg-accent-blue-600">
-            <input
-              type="date"
-              value={formatDate(appData.activeDate)}
-              onChange={changeActiveMonth}
-              className="w-full h-full bg-transparent text-accent-black invert px-1 m-0 text-center text-xl"
-            />
+      <div className="rounded-3xl bg-white/80 p-4 shadow-xl ring-1 ring-accent-blue/10">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src={CalendarIcon} className="h-6 w-6" />
+            <div className="flex flex-col">
+              <span className="text-xs uppercase tracking-[0.18em] text-slate-500">Schedule</span>
+              <span className="text-lg font-semibold text-slate-900">This Week</span>
+            </div>
+          </div>
+          <div className="flex flex-row w-44 md:w-56">
+            <div className="flex justify-center w-full rounded-2xl border border-accent-blue/20 bg-accent-blue-50/60 shadow-inner">
+              <input
+                type="date"
+                value={formatDate(appData.activeDate)}
+                onChange={changeActiveMonth}
+                className="w-full h-full rounded-2xl border-none bg-transparent px-2 py-1 text-center text-sm font-semibold text-slate-700 focus:outline-none"
+              />
+            </div>
           </div>
         </div>
-      </div>
-      <div className="w-full h-full flex flex-row items-center justify-center">
-        <div className="flex flex-row w-full h-full justify-evenly items-center">
-          <ChevronLeftIcon
-            className="hidden lg:flex w-10 h-10 fill-accent-black-100 hover:fill-accent-black-300"
-            onClick={(e) => {
-              const tempDate = appData.activeDate;
-              tempDate.setDate(tempDate.getDate() - 7);
-            }}
-          />
-          <div
-            className="w-full md:w-[90%] flex flex-row justify-between px-4"
-            onTouchStart={touchstart}
-            onTouchEnd={touchend}
-          >
-            {dates.map((date, key) => (
-              <CalendarItem date={date} key={key} />
-            ))}
+        <div className="mt-4 flex flex-row items-center justify-center">
+          <div className="flex flex-row w-full h-full justify-evenly items-center">
+            <div className="hidden lg:flex">
+              <button
+                className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent-blue-50 text-slate-700 shadow-inner transition hover:bg-accent-blue-100"
+                onClick={() => shiftWeek(-1)}
+              >
+                <ChevronLeftIcon className="w-6 h-6" />
+              </button>
+            </div>
+            <div
+              className="w-full md:w-[90%] flex flex-row justify-between px-2 md:px-4"
+              onTouchStart={touchstart}
+              onTouchEnd={touchend}
+            >
+              {dates.map((date, key) => (
+                <CalendarItem date={date} key={key} />
+              ))}
+            </div>
+            <div className="hidden lg:flex">
+              <button
+                className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent-blue-50 text-slate-700 shadow-inner transition hover:bg-accent-blue-100"
+                onClick={() => shiftWeek(1)}
+              >
+                <ChevronRightIcon className="w-6 h-6" />
+              </button>
+            </div>
           </div>
-          <ChevronRightIcon
-            className="hidden lg:flex w-10 h-10 fill-accent-black-100 hover:fill-accent-black-300"
-            onClick={(e) => {
-              const tempDate = appData.activeDate;
-              tempDate.setDate(tempDate.getDate() + 7);
-              setAppData({
-                appData,
-                activeDate: tempDate
-              });
-            }}
-          />
         </div>
       </div>
     </div>

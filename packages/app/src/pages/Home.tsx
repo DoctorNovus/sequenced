@@ -20,19 +20,23 @@ const Home = () => {
 
     if (auth.isLoading)
         return (
-            <div className="w-full h-full flex flex-col px-4 py-2 gap-4">
-                <HomeIntroduction skeleton="true" />
-                <HomeAgenda skeleton="true" />
-                <HomeUpcoming skeleton="true" />
+            <div className="w-full h-full flex flex-col px-2 md:px-4 lg:px-6 py-4">
+                <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
+                    <HomeIntroduction skeleton="true" />
+                    <HomeAgenda skeleton="true" />
+                    <HomeUpcoming skeleton="true" />
+                </div>
             </div>
         )
 
     return (
         <AuthProvider>
-            <div className="w-full h-full flex flex-col px-4 py-2 gap-4">
-                <HomeIntroduction user={user} today={today} />
-                <HomeAgenda />
-                <HomeUpcoming />
+            <div className="w-full h-full flex flex-col px-2 md:px-4 lg:px-6 py-4">
+                <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
+                    <HomeIntroduction user={user} today={today} />
+                    <HomeAgenda />
+                    <HomeUpcoming />
+                </div>
             </div>
         </AuthProvider>
     )

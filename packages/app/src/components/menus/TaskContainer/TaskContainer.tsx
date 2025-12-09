@@ -40,8 +40,8 @@ export default function TaskContainer({
 
   if (skeleton) {
     return (
-      <div className="group flex flex-col items-center w-[90%] h-full my-2">
-        <div className="w-full flex flex-row items-center border bg-accent-blue text-accent-white border-accent-blue rounded-lg px-2  hover:bg-accent-blue-600 [&:has(.task-container-accordian:hover)]:bg-accent-blue">
+      <div className="group flex flex-col items-center w-full h-full my-2">
+        <div className="w-full flex flex-row items-center rounded-2xl bg-white/90 px-3 py-3 text-slate-900 shadow-md ring-1 ring-accent-blue/10 [&:has(.task-container-accordian:hover)]:ring-accent-blue/30">
           <div className="w-full flex flex-row justify-between">
             <div className="flex flex-row items-center py-1">
               <ChevronRightIcon
@@ -49,22 +49,22 @@ export default function TaskContainer({
                 width="32"
               />
               <div className="flex flex-row gap-2">
-                <h1 className="text-xl">{title}</h1>
-                <h1 className="text-xl text-accent-white">(0/0)</h1>
+                <h1 className="text-xl font-semibold">{title}</h1>
+                <h1 className="text-xl text-accent-blue-700">(0/0)</h1>
               </div>
             </div>
             <div className="flex flex-row items-center">
               <Menu>
                 <Menu.Button>
-                  <div className="group/filter task-container-accordian">
+                  <div className="group/filter task-container-accordian rounded-2xl bg-accent-blue-50 p-2">
                     <AdjustmentsHorizontalIcon
-                      width="32"
+                      width="24"
                       className="group-hover/filter:fill-accent-blue"
                     />
                   </div>
                 </Menu.Button>
                 <div className="group/filter relative inset-0 z-20">
-                  <Menu.Items className="flex flex-col absolute right-4 top-4 gap-2 bg-white border border-solid shadow-md rounded-lg py-4 px-4 z-30">
+                  <Menu.Items className="flex flex-col absolute right-4 top-4 gap-2 bg-white/95 border border-solid border-accent-blue/10 shadow-md rounded-xl py-4 px-4 z-30 backdrop-blur">
                     <TaskMenuItem skeleton="true">
                       <span>All</span>
                     </TaskMenuItem>
@@ -120,7 +120,7 @@ export default function TaskContainer({
   }
 
   return (
-    <div className="group flex flex-col items-center w-[90%] h-full my-2">
+    <div className="group flex flex-col items-center w-full h-full my-2">
       {/* Migrate to dynamic loading content */}
       {settings.isLoading && <span>Loading...</span>}
       {settings.isError && <span>Error: {settings.error.message}</span>}
@@ -133,7 +133,7 @@ export default function TaskContainer({
               <Disclosure.Button
                 onClick={async () => await handleClick(open)}
                 as="div"
-                className="w-full flex flex-row items-center border bg-accent-blue text-accent-white border-accent-blue rounded-lg px-2  hover:bg-accent-blue-600 [&:has(.task-container-accordian:hover)]:bg-accent-blue"
+                className="w-full flex flex-row items-center rounded-2xl bg-white/90 px-3 py-3 text-slate-900 shadow-md ring-1 ring-accent-blue/10 transition hover:-translate-y-0.5 hover:ring-accent-blue/30 [&:has(.task-container-accordian:hover)]:ring-accent-blue/30"
               >
                 <div className="w-full flex flex-row justify-between">
                   <div className="flex flex-row items-center py-1">
@@ -142,9 +142,9 @@ export default function TaskContainer({
                       width="32"
                     />
                     <div className="flex flex-row gap-2">
-                      <h1 className="text-xl">{title}</h1>
+                      <h1 className="text-xl font-semibold">{title}</h1>
                       {baseTasks.filter((task) => !task.done).length > 0 && (
-                        <h1 className="text-xl text-accent-white">
+                        <h1 className="text-xl text-accent-blue-700">
                           ({baseTasks.filter((task) => !task.done).length}/
                           {baseTasks.length})
                         </h1>
@@ -154,15 +154,15 @@ export default function TaskContainer({
                   <div className="flex flex-row items-center">
                     <Menu>
                       <Menu.Button>
-                        <div className="group/filter task-container-accordian">
+                        <div className="group/filter task-container-accordian rounded-2xl bg-accent-blue-50 p-2">
                           <AdjustmentsHorizontalIcon
-                            width="32"
+                            width="24"
                             className="group-hover/filter:fill-accent-blue"
                           />
                         </div>
                       </Menu.Button>
                       <div className="group/filter relative inset-0 z-20">
-                        <Menu.Items className="flex flex-col absolute right-4 top-4 gap-2 bg-white border border-solid shadow-md rounded-lg py-4 px-4 z-30">
+                        <Menu.Items className="flex flex-col absolute right-4 top-4 gap-2 bg-white/95 border border-solid border-accent-blue/10 shadow-md rounded-xl py-4 px-4 z-30 backdrop-blur">
                           <TaskMenuItem
                             active={taskFilter == "all"}
                             handleClick={() => setTaskFilter("all")}

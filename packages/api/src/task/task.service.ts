@@ -1,6 +1,7 @@
 import { Injectable } from "@outwalk/firefly";
 import { Task } from "./task.entity";
 import { User } from "@/user/user.entity";
+import { UpdateQuery } from "mongoose";
 
 @Injectable()
 export class TaskService {
@@ -9,7 +10,7 @@ export class TaskService {
         return Task.create(data);
     }
 
-    async updateTask(id: string, data: Partial<Task>): Promise<Task> {
+    async updateTask(id: string, data: Partial<Task> | UpdateQuery<Task>): Promise<Task | null> {
         return Task.findByIdAndUpdate(id, data).lean<Task>().exec();
     }
 
@@ -17,7 +18,7 @@ export class TaskService {
         return Task.find({ users: userId }).populate("subtasks").lean<Task[]>().exec();
     }
 
-    async getTaskDateFormat(date: Date) {
+    getTaskDateFormat(date: Date): RegExp {
         const year = `${date.getFullYear()}`;
         const month = (date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
         const day = (date.getDate() < 10) ? `0${date.getDate()}` : date.getDate();
@@ -25,7 +26,7 @@ export class TaskService {
         return new RegExp(`${year}-${month}-${day}`);
     }
 
-    async getTaskDateWeekFormat(date: Date) {
+    getTaskDateWeekFormat(date: Date): RegExp {
         let dates = `^(?:`;
 
         for (let i = 0; i < 7; i++) {
@@ -67,7 +68,7 @@ export class TaskService {
 
     async getTasksWeek(userId: string): Promise<Task[]> {
         const today = new Date();
-        const format = await this.getTaskDateWeekFormat(today);
+        const format = this.getTaskDateWeekFormat(today);
 
         return Task.find({ users: userId, date: { $regex: format }, done: false })
             .populate("subtasks")
@@ -92,14 +93,16 @@ export class TaskService {
             .exec();
     }
 
-    async deleteTask(id: string): Promise<Task> {
+    async deleteTask(id: string): Promise<Task | null> {
         return Task.findByIdAndDelete(id).lean<Task>().exec();
     }
 
-    async getUsersByTaskId(id: string): Promise<User[]> {
+    async getUsersByTaskId(id: string): Promise<User[] | null> {
         if (!id) return null;
         const task = await Task.findById(id);
         if (!task) return null;
-        return (task.select("users").populate("users").exec()).users;
+
+        const populated = await task.select("users").populate("users").exec();
+        return (populated?.users as User[]) ?? [];
     }
 }

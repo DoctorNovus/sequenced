@@ -22,9 +22,9 @@ export default function Task() {
 
   if (tasks.isLoading) {
     return (
-      <div className="w-full h-full bg-white text-accent-black">
+      <div className="w-full h-full text-accent-black">
         <div className="h-full pb-12">
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-4 px-1 md:px-2">
             <ActiveCalendar skeleton="true" />
             <DayTasks skeleton="true" />
             <TaskContainer title="All Tasks" skeleton="true" />
@@ -38,9 +38,9 @@ export default function Task() {
   }
 
   return (
-    <div className="w-full h-full bg-white text-accent-black">
+    <div className="w-full h-full text-accent-black">
       <div className="h-full pb-12">
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-4 px-1 md:px-2">
           <ActiveCalendar />
           <DayTasks
             setIsInspecting={setIsInspecting}

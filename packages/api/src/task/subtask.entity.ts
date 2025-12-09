@@ -1,7 +1,9 @@
-import { Entity, Model, Prop } from "@outwalk/firefly/mongoose";
+import { Entity, Model, Prop } from "@/_lib/mongoose";
 
 @Entity()
 export class SubTask extends Model {
+
+    id: string;
 
     @Prop({ type: String, required: true })
     title: string;

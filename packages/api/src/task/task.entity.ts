@@ -1,9 +1,11 @@
-import { Entity, Model, Prop } from "@outwalk/firefly/mongoose";
+import { Entity, Model, Prop } from "@/_lib/mongoose";
 import { SubTask } from "./subtask.entity";
-import { User } from "@/user/user.entity";
+import { User } from "../user/user.entity";
 
 @Entity()
 export class Task extends Model {
+
+    id: string;
 
     @Prop({ type: String, required: true })
     title: string;
@@ -38,5 +40,5 @@ export class Task extends Model {
     subtasks: SubTask[];
 
     @Prop({ type: [User], default: [] })
-    users: User[];
+    users: (User | string)[];
 }
