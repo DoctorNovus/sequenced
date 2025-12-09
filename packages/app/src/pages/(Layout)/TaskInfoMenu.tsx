@@ -233,7 +233,7 @@ export default function TaskInfoMenu({
         <div
           className="fixed inset-0 flex w-full h-full items-end justify-center bg-accent-blue/10 backdrop-blur-sm px-3 pb-4 pt-10 md:items-center"
         >
-          <DialogPanel className="flex w-full max-w-xl max-h-[90vh] flex-col overflow-y-auto rounded-3xl bg-gradient-to-b from-white/95 via-white to-accent-blue-50/60 text-accent-black shadow-2xl ring-1 ring-accent-blue/15 p-4 md:p-6">
+          <DialogPanel className="flex w-full max-w-xl max-h-screen flex-col overflow-y-auto rounded-3xl bg-gradient-to-b from-white/95 via-white to-accent-blue-50/60 text-accent-black shadow-2xl ring-1 ring-accent-blue/15 p-4 md:p-6">
             <div className="flex flex-col gap-5">
               <MenuHeader
                 type={type}

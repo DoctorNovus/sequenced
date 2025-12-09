@@ -15,7 +15,7 @@ export default function DataContainer() {
                     <div className="flex-1 rounded-3xl">
                         <div
                             id="unit-container"
-                            className={`flex h-full ${isAuthRoute ? "min-h-screen justify-center" : "min-h-[80vh] justify-start"} flex-col rounded-3xl py-2 md:px-8 overflow-y-auto`}
+                            className={`flex h-full ${isAuthRoute ? "min-h-screen justify-center" : "min-h-screen justify-start"} flex-col rounded-3xl py-2 md:px-8 overflow-y-auto`}
                         >
                             <Outlet />
                         </div>

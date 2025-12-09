@@ -15,7 +15,7 @@ export function NavBar() {
 
   const renderBar = (isInteractive: boolean) => (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 md:px-4">
-      <div className="pointer-events-auto nav-pad w-full max-w-2xl rounded-[18px] bg-white/92 ring-1 ring-accent-blue/12 border border-white/70 h-[68px] md:h-[72px] bg-white">
+      <div className="pointer-events-auto nav-pad w-full max-w-2xl rounded-2xl bg-white/92 ring-1 ring-accent-blue/12 border border-white/70 h-16 md:h-20 bg-white">
         <div className="relative flex h-full items-center justify-between px-3 py-2 md:px-5">
           <div className="flex flex-1 items-center justify-evenly gap-2 md:pr-10">
             <NavItem to="/" title="Home">

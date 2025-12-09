@@ -29,7 +29,7 @@ export function TaskInfoMenuDelete({
         >
           Delete
         </button>
-        <div className="absolute inset-50 w-[100vw] h-[100vh] z-10 top-0 left-0 flex justify-center items-end py-8">
+        <div className="absolute inset-0 w-screen h-screen z-10 top-0 left-0 flex justify-center items-end py-8">
           <div className="flex flex-col gap-2 border border-solid shadow-md task-black bg-white rounded-md px-4 py-4 z-20 items-center justify-center h-fit">
             <h1 className="text-lg text-center text-black my-2">
               Are you sure you want to delete this?

@@ -251,10 +251,6 @@ export default function SettingsPage() {
         </div>
 
         <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
-          <UserLogin />
-        </div>
-
-        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-3">
             <h2 className="text-lg font-semibold text-slate-900">Support Sequenced</h2>
             <p className="text-sm text-slate-600">
@@ -328,6 +324,10 @@ export default function SettingsPage() {
               </a>
             </div>
           </div>
+        </div>
+
+        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+          <UserLogin />
         </div>
 
         <DeveloperSettings>
