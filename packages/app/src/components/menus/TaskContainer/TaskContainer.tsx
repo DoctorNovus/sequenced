@@ -10,8 +10,7 @@ import invisible_icon from "@/assets/invisible.svg";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
 
-import { Disclosure, Menu } from "@headlessui/react";
-import TaskMenuItem from "./TaskMenuItem";
+import { Disclosure } from "@headlessui/react";
 import { matchDate } from "@/utils/date";
 import { isTaskDone, sortByDate, sortByPriority } from "@/utils/data";
 import { Task } from "@/hooks/tasks";
@@ -54,26 +53,16 @@ export default function TaskContainer({
               </div>
             </div>
             <div className="flex flex-row items-center">
-              <Menu>
-                <Menu.Button>
-                  <div className="group/filter task-container-accordian rounded-2xl bg-accent-blue-50 p-2">
-                    <AdjustmentsHorizontalIcon
-                      width="24"
-                      className="group-hover/filter:fill-accent-blue"
-                    />
-                  </div>
-                </Menu.Button>
-                <div className="group/filter relative inset-0 z-20">
-                  <Menu.Items className="flex flex-col absolute right-4 top-4 gap-2 bg-white/95 border border-solid border-accent-blue/10 shadow-md rounded-xl py-4 px-4 z-30 backdrop-blur">
-                    <TaskMenuItem skeleton="true">
-                      <span>All</span>
-                    </TaskMenuItem>
-                    <TaskMenuItem skeleton="true">
-                      <span>Incomplete</span>
-                    </TaskMenuItem>
-                  </Menu.Items>
+              <div className="flex items-center gap-2 rounded-full border border-accent-blue/20 bg-accent-blue-50/50 px-2 py-1">
+                <span className="text-xs text-slate-600 flex items-center gap-1">
+                  <AdjustmentsHorizontalIcon width="16" />
+                  Filter
+                </span>
+                <div className="flex rounded-full bg-white/70 border border-accent-blue/20 overflow-hidden">
+                  <span className="px-2 py-1 text-xs text-accent-blue-700">All</span>
+                  <span className="px-2 py-1 text-xs text-slate-500">Incomplete</span>
                 </div>
-              </Menu>
+              </div>
             </div>
           </div>
         </div>
@@ -152,32 +141,40 @@ export default function TaskContainer({
                     </div>
                   </div>
                   <div className="flex flex-row items-center">
-                    <Menu>
-                      <Menu.Button>
-                        <div className="group/filter task-container-accordian rounded-2xl bg-accent-blue-50 p-2">
-                          <AdjustmentsHorizontalIcon
-                            width="24"
-                            className="group-hover/filter:fill-accent-blue"
-                          />
-                        </div>
-                      </Menu.Button>
-                      <div className="group/filter relative inset-0 z-20">
-                        <Menu.Items className="flex flex-col absolute right-4 top-4 gap-2 bg-white/95 border border-solid border-accent-blue/10 shadow-md rounded-xl py-4 px-4 z-30 backdrop-blur">
-                          <TaskMenuItem
-                            active={taskFilter == "all"}
-                            handleClick={() => setTaskFilter("all")}
-                          >
-                            <span>All</span>
-                          </TaskMenuItem>
-                          <TaskMenuItem
-                            active={taskFilter == "incomplete"}
-                            handleClick={() => setTaskFilter("incomplete")}
-                          >
-                            <span>Incomplete</span>
-                          </TaskMenuItem>
-                        </Menu.Items>
+                    <div className="flex items-center gap-2 rounded-full border border-accent-blue/20 bg-accent-blue-50/50 px-2 py-1">
+                      <span className="text-xs text-slate-600 flex items-center gap-1">
+                        <AdjustmentsHorizontalIcon width="16" />
+                        Filter
+                      </span>
+                      <div className="flex rounded-full bg-white/70 border border-accent-blue/20 overflow-hidden">
+                        <button
+                          type="button"
+                          className={`px-3 py-1 text-xs font-semibold transition ${taskFilter === "all"
+                            ? "bg-accent-blue text-white"
+                            : "text-slate-600"
+                            }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTaskFilter("all");
+                          }}
+                        >
+                          All
+                        </button>
+                        <button
+                          type="button"
+                          className={`px-3 py-1 text-xs font-semibold transition ${taskFilter === "incomplete"
+                            ? "bg-accent-blue text-white"
+                            : "text-slate-600"
+                            }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTaskFilter("incomplete");
+                          }}
+                        >
+                          Incomplete
+                        </button>
                       </div>
-                    </Menu>
+                    </div>
                   </div>
                 </div>
               </Disclosure.Button>
