@@ -7,6 +7,7 @@ import TasksIcon from "../Icons/TasksIcon";
 import NavItem from "./NavItem";
 import ListsIcon from "../Icons/ListsIcon";
 import { useAuth } from "@/hooks/auth";
+import CalendarViewIcon from "../Icons/CalendarViewIcon";
 
 export function NavBar() {
   const auth = useAuth();
@@ -39,8 +40,8 @@ export function NavBar() {
           </div>
 
           <div className="flex flex-1 items-center justify-evenly gap-2 md:pl-10">
-            <NavItem to="#lists" title="">
-              {/* <ListsIcon /> */}
+            <NavItem to="#" title="Calendar" disabled>
+              <CalendarViewIcon className="opacity-50 cursor-not-allowed" />
             </NavItem>
             <NavItem to="/settings" title="Settings">
               <SettingsIcon />

@@ -5,9 +5,10 @@ interface NavItemProps {
     to: string;
     title: string;
     children: ReactNode;
+    disabled?: boolean;
 }
 
-export default function NavItem({ to, title, children }: NavItemProps) {
+export default function NavItem({ to, title, children, disabled }: NavItemProps) {
     const pathname = window.location.pathname;
 
     const isActive = pathname == to;
@@ -17,7 +18,7 @@ export default function NavItem({ to, title, children }: NavItemProps) {
         <Link
             to={to}
             aria-current={isActive ? "page" : undefined}
-            className={`flex flex-col items-center rounded-2xl px-2 py-1 text-[11px] font-semibold transition-colors ${isActive
+            className={`flex flex-col items-center rounded-2xl px-2 py-1 text-[11px] font-semibold transition-colors ${disabled ? "pointer-events-none opacity-50 cursor-not-allowed hover:text-gray-500 fill-gray-500" : ""} ${isActive
                 ? "text-accent-blue-800 fill-accent-blue-800"
                 : "text-slate-500 fill-slate-500 hover:text-accent-blue-700 hover:fill-accent-blue-700"
                 }`}
