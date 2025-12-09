@@ -2,6 +2,7 @@ import { Injectable } from "@outwalk/firefly";
 import { Task } from "./task.entity";
 import { User } from "@/user/user.entity";
 import { UpdateQuery } from "mongoose";
+import mongoose from "mongoose";
 
 @Injectable()
 export class TaskService {
@@ -15,7 +16,11 @@ export class TaskService {
     }
 
     async getTasksByUserId(userId: string): Promise<Task[]> {
-        return Task.find({ users: userId }).populate("subtasks").lean<Task[]>().exec();
+        return Task.find({ users: userId })
+            .populate("subtasks")
+            .populate({ path: "users", select: "first last email id" })
+            .lean<Task[]>()
+            .exec();
     }
 
     getTaskDateFormat(date: Date): RegExp {
@@ -50,6 +55,7 @@ export class TaskService {
 
         return Task.find({ users: userId, date: { $regex: todayFormat }, done: false })
             .populate("subtasks")
+            .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
     }
@@ -62,6 +68,7 @@ export class TaskService {
 
         return Task.find({ users: userId, date: { $regex: tomorrowFormat }, done: false })
             .populate("subtasks")
+            .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
     }
@@ -72,6 +79,7 @@ export class TaskService {
 
         return Task.find({ users: userId, date: { $regex: format }, done: false })
             .populate("subtasks")
+            .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
     }
@@ -81,6 +89,7 @@ export class TaskService {
 
         return Task.find({ users: userId, date: format, done: false })
             .populate("subtasks")
+            .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
     }
@@ -88,6 +97,7 @@ export class TaskService {
     async getTasksIncomplete(userId: string): Promise<Task[]> {
         return Task.find({ users: userId, done: false })
             .populate("subtasks")
+            .populate({ path: "users", select: "first last email id" })
             .sort({ priority: -1 })
             .lean<Task[]>()
             .exec();
@@ -98,10 +108,10 @@ export class TaskService {
     }
 
     async getUsersByTaskId(id: string): Promise<User[] | null> {
-        if (!id) return null;
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) return [];
         const populated = await Task.findById(id)
             .select("users")
-            .populate("users")
+            .populate({ path: "users", select: "first last email id" })
             .lean<{ users: User[] }>()
             .exec();
 

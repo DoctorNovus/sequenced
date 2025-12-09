@@ -1,4 +1,5 @@
 import { Entity, Model, Prop } from "@/_lib/mongoose";
+import mongoose from "mongoose";
 import { SubTask } from "./subtask.entity";
 import { User } from "../user/user.entity";
 
@@ -39,6 +40,6 @@ export class Task extends Model {
     @Prop({ type: [SubTask], default: [] })
     subtasks: SubTask[];
 
-    @Prop({ type: [User], default: [] })
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], default: [] })
     users: (User | string)[];
 }

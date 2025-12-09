@@ -9,6 +9,8 @@ export function TaskInfoMenuDelete({
 }) {
   const { mutate: deleteTask } = useDeleteTask();
 
+  console.log(task);
+
   const setDeleteTask = () => {
     deleteTask(task);
 
