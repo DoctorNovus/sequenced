@@ -141,11 +141,7 @@ export default function TaskContainer({
                     </div>
                   </div>
                   <div className="flex flex-row items-center">
-                    <div className="flex items-center gap-2 rounded-full border border-accent-blue/20 bg-accent-blue-50/50 px-2 py-1">
-                      <span className="text-xs text-slate-600 flex items-center gap-1">
-                        <AdjustmentsHorizontalIcon width="16" />
-                        Filter
-                      </span>
+                    <div className="flex items-center gap-2 rounded-full px-2 py-1">
                       <div className="flex rounded-full bg-white/70 border border-accent-blue/20 overflow-hidden">
                         <button
                           type="button"

@@ -5,11 +5,12 @@ import { isOverdue } from "@/utils/date";
 import { formatDigits } from "@/utils/math";
 
 export default function TaskItemDate({ task }: { task: Task }) {
-  if (!task?.date) return <></>;
-
   const [appData, setAppData] = useApp();
 
+  if (!task?.date) return <></>;
+
   const taskDate: Date = new Date(task.date);
+  if (Number.isNaN(taskDate.getTime()) || taskDate.getTime() <= 0) return <></>;
   let date: Date = taskDate;
 
   if (task.repeater) {
