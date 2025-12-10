@@ -63,7 +63,7 @@ export default function App() {
 }
 
 async function initialize() {
-  await initializeAdMob();
+  // await initializeAdMob();
   await initializeNotifications();
 }
 
