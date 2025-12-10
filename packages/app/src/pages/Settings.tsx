@@ -253,19 +253,7 @@ export default function SettingsPage() {
         <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-3">
             <h2 className="text-lg font-semibold text-slate-900">Support Sequenced</h2>
-            <p className="text-sm text-slate-600">
-              I want to keep Sequenced free for everyone. If you’d like to help, consider a Ko-fi donation.
-            </p>
             <div className="flex flex-wrap gap-2">
-              <a
-                href="https://ko-fi.com/DoctorNovus"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex w-fit items-center gap-2 rounded-lg bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition"
-              >
-                <span className="text-lg">☕</span>
-                Donate on Ko-fi
-              </a>
               <a
                 href="#review"
                 className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
