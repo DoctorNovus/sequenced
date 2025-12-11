@@ -76,6 +76,8 @@ export default function TaskContainer({
   else
     baseTasks = tasks?.isSuccess ? sortByDate(tasks?.data) : [];
 
+  baseTasks = baseTasks.filter(Boolean);
+
   baseTasks = sortByPriority(baseTasks);
 
   const handleClick = async (open: boolean) => {
@@ -99,13 +101,8 @@ export default function TaskContainer({
     return task;
   });
 
-  // TODO: Migrate to query fetch
-  if (taskFilter == "incomplete") {
-    baseTasks = baseTasks.filter((task) => isTaskDone(task, appData.activeDate));
-  }
-
   return (
-    <div className="group flex flex-col items-center w-full h-full my-2">
+    <div className="group flex flex-col items-center w-full h-full my-2 px-0 md:px-0">
       {/* Migrate to dynamic loading content */}
       {settings.isLoading && <span>Loading...</span>}
       {settings.isError && <span>Error: {settings.error.message}</span>}

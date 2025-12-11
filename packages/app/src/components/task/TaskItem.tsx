@@ -57,12 +57,14 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [isManaging, setIsManaging] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   const [isAccordion, setAccordion] = useState(item.accordion || false);
 
 
   const handleMarkComplete = (e) => {
     e.stopPropagation();
+    setIsCompleting(true);
 
     let newData = {};
 
@@ -117,6 +119,9 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
     }
 
     setIsManaging(false);
+
+    // allow fade-out before hiding when filtering incomplete
+    setTimeout(() => setIsCompleting(false), 600);
   };
 
   const handleInteractive = (e) => {
@@ -149,7 +154,7 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
 
   return (
     <div
-      className={`${taskFilter == "all" || (taskFilter == "incomplete" && !item.done)
+      className={`${taskFilter == "all" || (taskFilter == "incomplete" && (!item.done || isCompleting))
         ? "flex"
         : "hidden"
         } w-full flex-col gap-2`}
@@ -157,6 +162,7 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
       <TaskItemShell
         task={item}
         activeDate={appData.activeDate}
+        className={isCompleting ? "opacity-30 translate-y-1 scale-[0.99]" : ""}
         onClick={(e) => handleInteractive(e)}
       >
         <div className="w-full h-full flex flex-row items-center">

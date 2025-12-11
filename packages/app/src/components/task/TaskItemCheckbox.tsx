@@ -1,15 +1,31 @@
-export default function TaskItemCheckBox(props) {
+import { CheckIcon } from "@heroicons/react/24/solid";
+
+export default function TaskItemCheckBox({ checked, ...props }) {
   return (
-    <div
-      className="w-7 h-7 flex flex-row items-center justify-center border border-accent-black-300 rounded-full px-0.5 py-0.5 hover:bg-accent-blue-700"
+    <label
+      className={`relative flex h-7 w-7 items-center justify-center rounded-lg border-2 px-0.5 py-0.5 transition ${
+        checked
+          ? "border-accent-blue bg-gradient-to-br from-accent-blue-600 to-accent-blue-500 shadow-sm shadow-accent-blue/30"
+          : "border-accent-blue/50 bg-white hover:border-accent-blue"
+      }`}
       onClick={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
+      aria-checked={checked}
+      role="checkbox"
     >
       <input
         type="checkbox"
-        className="w-6 h-6 bg-transparent appearance-none checked:bg-accent-blue rounded-full"
+        className="sr-only"
+        checked={checked}
         {...props}
       />
-    </div>
+      <div
+        className={`flex h-5 w-5 items-center justify-center rounded-md text-white transition ${
+          checked ? "opacity-100 scale-100" : "opacity-0 scale-75"
+        }`}
+      >
+        <CheckIcon className="h-4 w-4" />
+      </div>
+    </label>
   );
 }

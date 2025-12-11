@@ -21,7 +21,7 @@ export default function DayTasks({ skeleton, tasks, setIsInspecting }) {
     if (!tasks.isSuccess)
       return [];
 
-    tasks = sortByDate(tasks.data);
+    tasks = sortByDate(tasks.data).filter(Boolean);
 
     const dayTasks = [];
 
