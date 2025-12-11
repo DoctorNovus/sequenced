@@ -1,4 +1,5 @@
 import { Entity, Model, Prop } from "@/_lib/mongoose";
+import mongoose from "mongoose";
 
 @Entity()
 export class SubTask extends Model {
@@ -15,8 +16,8 @@ export class SubTask extends Model {
     @Prop({ type: String, default: () => new Date().toString() })
     date: string;
 
-    @Prop({ type: Boolean, default: false })
-    done: boolean;
+    @Prop({ type: mongoose.Schema.Types.Mixed, default: false })
+    done: boolean | string[];
 
     @Prop({ type: String, default: "" })
     repeater: string;

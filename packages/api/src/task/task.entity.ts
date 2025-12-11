@@ -18,8 +18,8 @@ export class Task extends Model {
     @Prop({ type: String, default: () => new Date().toString() })
     date: string;
 
-    @Prop({ type: Boolean, default: false })
-    done: boolean;
+    @Prop({ type: mongoose.Schema.Types.Mixed, default: false })
+    done: boolean | string[];
 
     @Prop({ type: String, default: "" })
     repeater: string;
