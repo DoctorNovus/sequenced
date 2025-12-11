@@ -9,8 +9,6 @@ export function TaskInfoMenuDelete({
 }) {
   const { mutate: deleteTask } = useDeleteTask();
 
-  console.log(task);
-
   const setDeleteTask = () => {
     deleteTask(task);
 
@@ -19,47 +17,51 @@ export function TaskInfoMenuDelete({
     closeMenu();
   };
 
-  if (isDeleting)
-    return (
-      <div className="w-full">
-        <button
-          className={`${isDeleting && "blur-sm"
-            } bg-red-600 text-accent-white border border-accent-white px-1 py-1 rounded-md hover:bg-red-700`}
-          onClick={() => setIsDeleting(true)}
-        >
-          Delete
-        </button>
-        <div className="absolute inset-0 w-screen h-screen z-10 top-0 left-0 flex justify-center items-end py-8">
-          <div className="flex flex-col gap-2 border border-solid shadow-md task-black bg-white rounded-md px-4 py-4 z-20 items-center justify-center h-fit">
-            <h1 className="text-lg text-center text-black my-2">
-              Are you sure you want to delete this?
-            </h1>
-            <div className="flex w-full justify-center items-center gap-8">
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        className="w-full h-11 rounded-xl border border-accent-red-200 bg-white text-base font-semibold text-accent-red-700 shadow-sm transition hover:-translate-y-px hover:bg-accent-red-50 disabled:opacity-60"
+        onClick={() => setIsDeleting(true)}
+        disabled={isDeleting}
+      >
+        Delete task
+      </button>
+
+      {isDeleting && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center px-3 pb-12 md:items-center md:pb-0">
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            onClick={() => setIsDeleting(false)}
+          />
+
+          <div className="relative z-10 w-full max-w-md rounded-2xl bg-white/95 p-5 text-center text-slate-900 shadow-2xl ring-1 ring-accent-blue/15">
+            <div className="mb-3 flex flex-col gap-1">
+              <h1 className="text-lg font-semibold">Delete this task?</h1>
+              <p className="text-sm text-slate-600">
+                This will permanently remove the task and any subtasks.
+              </p>
+            </div>
+
+            <div className="flex flex-row gap-3">
               <button
-                className="px-6 py-2 text-lg rounded-md bg-accent-red-600 text-white hover:bg-red-700"
-                onClick={() => setDeleteTask()}
-              >
-                Yes
-              </button>
-              <button
-                className="px-6 py-2 text-lg rounded-md bg-accent-blue-600 text-white hover:bg-blue-700"
+                type="button"
+                className="h-11 w-full rounded-xl border border-accent-blue/20 bg-white text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
                 onClick={() => setIsDeleting(false)}
               >
-                No
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="h-11 w-full rounded-xl bg-gradient-to-r from-accent-red-600 to-accent-red-500 text-sm font-semibold text-white shadow-md shadow-red-200/80 ring-1 ring-red-200 transition hover:-translate-y-px"
+                onClick={() => setDeleteTask()}
+              >
+                Delete
               </button>
             </div>
           </div>
-
         </div>
-      </div>
-    );
-
-  return (
-    <button
-      className="bg-red-600 text-accent-white px-1 py-1 rounded-md hover:bg-red-700 px-6 py-2"
-      onClick={() => setIsDeleting(true)}
-    >
-      Delete
-    </button>
+      )}
+    </div>
   );
 }

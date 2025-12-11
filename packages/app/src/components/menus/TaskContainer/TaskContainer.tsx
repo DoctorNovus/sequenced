@@ -41,7 +41,7 @@ export default function TaskContainer({
     return (
       <div className="group flex flex-col items-center w-full h-full my-2">
         <div className="w-full flex flex-row items-center rounded-2xl bg-white/90 px-3 py-3 text-slate-900 shadow-md ring-1 ring-accent-blue/10 [&:has(.task-container-accordian:hover)]:ring-accent-blue/30">
-          <div className="w-full flex flex-row justify-between">
+          <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-row items-center py-1">
               <ChevronRightIcon
                 className=""
@@ -52,8 +52,8 @@ export default function TaskContainer({
                 <h1 className="text-xl text-accent-blue-700">(0/0)</h1>
               </div>
             </div>
-            <div className="flex flex-row items-center">
-              <div className="flex items-center gap-2 rounded-full px-2 py-1">
+            <div className="flex flex-row items-center sm:justify-end">
+              <div className="flex w-full justify-start sm:justify-end">
                 <div className="flex rounded-full bg-white/70 border border-accent-blue/20 overflow-hidden">
                   <span className="px-2 py-1 text-xs text-accent-blue-700">All</span>
                   <span className="px-2 py-1 text-xs text-slate-500">Incomplete</span>
@@ -120,7 +120,7 @@ export default function TaskContainer({
                 as="div"
                 className="w-full flex flex-row items-center rounded-2xl bg-white/90 px-3 py-3 text-slate-900 shadow-md ring-1 ring-accent-blue/10 transition hover:-translate-y-0.5 hover:ring-accent-blue/30 [&:has(.task-container-accordian:hover)]:ring-accent-blue/30"
               >
-                <div className="w-full flex flex-row justify-between">
+                <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-row items-center py-1">
                     <ChevronRightIcon
                       className={open ? "rotate-90 transform" : ""}
@@ -136,8 +136,8 @@ export default function TaskContainer({
                       )}
                     </div>
                   </div>
-                  <div className="flex flex-row items-center">
-                    <div className="flex items-center gap-2 rounded-full px-2 py-1">
+                  <div className="flex flex-row items-center sm:justify-end">
+                    <div className="flex w-full justify-start sm:justify-end">
                       <div className="flex rounded-full bg-white/70 border border-accent-blue/20 overflow-hidden">
                         <button
                           type="button"
