@@ -1,6 +1,15 @@
 import { TaskItem } from "../task/TaskItem";
 
-export default function TaskMenu({ skeleton, tasks, setIsInspecting, taskFilter }) {
+export default function TaskMenu({
+  skeleton,
+  tasks,
+  setIsInspecting,
+  taskFilter,
+  selectionMode = false,
+  selectedTaskIds = [],
+  toggleSelection,
+  animatingIds = []
+}) {
 
   if (skeleton) {
     return (
@@ -22,7 +31,15 @@ export default function TaskMenu({ skeleton, tasks, setIsInspecting, taskFilter 
         {visibleTasks.length > 0 &&
           visibleTasks.map((task, key) => (
             <li key={key} className="w-full">
-              <TaskItem item={task} setIsInspecting={setIsInspecting} taskFilter={taskFilter} />
+              <TaskItem
+                item={task}
+                setIsInspecting={setIsInspecting}
+                taskFilter={taskFilter}
+                selectionMode={selectionMode}
+                isSelected={selectedTaskIds.includes(task.id)}
+                onToggleSelect={toggleSelection}
+                isAnimating={animatingIds.includes(task.id)}
+              />
             </li>
           ))}
         {visibleTasks.length === 0 && (

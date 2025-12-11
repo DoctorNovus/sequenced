@@ -12,9 +12,13 @@ import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 
 interface TaskItemParams {
   skeleton: boolean;
+  selectionMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelect?: (id: string) => void;
+  isAnimating?: boolean;
 }
 
-export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFilter }: TaskItemParams) {
+export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFilter, selectionMode = false, isSelected = false, onToggleSelect, isAnimating = false }: TaskItemParams) {
 
   if (skeleton) {
     return (
@@ -60,6 +64,11 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
   const [isCompleting, setIsCompleting] = useState(false);
 
   const [isAccordion, setAccordion] = useState(item.accordion || false);
+
+  const handleToggleSelect = () => {
+    if (!onToggleSelect || !item?.id) return;
+    onToggleSelect(item.id);
+  };
 
 
   const handleMarkComplete = (e) => {
@@ -125,6 +134,12 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
   };
 
   const handleInteractive = (e) => {
+    if (selectionMode) {
+      e.stopPropagation();
+      handleToggleSelect();
+      return;
+    }
+
     if (type == "subtask") {
       handleInteractiveSubtask(e);
       return;
@@ -152,6 +167,17 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
     setIsInspecting(true);
   };
 
+  const selectionClass = selectionMode
+    ? isSelected
+      ? "ring-2 ring-accent-blue/40"
+      : "ring-1 ring-dashed ring-accent-blue/30"
+    : "";
+
+  const fadeClass =
+    isCompleting || isAnimating
+      ? "opacity-0 translate-y-1 scale-[0.98] pointer-events-none"
+      : "";
+
   return (
     <div
       className={`${taskFilter == "all" || (taskFilter == "incomplete" && (!item.done || isCompleting))
@@ -162,14 +188,23 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
       <TaskItemShell
         task={item}
         activeDate={appData.activeDate}
-        className={isCompleting ? "opacity-30 translate-y-1 scale-[0.99]" : ""}
+        className={`${fadeClass} ${selectionClass}`}
         onClick={(e) => handleInteractive(e)}
       >
         <div className="w-full h-full flex flex-row items-center">
           <TaskItemCheckBox
             checked={!isTaskDone(item, appData.activeDate)}
-            onChange={handleMarkComplete}
-            onClick={(e) => e.stopPropagation()}
+            onChange={(e) => {
+              if (selectionMode) {
+                handleToggleSelect();
+                return;
+              }
+              handleMarkComplete(e);
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (selectionMode) handleToggleSelect();
+            }}
           />
           <div className="w-full">
             <div className="w-full flex flex-row items-center justify-between">

@@ -17,6 +17,7 @@ import { Task } from "@/hooks/tasks";
 import { useUpdateSettings, useSettings } from "@/hooks/settings";
 import { useApp, useAppReducer } from "@/hooks/app";
 import { UseQueryResult } from "@tanstack/react-query";
+import { useUpdateTask } from "@/hooks/tasks";
 
 interface ContainerSettings {
   identifier: string;
@@ -34,8 +35,12 @@ export default function TaskContainer({
 }: ContainerSettings) {
   const [appData, setAppData] = useApp();
   const [taskFilter, setTaskFilter] = useState("incomplete");
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
+  const [animatingIds, setAnimatingIds] = useState<string[]>([]);
   const { mutate: setSettings } = useUpdateSettings();
   const settings = useSettings();
+  const { mutateAsync: updateTask } = useUpdateTask();
 
   if (skeleton) {
     return (
@@ -79,6 +84,47 @@ export default function TaskContainer({
   baseTasks = baseTasks.filter(Boolean);
 
   baseTasks = sortByPriority(baseTasks);
+
+  const toggleSelection = (taskId: string) => {
+    setSelectedTaskIds((prev) =>
+      prev.includes(taskId) ? prev.filter((id) => id !== taskId) : [...prev, taskId]
+    );
+  };
+
+  const exitSelection = () => {
+    setSelectionMode(false);
+    setSelectedTaskIds([]);
+  };
+
+  const completeSelected = async () => {
+    if (selectedTaskIds.length === 0) return;
+
+    setAnimatingIds(selectedTaskIds);
+
+    setTimeout(async () => {
+      const activeDay = new Date(appData.activeDate ?? new Date());
+      activeDay.setHours(0, 0, 0, 0);
+
+      const toUpdate = baseTasks.filter((task) => selectedTaskIds.includes(task.id));
+
+      const updates = toUpdate.map((task) => {
+        if (task.repeater && task.repeater.length > 0) {
+          const doneList = Array.isArray(task.done) ? [...task.done] : [];
+          const alreadyMarked = doneList.find((d) => matchDate(new Date(d), activeDay));
+          if (!alreadyMarked) doneList.push(activeDay);
+
+          return { id: task.id, data: { ...task, done: doneList } };
+        }
+
+        return { id: task.id, data: { ...task, done: true } };
+      });
+
+      await Promise.all(updates.map((payload) => updateTask(payload)));
+
+      setAnimatingIds([]);
+      exitSelection();
+    }, 240);
+  };
 
   const handleClick = async (open: boolean) => {
     let groupsActive = settings.data?.groupsActive;
@@ -134,7 +180,7 @@ export default function TaskContainer({
                     </div>
                   </div>
                   <div className="flex flex-row items-center sm:justify-end">
-                    <div className="flex w-full justify-start sm:justify-end">
+                    <div className="flex w-full flex-wrap items-center justify-start sm:justify-end gap-2">
                       <div className="flex rounded-full bg-white/70 border border-accent-blue/20 overflow-hidden">
                         <button
                           type="button"
@@ -163,6 +209,43 @@ export default function TaskContainer({
                           Incomplete
                         </button>
                       </div>
+                      {!selectionMode && (
+                        <button
+                          type="button"
+                          className="rounded-lg border border-accent-blue/30 bg-white px-3 py-1.5 text-xs font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectionMode(true);
+                          }}
+                        >
+                          Select
+                        </button>
+                      )}
+                      {selectionMode && (
+                        <>
+                          <button
+                            type="button"
+                            className="rounded-lg border border-emerald-300 bg-emerald-500/90 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:-translate-y-px transition disabled:opacity-60"
+                            disabled={selectedTaskIds.length === 0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              completeSelected();
+                            }}
+                          >
+                            Complete ({selectedTaskIds.length})
+                          </button>
+                          <button
+                            type="button"
+                            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:-translate-y-px transition"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              exitSelection();
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -173,6 +256,10 @@ export default function TaskContainer({
                   tasks={baseTasks}
                   setIsInspecting={setIsInspecting}
                   taskFilter={taskFilter}
+                  selectionMode={selectionMode}
+                  selectedTaskIds={selectedTaskIds}
+                  toggleSelection={toggleSelection}
+                  animatingIds={animatingIds}
                 />
                 {/* )} */}
               </Disclosure.Panel>
