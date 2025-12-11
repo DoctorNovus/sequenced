@@ -25,6 +25,7 @@ import MenuFields from "./(TaskInfoMenu)/MenuFields";
 import MenuEdit from "./(TaskInfoMenu)/MenuEdit";
 import MenuFooter from "./(TaskInfoMenu)/MenuFooter";
 import { Logger } from "@/utils/logger";
+import { CheckCircleIcon, PencilSquareIcon, SparklesIcon } from "@heroicons/react/24/solid";
 
 interface TaskInfoMenuSettings {
   type?: string;
@@ -96,6 +97,7 @@ export default function TaskInfoMenu({
   const [tempData, setTempData] = useReducer(reducer, initialData);
   const [quickTasksInput, setQuickTasksInput] = useState("");
   const [isQuickAdd, setIsQuickAdd] = useState(false);
+  const [toast, setToast] = useState<{ text: string; variant: "create" | "update" | "bulk" } | null>(null);
 
   useEffect(() => {
     if (type !== "add" || !isOpen) return;
@@ -208,6 +210,11 @@ export default function TaskInfoMenu({
 
   const oldTask = useTaskById(tempData.id);
 
+  const showToast = (text: string, variant: "create" | "update" | "bulk") => {
+    setToast({ text, variant });
+    setTimeout(() => setToast(null), 2400);
+  };
+
   const saveAll = () => {
     if (appData.activeParent) {
       const subTaskData = tempData;
@@ -251,6 +258,8 @@ export default function TaskInfoMenu({
     Logger.log("Data To Add", {
       tempData
     });
+
+    showToast("Task updated", "update");
   };
 
   const submitForm = () => {
@@ -270,7 +279,10 @@ export default function TaskInfoMenu({
         subtasks: [],
       }));
 
-      addTasksBulk(payload).then(() => resetForm());
+      addTasksBulk(payload).then(() => {
+        showToast("Tasks added", "bulk");
+        resetForm();
+      });
       return;
     }
 
@@ -293,72 +305,105 @@ export default function TaskInfoMenu({
     addTask(tempData);
     createNotification(tempData);
 
+    showToast("Task created", "create");
     resetForm();
   };
 
   const ref = useRef(null);
 
   return (
-    <Transition
-      show={isOpen}
-      enter="transition duration-500"
-    >
-      <Dialog
-        onClose={() => resetForm()}
-        initialFocus={ref}
-        ref={ref}
-        className="relative z-50"
+    <>
+      <Transition
+        show={isOpen}
+        enter="transition duration-500"
       >
-        <div
-          className="fixed inset-0 flex w-full h-full items-end justify-center bg-accent-blue/10 backdrop-blur-sm px-3 pb-4 pt-10 md:items-center"
+        <Dialog
+          onClose={() => resetForm()}
+          initialFocus={ref}
+          ref={ref}
+          className="relative z-50"
         >
-          <DialogPanel className="flex w-full max-w-xl max-h-screen flex-col overflow-y-auto rounded-3xl bg-gradient-to-b from-white/95 via-white to-accent-blue-50/60 text-accent-black shadow-2xl ring-1 ring-accent-blue/15 p-4 md:p-6">
-            <div className="flex flex-col gap-5">
-              <MenuHeader
-                type={type}
-                isDeleting={isDeleting}
-              />
-              <MenuFields
-                type={type}
-                isDeleting={isDeleting}
+          <div
+            className="fixed inset-0 flex w-full h-full items-end justify-center bg-accent-blue/10 backdrop-blur-sm px-3 pb-4 pt-10 md:items-center"
+          >
+            <DialogPanel className="flex w-full max-w-xl max-h-screen flex-col overflow-y-auto rounded-3xl bg-gradient-to-b from-white/95 via-white to-accent-blue-50/60 text-accent-black shadow-2xl ring-1 ring-accent-blue/15 p-4 md:p-6">
+              <div className="flex flex-col gap-5">
+                <MenuHeader
+                  type={type}
+                  isDeleting={isDeleting}
+                />
+                <MenuFields
+                  type={type}
+                  isDeleting={isDeleting}
 
-                tempData={tempData}
-                setTempData={setTempData}
-                quickTasksInput={quickTasksInput}
-                setQuickTasksInput={setQuickTasksInput}
-                isQuickAdd={isQuickAdd}
-                setIsQuickAdd={setIsQuickAdd}
+                  tempData={tempData}
+                  setTempData={setTempData}
+                  quickTasksInput={quickTasksInput}
+                  setQuickTasksInput={setQuickTasksInput}
+                  isQuickAdd={isQuickAdd}
+                  setIsQuickAdd={setIsQuickAdd}
 
-                setIsOpen={setIsOpen}
+                  setIsOpen={setIsOpen}
 
-                changeAppDate={changeAppDate}
-                changeTempAppDate={changeTempAppDate}
+                  changeAppDate={changeAppDate}
+                  changeTempAppDate={changeTempAppDate}
 
-                appData={appData}
-                setAppData={setAppData}
-              />
-              <MenuEdit
-                type={type}
+                  appData={appData}
+                  setAppData={setAppData}
+                />
+                <MenuEdit
+                  type={type}
 
-                isDeleting={isDeleting}
-                setIsDeleting={setIsDeleting}
+                  isDeleting={isDeleting}
+                  setIsDeleting={setIsDeleting}
 
-                appData={appData}
-                tempData={tempData}
+                  appData={appData}
+                  tempData={tempData}
 
-                setIsOpen={setIsOpen}
-              />
-              <MenuFooter
-                type={type}
-                isDeleting={isDeleting}
+                  setIsOpen={setIsOpen}
+                />
+                <MenuFooter
+                  type={type}
+                  isDeleting={isDeleting}
 
-                resetForm={resetForm}
-                submitForm={submitForm}
-              />
+                  resetForm={resetForm}
+                  submitForm={submitForm}
+                />
+              </div>
+            </DialogPanel>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition
+        show={!!toast}
+        enter="transition duration-200 ease-out"
+        enterFrom="translate-y-2 opacity-0"
+        enterTo="translate-y-0 opacity-100"
+        leave="transition duration-500 ease-in"
+        leaveFrom="translate-y-0 opacity-100"
+        leaveTo="translate-y-2 opacity-0"
+      >
+        <div className="pointer-events-none fixed inset-x-0 top-6 z-[60] flex justify-center px-6">
+          <div
+            className={`pointer-events-auto flex items-center gap-4 w-full max-w-md rounded-2xl px-5 py-4 text-white shadow-2xl shadow-slate-900/30 ring-1 ring-slate-800/70 ${
+              toast?.variant === "create"
+                ? "bg-gradient-to-r from-accent-blue-700 to-accent-blue-500"
+                : toast?.variant === "update"
+                  ? "bg-gradient-to-r from-emerald-600 to-emerald-500"
+                  : "bg-gradient-to-r from-indigo-600 to-accent-blue-500"
+            }`}
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15">
+              {toast?.variant === "create" && <SparklesIcon className="h-5 w-5" />}
+              {toast?.variant === "update" && <PencilSquareIcon className="h-5 w-5" />}
+              {toast?.variant === "bulk" && <CheckCircleIcon className="h-5 w-5" />}
             </div>
-          </DialogPanel>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold leading-tight">{toast?.text}</span>
+            </div>
+          </div>
         </div>
-      </Dialog>
-    </Transition>
+      </Transition>
+    </>
   );
 }
