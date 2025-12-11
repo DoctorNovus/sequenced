@@ -18,7 +18,7 @@ import {
   Transition,
 } from "@headlessui/react";
 
-import { Dispatch, SetStateAction, useReducer, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useReducer, useRef, useState } from "react";
 
 import MenuHeader from "./(TaskInfoMenu)/MenuHeader";
 import MenuFields from "./(TaskInfoMenu)/MenuFields";
@@ -50,15 +50,64 @@ export default function TaskInfoMenu({
   const { mutateAsync: addTasksBulk } = useAddTasksBulk();
   const { mutate: updateTask } = useUpdateTask();
 
+  const getDefaultDate = () => {
+    const now = new Date();
+    const selected = appData.activeDate ? new Date(appData.activeDate) : null;
+
+    if (selected) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const selectedDay = new Date(selected);
+      selectedDay.setHours(0, 0, 0, 0);
+
+      const baseDate =
+        selectedDay.getTime() === today.getTime()
+          ? new Date(now.getTime() + 1000 * 60 * 60 * 24) // tomorrow
+          : selected;
+
+      baseDate.setHours(
+        now.getHours(),
+        now.getMinutes(),
+        now.getSeconds(),
+        now.getMilliseconds()
+      );
+
+      return baseDate;
+    }
+
+    const tomorrow = new Date(now.getTime() + 1000 * 60 * 60 * 24);
+    tomorrow.setHours(
+      now.getHours(),
+      now.getMinutes(),
+      now.getSeconds(),
+      now.getMilliseconds()
+    );
+
+    return tomorrow;
+  };
+
   const initialData: Task = {
     ...createInitialTaskData(),
     id: createID(20),
-    date: new Date(appData.activeDate),
+    date: getDefaultDate(),
   };
 
   const [tempData, setTempData] = useReducer(reducer, initialData);
   const [quickTasksInput, setQuickTasksInput] = useState("");
   const [isQuickAdd, setIsQuickAdd] = useState(false);
+
+  useEffect(() => {
+    if (type !== "add" || !isOpen) return;
+
+    setTempData({
+      ...createInitialTaskData(),
+      id: createID(20),
+      date: getDefaultDate(),
+    });
+    setQuickTasksInput("");
+    setIsQuickAdd(false);
+  }, [isOpen, appData.activeDate]);
 
   if (type == "edit") {
     if (
@@ -146,7 +195,11 @@ export default function TaskInfoMenu({
   };
 
   const resetForm = () => {
-    setTempData({ ...createInitialTaskData(), id: undefined });
+    setTempData({
+      ...createInitialTaskData(),
+      id: undefined,
+      date: getDefaultDate()
+    });
     setQuickTasksInput("");
     setIsQuickAdd(false);
     setAppData({ ...appData, activeTask: undefined });
@@ -209,7 +262,7 @@ export default function TaskInfoMenu({
     if (type === "add" && isQuickAdd && quickLines.length > 0) {
       const payload = quickLines.map((title) => ({
         title,
-        date: new Date(appData.activeDate),
+        date: getDefaultDate(),
         done: false,
         repeater: "",
         reminder: "",
