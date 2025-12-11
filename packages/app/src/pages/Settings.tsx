@@ -15,6 +15,9 @@ import { Logger } from "@/utils/logger";
 import DeveloperSettings from "./(Settings)/DeveloperSettings";
 import ControllerUser from "./(Settings)/ControlledUser";
 import { useTasks, useDeleteTask } from "@/hooks/tasks";
+import xIcon from "@/assets/social_icons/x.svg";
+import instagramIcon from "@/assets/social_icons/instagram.svg";
+import facebookIcon from "@/assets/social_icons/facebook.svg";
 
 export default function SettingsPage() {
   const [tempSettings, setTempSettings] = useState<Settings>({});
@@ -281,7 +284,7 @@ export default function SettingsPage() {
                 className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
                 aria-label="Ottegi on X"
               >
-                <span className="text-lg">𝕏</span>
+                <img src={xIcon} alt="X logo" className="h-5 w-5" />
               </a>
               <a
                 href="https://www.instagram.com/OttegiLLC"
@@ -290,7 +293,7 @@ export default function SettingsPage() {
                 className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
                 aria-label="Ottegi on Instagram"
               >
-                <span className="text-lg">📸</span>
+                <img src={instagramIcon} alt="Instagram logo" className="h-5 w-5" />
               </a>
               <a
                 href="https://www.linkedin.com/company/ottegi"
@@ -299,7 +302,7 @@ export default function SettingsPage() {
                 className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
                 aria-label="Ottegi on LinkedIn"
               >
-                <span className="text-lg">in</span>
+                <span className="text-sm font-semibold">in</span>
               </a>
               <a
                 href="https://www.facebook.com/OttegiLLC"
@@ -308,7 +311,7 @@ export default function SettingsPage() {
                 className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
                 aria-label="Ottegi on Facebook"
               >
-                <span className="text-lg">f</span>
+                <img src={facebookIcon} alt="Facebook logo" className="h-5 w-5" />
               </a>
             </div>
           </div>
