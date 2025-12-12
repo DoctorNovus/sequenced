@@ -260,6 +260,7 @@ export default function TaskContainer({
                   selectedTaskIds={selectedTaskIds}
                   toggleSelection={toggleSelection}
                   animatingIds={animatingIds}
+                  activeDate={appData.activeDate}
                 />
                 {/* )} */}
               </Disclosure.Panel>

@@ -1,4 +1,5 @@
 import { TaskItem } from "../task/TaskItem";
+import { isTaskDone } from "@/utils/data";
 
 export default function TaskMenu({
   skeleton,
@@ -8,7 +9,8 @@ export default function TaskMenu({
   selectionMode = false,
   selectedTaskIds = [],
   toggleSelection,
-  animatingIds = []
+  animatingIds = [],
+  activeDate
 }) {
 
   if (skeleton) {
@@ -23,7 +25,13 @@ export default function TaskMenu({
     )
   }
 
-  const visibleTasks = (tasks.filter((task) => !task.done) || []).filter(Boolean);
+  const visibleTasks = (tasks || [])
+    .filter(Boolean)
+    .filter((task) =>
+      taskFilter === "incomplete"
+        ? isTaskDone(task, activeDate)
+        : true
+    );
 
   return (
     <div className="w-full h-full flex flex-col items-center ">

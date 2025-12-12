@@ -178,9 +178,11 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
       ? "opacity-0 translate-y-1 scale-[0.98] pointer-events-none"
       : "";
 
+  const isPending = isTaskDone(item, appData.activeDate);
+
   return (
     <div
-      className={`${taskFilter == "all" || (taskFilter == "incomplete" && (!item.done || isCompleting))
+      className={`${taskFilter == "all" || (taskFilter == "incomplete" && (isPending || isCompleting))
         ? "flex"
         : "hidden"
         } w-full flex-col gap-2`}
