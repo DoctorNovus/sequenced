@@ -1,0 +1,46 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: sequenced-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    # Uncomment to access Mongo from your host (e.g., for Compass).
+    # ports:
+    #   - "27017:27017"
+
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    container_name: sequenced-api
+    depends_on:
+      - mongo
+    environment:
+      # Point the API to the frontend origin for CORS.
+      APP_URL: http://localhost:4173
+      SESSION_SECRET: change-me
+      # Default to the bundled Mongo container; override when pointing to a host DB:
+      #   DATABASE_URL=mongodb://host.docker.internal:27017/sequenced docker compose up
+      DATABASE_URL: ${DATABASE_URL:-mongodb://mongo:27017/sequenced}
+      PORT: 8080
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: packages/app/Dockerfile
+      args:
+        # Used in the Vite build so the app calls the API container.
+        VITE_API_URL: http://localhost:8080
+    container_name: sequenced-frontend
+    depends_on:
+      - api
+    ports:
+      - "4173:80"
+    restart: unless-stopped
+
+volumes:
+  mongo-data:

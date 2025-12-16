@@ -5,7 +5,11 @@ import { Task } from "@backend/task/task.entity";
 
 export const AppContext = createContext(null);
 
-export const SERVER_IP = process.env.NODE_ENV == "development" ? `http://localhost:8080` : `https://api.sequenced.ottegi.com`;
+// Allow docker / hosted environments to inject an API base URL at build time.
+const apiUrl = import.meta.env?.VITE_API_URL;
+
+export const SERVER_IP = apiUrl
+  ?? (process.env.NODE_ENV == "development" ? `http://localhost:8080` : `https://api.sequenced.ottegi.com`);
 
 Logger.log(`Running in ${process.env.NODE_ENV} mode.`);
 
