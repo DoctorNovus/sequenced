@@ -4,7 +4,39 @@ import TaskInfoMenuSubtaskMenu from "./Shared/TaskInfoMenuSubtaskMenu";
 import TaskInfoMenuSelect from "./Shared/TaskInfoMenuSelect";
 import TaskInfoMenuUser from "./Shared/TaskInfoUser/TaskInfoMenuUser";
 
-export default function MenuFields({ type, isDeleting, tempData, setTempData, setIsOpen, changeAppDate, changeTempAppDate, appData, setAppData, quickTasksInput, setQuickTasksInput, isQuickAdd, setIsQuickAdd }) {
+interface MenuFieldsProps {
+    type: string | undefined;
+    isDeleting: boolean;
+    tempData: any;
+    setTempData: any;
+    setIsOpen: any;
+    changeAppDate: any;
+    changeTempAppDate: any;
+    appData: any;
+    setAppData: any;
+    quickTasksInput: string;
+    setQuickTasksInput: any;
+    isQuickAdd: boolean;
+    setIsQuickAdd: any;
+    validationError: string | null;
+}
+
+export default function MenuFields({
+    type,
+    isDeleting,
+    tempData,
+    setTempData,
+    setIsOpen,
+    changeAppDate,
+    changeTempAppDate,
+    appData,
+    setAppData,
+    quickTasksInput,
+    setQuickTasksInput,
+    isQuickAdd,
+    setIsQuickAdd,
+    validationError
+}: MenuFieldsProps) {
     return (
         <div className={`flex flex-col gap-4 ${isDeleting && "blur-sm"}`}>
             {type === "add" && (
@@ -35,6 +67,11 @@ export default function MenuFields({ type, isDeleting, tempData, setTempData, se
                             }
                         />
                     )}
+                    {isQuickAdd && validationError && (
+                        <span className="px-1 text-sm font-semibold text-accent-red-500">
+                            {validationError}
+                        </span>
+                    )}
                 </div>
             )}
             {!isQuickAdd && (
@@ -46,6 +83,11 @@ export default function MenuFields({ type, isDeleting, tempData, setTempData, se
                             setTempData({ ...tempData, title: e.target.value })
                         }
                     />
+                    {!isQuickAdd && validationError && (
+                        <span className="px-1 text-sm font-semibold text-accent-red-500">
+                            {validationError}
+                        </span>
+                    )}
 
             {/* <TaskInfoMenuSelect
           name="Task Type"

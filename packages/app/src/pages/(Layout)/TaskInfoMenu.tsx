@@ -98,6 +98,26 @@ export default function TaskInfoMenu({
   const [quickTasksInput, setQuickTasksInput] = useState("");
   const [isQuickAdd, setIsQuickAdd] = useState(false);
   const [toast, setToast] = useState<{ text: string; variant: "create" | "update" | "bulk" } | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const quickLines = quickTasksInput
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
+  const hasTitle = !!tempData.title?.trim();
+  const isSubmitDisabled =
+    type === "add" && isQuickAdd
+      ? quickLines.length === 0
+      : !hasTitle;
+
+  useEffect(() => {
+    if (!validationError) return;
+
+    if ((isQuickAdd && quickLines.length > 0) || (!isQuickAdd && hasTitle)) {
+      setValidationError(null);
+    }
+  }, [hasTitle, isQuickAdd, quickLines.length, validationError]);
 
   useEffect(() => {
     if (type !== "add" || !isOpen) return;
@@ -204,6 +224,7 @@ export default function TaskInfoMenu({
     });
     setQuickTasksInput("");
     setIsQuickAdd(false);
+    setValidationError(null);
     setAppData({ ...appData, activeTask: undefined });
     setIsOpen(false);
   };
@@ -215,9 +236,36 @@ export default function TaskInfoMenu({
     setTimeout(() => setToast(null), 2400);
   };
 
+  const validateBeforeSubmit = (isQuickAddMode: boolean) => {
+    if (isQuickAddMode) {
+      if (quickLines.length === 0) {
+        setValidationError("Add at least one task title.");
+        return false;
+      }
+
+      setValidationError(null);
+      return true;
+    }
+
+    if (!tempData.title || tempData.title.trim().length === 0) {
+      setValidationError("Title is required.");
+      return false;
+    }
+
+    setValidationError(null);
+    return true;
+  };
+
   const saveAll = () => {
+    if (!validateBeforeSubmit(false)) return;
+
+    const cleanedTask = {
+      ...tempData,
+      title: tempData.title.trim(),
+    };
+
     if (appData.activeParent) {
-      const subTaskData = tempData;
+      const subTaskData = cleanedTask;
 
       Logger.log("Sub Task Data", subTaskData);
 
@@ -246,14 +294,12 @@ export default function TaskInfoMenu({
       return;
     }
 
-    const taskData = oldTask.data;
-
-    updateTask({
-      id: tempData.id,
-      data: {
-        ...tempData,
-      },
-    });
+      updateTask({
+        id: tempData.id,
+        data: {
+          ...cleanedTask,
+        },
+      });
 
     Logger.log("Data To Add", {
       tempData
@@ -263,12 +309,9 @@ export default function TaskInfoMenu({
   };
 
   const submitForm = () => {
-    const quickLines = quickTasksInput
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0);
+    if (type === "add" && isQuickAdd) {
+      if (!validateBeforeSubmit(true)) return;
 
-    if (type === "add" && isQuickAdd && quickLines.length > 0) {
       const payload = quickLines.map((title) => ({
         title,
         date: getDefaultDate(),
@@ -292,6 +335,8 @@ export default function TaskInfoMenu({
       return;
     }
 
+    if (!validateBeforeSubmit(false)) return;
+
     if (!tempData.id) tempData.id = createID(20);
 
     if (appData.storedDate) {
@@ -302,8 +347,13 @@ export default function TaskInfoMenu({
       });
     }
 
-    addTask(tempData);
-    createNotification(tempData);
+    const cleanedTask = {
+      ...tempData,
+      title: tempData.title.trim(),
+    };
+
+    addTask(cleanedTask);
+    createNotification(cleanedTask);
 
     showToast("Task created", "create");
     resetForm();
@@ -350,6 +400,7 @@ export default function TaskInfoMenu({
 
                   appData={appData}
                   setAppData={setAppData}
+                  validationError={validationError}
                 />
                 <MenuEdit
                   type={type}
@@ -368,6 +419,7 @@ export default function TaskInfoMenu({
 
                   resetForm={resetForm}
                   submitForm={submitForm}
+                  isSubmitDisabled={isSubmitDisabled}
                 />
               </div>
             </DialogPanel>

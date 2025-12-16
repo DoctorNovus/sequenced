@@ -1,4 +1,12 @@
-export default function MenuFooter({ type, isDeleting, resetForm, submitForm }) {
+interface MenuFooterProps {
+    type: string | undefined;
+    isDeleting: boolean;
+    resetForm: () => void;
+    submitForm: () => void;
+    isSubmitDisabled?: boolean;
+}
+
+export default function MenuFooter({ type, isDeleting, resetForm, submitForm, isSubmitDisabled }: MenuFooterProps) {
     return (
         <div
             className={`flex flex-row gap-3 ${isDeleting && "blur-sm"}`}
@@ -14,8 +22,9 @@ export default function MenuFooter({ type, isDeleting, resetForm, submitForm }) 
 
             <div className="flex grow justify-end">
                 <button
-                    className="w-full h-11 rounded-xl text-base font-semibold bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 text-white shadow-md shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:translate-y-[-1px]"
+                    className="w-full h-11 rounded-xl text-base font-semibold bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 text-white shadow-md shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:translate-y-[-1px] disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={submitForm}
+                    disabled={isSubmitDisabled}
                 >
                     {type == "add" ? "Create" : "Save"}
                 </button>
