@@ -2,10 +2,10 @@
 FROM node:22-alpine AS builder
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json package-lock.json ./
 COPY packages/app/package*.json packages/app/
 COPY packages/api/package*.json packages/api/
-RUN npm ci
+RUN npm ci --workspaces
 
 COPY . .
 

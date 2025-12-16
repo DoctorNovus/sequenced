@@ -2,10 +2,10 @@ FROM node:22-alpine AS base
 WORKDIR /app
 
 # Install dependencies for the monorepo and this workspace.
-COPY package*.json ./
+COPY package.json package-lock.json ./
 COPY packages/api/package*.json packages/api/
 COPY packages/app/package*.json packages/app/
-RUN npm ci
+RUN npm ci --workspaces
 
 # Copy the source and build the API.
 COPY . .
