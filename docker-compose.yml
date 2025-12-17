@@ -26,6 +26,9 @@ services:
     depends_on:
       - api
     restart: unless-stopped
+    ports:
+      - "4173:80"
+
 
 volumes:
   mongo-data:
