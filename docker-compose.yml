@@ -1,11 +1,17 @@
 services:
   mongo:
     image: mongo:7
+    platform: linux/amd64
     volumes:
       - mongo-data:/data/db
 
   api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+      platform: linux/amd64
     image: registry.digitalocean.com/sequenced-registry/sequenced-api:latest
+    platform: linux/amd64
     environment:
       APP_URL: https://sequenced.ottegi.com
       SESSION_SECRET: change-me
@@ -18,7 +24,15 @@ services:
       - "8080:8080"   # optional if you reverse-proxy internally
 
   frontend:
+    build:
+      context: .
+      dockerfile: packages/app/Dockerfile
+      platform: linux/amd64
+      args:
+        # Build-time API endpoint baked into the Vite bundle.
+        VITE_API_URL: https://api.sequenced.ottegi.com
     image: registry.digitalocean.com/sequenced-registry/sequenced-frontend:latest
+    platform: linux/amd64
     environment:
       API_URL: https://api.sequenced.ottegi.com
       APP_URL: https://sequenced.ottegi.com
