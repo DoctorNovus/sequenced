@@ -9,7 +9,6 @@ services:
     build:
       context: .
       dockerfile: packages/api/Dockerfile
-      platform: linux/amd64
     image: registry.digitalocean.com/sequenced-registry/sequenced-api:latest
     platform: linux/amd64
     environment:
@@ -27,7 +26,6 @@ services:
     build:
       context: .
       dockerfile: packages/app/Dockerfile
-      platform: linux/amd64
       args:
         # Build-time API endpoint baked into the Vite bundle.
         VITE_API_URL: https://api.sequenced.ottegi.com
