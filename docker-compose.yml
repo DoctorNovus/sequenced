@@ -20,10 +20,14 @@ services:
       - "8080:8080"   # optional if you reverse-proxy internally
 
   frontend:
+    build:
+      context: .
+      dockerfile: packages/app/Dockerfile
+      args:
+        # Build-time API endpoint baked into the Vite bundle.
+        VITE_API_URL: https://api.sequenced.ottegi.com
     image: registry.digitalocean.com/sequenced-registry/sequenced-frontend:latest
     platform: linux/amd64
-    environment:
-      VITE_API_URL: https://api.sequenced.ottegi.com
     depends_on:
       - api
     restart: unless-stopped
