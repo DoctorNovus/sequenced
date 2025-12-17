@@ -1,10 +1,4 @@
 services:
-  mongo:
-    image: mongo:7
-    platform: linux/amd64
-    volumes:
-      - mongo-data:/data/db
-
   api:
     image: registry.digitalocean.com/sequenced-registry/sequenced-api:latest
     platform: linux/amd64
@@ -16,19 +10,23 @@ services:
     depends_on:
       - mongo
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
 
   frontend:
     image: registry.digitalocean.com/sequenced-registry/sequenced-frontend:latest
-    environment:
-        # Build-time API endpoint baked into the Vite bundle.
-        VITE_API_URL: https://api.sequenced.ottegi.com
     platform: linux/amd64
     depends_on:
       - api
     restart: unless-stopped
     ports:
-      - "4173:80"
+      - "127.0.0.1:4173:80"
 
+  mongo:
+    image: mongo:7
+    platform: linux/amd64
+    volumes:
+      - mongo-data:/data/db
 
 volumes:
   mongo-data:
