@@ -16,8 +16,6 @@ services:
     depends_on:
       - mongo
     restart: unless-stopped
-    ports:
-      - "8080:8080"   # optional if you reverse-proxy internally
 
   frontend:
     image: registry.digitalocean.com/sequenced-registry/sequenced-frontend:latest
@@ -28,8 +26,6 @@ services:
     depends_on:
       - api
     restart: unless-stopped
-    ports:
-      - "80:80"       # optional if you reverse-proxy internally
 
 volumes:
   mongo-data:
