@@ -23,8 +23,7 @@ services:
     image: registry.digitalocean.com/sequenced-registry/sequenced-frontend:latest
     platform: linux/amd64
     environment:
-      API_URL: https://api.sequenced.ottegi.com
-      APP_URL: https://sequenced.ottegi.com
+      VITE_API_URL: https://api.sequenced.ottegi.com
     depends_on:
       - api
     restart: unless-stopped
