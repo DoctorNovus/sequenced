@@ -3,10 +3,10 @@ services:
     image: registry.digitalocean.com/sequenced-registry/sequenced-api:latest
     platform: linux/amd64
     environment:
-      APP_URL: https://sequenced.ottegi.com
-      SESSION_SECRET: change-me
-      DATABASE_URL: mongodb://mongo:27017/sequenced
-      PORT: 8080
+      APP_URL: ${APP_URL}
+      SESSION_SECRET: ${SESSION_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+      PORT: ${PORT}
     depends_on:
       - mongo
     restart: unless-stopped
@@ -29,6 +29,8 @@ services:
     volumes:
       - mongo-data:/data/db
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:27017:27017"
 
 volumes:
   mongo-data:
