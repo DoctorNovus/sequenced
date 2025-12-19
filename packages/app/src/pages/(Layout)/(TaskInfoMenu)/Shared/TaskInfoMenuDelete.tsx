@@ -21,7 +21,9 @@ export function TaskInfoMenuDelete({
     <div className="relative">
       <button
         type="button"
-        className="w-full h-11 rounded-xl border border-accent-red-200 bg-white text-base font-semibold text-accent-red-700 shadow-sm transition hover:-translate-y-px hover:bg-accent-red-50 disabled:opacity-60"
+        className="w-full h-11 rounded-xl border text-base font-semibold shadow-sm transition hover:-translate-y-px disabled:opacity-60
+          border-red-300/70 bg-red-50/80 text-red-700 hover:bg-red-100
+          dark:border-red-400/50 dark:bg-[rgba(248,113,113,0.12)] dark:text-red-200"
         onClick={() => setIsDeleting(true)}
         disabled={isDeleting}
       >
@@ -31,14 +33,16 @@ export function TaskInfoMenuDelete({
       {isDeleting && (
         <div className="fixed inset-0 z-50 flex items-end justify-center px-3 pb-12 md:items-center md:pb-0">
           <div
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
             onClick={() => setIsDeleting(false)}
           />
 
-          <div className="relative z-10 w-full max-w-md rounded-2xl bg-white/95 p-5 text-center text-slate-900 shadow-2xl ring-1 ring-accent-blue/15">
+          <div className="relative z-10 w-full max-w-md rounded-2xl border p-5 text-center shadow-2xl ring-1 ring-red-300/60
+            border-red-300/70 bg-red-50/85 text-red-700
+            dark:border-red-400/50 dark:bg-[rgba(248,113,113,0.12)] dark:text-red-100">
             <div className="mb-3 flex flex-col gap-1">
               <h1 className="text-lg font-semibold">Delete this task?</h1>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-red-700 dark:text-red-100">
                 This will permanently remove the task and any subtasks.
               </p>
             </div>
@@ -46,7 +50,7 @@ export function TaskInfoMenuDelete({
             <div className="flex flex-row gap-3">
               <button
                 type="button"
-                className="h-11 w-full rounded-xl border border-accent-blue/20 bg-white text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+                className="h-11 w-full rounded-xl border border-accent-blue/20 bg-white text-sm font-semibold text-primary shadow-sm transition hover:bg-slate-50 dark:bg-[rgba(15,23,42,0.7)]"
                 onClick={() => setIsDeleting(false)}
               >
                 Cancel

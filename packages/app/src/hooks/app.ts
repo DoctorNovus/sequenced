@@ -16,7 +16,9 @@ export interface AppOptions {
   tempActiveDate?: Date;
   activeTask?: Task;
   activeParent?: Task;
-  
+
+  theme?: "light" | "dark";
+
   authorized: false;
 }
 
@@ -26,7 +28,7 @@ const initialData: AppOptions = {
   activeTask: undefined,
   activeParent: undefined,
 
-  
+  theme: "light",
   authorized: false
 };
 
@@ -36,7 +38,23 @@ const reducer = (data: Record<string, any>, payload: Record<string, any>) => ({
 });
 
 export function useAppReducer() {
-  return useReducer(reducer, initialData);
+  const initializer = () => {
+    let theme: "light" | "dark" = initialData.theme;
+
+    if (typeof window !== "undefined") {
+      const stored = window.localStorage.getItem("sequenced-theme");
+      if (stored === "light" || stored === "dark") {
+        theme = stored;
+      } else {
+        const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
+        theme = prefersDark ? "dark" : "light";
+      }
+    }
+
+    return { ...initialData, theme };
+  };
+
+  return useReducer(reducer, initialData, initializer);
 }
 
 export function useApp(): Iterator<AppOptions> | null {

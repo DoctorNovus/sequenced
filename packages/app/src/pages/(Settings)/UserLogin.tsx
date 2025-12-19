@@ -19,20 +19,20 @@ export default function UserLogin() {
 
     return (
         <div className="flex flex-col gap-2">
-            {user.isLoading && <span className="text-slate-500 text-sm">Loading user...</span>}
+            {user.isLoading && <span className="text-muted text-sm">Loading user...</span>}
             {user.isSuccess && (
                 <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-lg font-semibold text-slate-900">Sync Status</h1>
-                        <span className="text-xs rounded-full bg-accent-blue-50 px-2 py-1 text-accent-blue-700">
+                        <h1 className="text-lg font-semibold text-primary">Sync Status</h1>
+                        <span className="text-xs rounded-full bg-accent-blue-50 px-2 py-1 text-accent-blue-700 dark:bg-[rgba(99,102,241,0.12)]">
                             {user.data?.id ? "Signed in" : "Signed out"}
                         </span>
                     </div>
                     {
                         user.data?.id ?
                             (
-                                <div className="flex flex-col gap-2 rounded-xl border border-accent-blue/15 bg-accent-blue-50/50 px-3 py-2">
-                                    <div className="text-slate-700 text-sm">Logged in as <span className="font-semibold">{user.data.email}</span></div>
+                                <div className="flex flex-col gap-2 rounded-xl border border-accent-blue/15 bg-accent-blue-50/50 px-3 py-2 dark:bg-[rgba(99,102,241,0.12)]">
+                                    <div className="text-primary text-sm">Logged in as <span className="font-semibold">{user.data.email}</span></div>
                                     <button onClick={logoutUser} className="self-start rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition">
                                         Sign Out
                                     </button>
@@ -40,7 +40,7 @@ export default function UserLogin() {
                             ) :
                             (
                                 <div className="flex flex-col gap-2 rounded-xl border border-dashed border-accent-blue/30 px-3 py-2">
-                                    <span className="text-slate-600 text-sm">Not signed in.</span>
+                                    <span className="text-muted text-sm">Not signed in.</span>
                                     <button className="w-fit rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition" onClick={() => navigate("/auth")}>
                                         Sign In
                                     </button>

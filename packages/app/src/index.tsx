@@ -1,4 +1,4 @@
-import { StrictMode, useReducer } from "react";
+import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -37,6 +37,18 @@ export const queryClient = new QueryClient({
 
 export default function App() {
   const reducer = useAppReducer();
+  const [appState] = reducer;
+
+  useEffect(() => {
+    const theme = appState?.theme === "dark" ? "dark" : "light";
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.setAttribute("data-theme", theme);
+    try {
+      window.localStorage.setItem("sequenced-theme", theme);
+    } catch (err) {
+      console.warn("Failed to persist theme preference", err);
+    }
+  }, [appState?.theme]);
 
   return (
     <QueryClientProvider client={queryClient}>

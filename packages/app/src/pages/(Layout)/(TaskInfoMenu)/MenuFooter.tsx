@@ -13,7 +13,7 @@ export default function MenuFooter({ type, isDeleting, resetForm, submitForm, is
         >
             <div className="flex grow justify-start">
                 <button
-                    className="w-full h-11 rounded-xl text-base font-semibold bg-white border border-accent-blue/30 text-accent-blue shadow-sm hover:bg-accent-blue hover:text-white transition"
+                    className="w-full h-11 rounded-xl text-base font-semibold bg-white border border-accent-blue/30 text-accent-blue shadow-sm hover:bg-accent-blue hover:text-white transition dark:bg-[rgba(15,23,42,0.7)]"
                     onClick={resetForm}
                 >
                     Cancel

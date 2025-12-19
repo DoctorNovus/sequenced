@@ -18,6 +18,7 @@ import { useTasks, useDeleteTask } from "@/hooks/tasks";
 import xIcon from "@/assets/social_icons/x.svg";
 import instagramIcon from "@/assets/social_icons/instagram.svg";
 import facebookIcon from "@/assets/social_icons/facebook.svg";
+import { useApp } from "@/hooks/app";
 
 export default function SettingsPage() {
   const [tempSettings, setTempSettings] = useState<Settings>({});
@@ -25,6 +26,7 @@ export default function SettingsPage() {
   const { mutateAsync: deleteTask } = useDeleteTask();
   const [cleanupInterval, setCleanupInterval] = useState<string>("30");
   const [cleanupStatus, setCleanupStatus] = useState<string>("");
+  const [appState, setAppState] = useApp();
 
   useEffect(() => {
     getSettings().then(async (tempSettings) => {
@@ -133,6 +135,11 @@ export default function SettingsPage() {
     }
   };
 
+  const toggleTheme = () => {
+    const next = (appState?.theme ?? "light") === "dark" ? "light" : "dark";
+    setAppState({ ...appState, theme: next });
+  };
+
   const TestDaily = async () => {
     const fireAt = new Date(Date.now() + 3000);
     await scheduleNotification({
@@ -171,7 +178,31 @@ export default function SettingsPage() {
         </div>
       </div>
       <div className="w-full max-w-3xl flex flex-col gap-4">
-        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+        <div className="rounded-2xl surface-card border ring-1 ring-accent-blue/10 p-4 flex items-center justify-between">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-lg font-semibold text-primary">Appearance</h2>
+            <p className="text-sm text-muted">Switch between light and dark mode.</p>
+          </div>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="flex items-center gap-2 rounded-xl border border-accent-blue/25 bg-white/70 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-px dark:bg-transparent"
+          >
+            <span>{(appState?.theme ?? "light") === "dark" ? "Dark" : "Light"} mode</span>
+            <span
+              className={`relative inline-flex h-6 w-11 items-center rounded-full ${
+                (appState?.theme ?? "light") === "dark" ? "bg-accent-blue-600" : "bg-slate-300"
+              } transition`}
+            >
+              <span
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${
+                  (appState?.theme ?? "light") === "dark" ? "translate-x-5" : "translate-x-1"
+                }`}
+              />
+            </span>
+          </button>
+        </div>
+        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-2">
             <DailyNotifications tempSettings={tempSettings} UpdateSettings={UpdateSettings} />
             {tempSettings.sendDailyReminders && (
@@ -201,7 +232,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-3">
             <h2 className="text-lg font-semibold text-slate-900">Feedback</h2>
             <p className="text-sm text-slate-600">Spot an issue or have an idea? Drop us a note.</p>
@@ -216,7 +247,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-3">
             <h2 className="text-lg font-semibold text-slate-900">Delete Completed Tasks</h2>
             <p className="text-sm text-slate-600">
@@ -253,7 +284,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-3">
             <h2 className="text-lg font-semibold text-slate-900">Support Sequenced</h2>
             <div className="flex flex-wrap gap-2">
@@ -272,7 +303,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-3">
             <h2 className="text-lg font-semibold text-slate-900">Follow Ottegi</h2>
             <p className="text-sm text-slate-600">Stay up to date with releases and progress.</p>
@@ -317,12 +348,12 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
           <UserLogin />
         </div>
 
         <DeveloperSettings>
-          <div className="rounded-2xl bg-white/90 shadow-md ring-1 ring-accent-blue/10 p-4">
+          <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
             <ControllerUser />
           </div>
         </DeveloperSettings>

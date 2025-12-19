@@ -13,10 +13,10 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
 
     if (skeleton)
         return (
-            <div className="rounded-3xl bg-white/80 p-5 shadow-xl ring-1 ring-accent-blue/10">
+            <div className="rounded-3xl surface-card border p-5 shadow-xl ring-1 ring-accent-blue/10">
                 <div className="flex items-center justify-between">
                     <div className="flex flex-col gap-1">
-                        <span className="text-xl font-semibold text-slate-900">Your Agenda</span>
+                        <span className="text-xl font-semibold text-primary">Your Agenda</span>
                     </div>
                     <div className="rounded-full bg-accent-blue-50 px-3 py-1 text-xs font-semibold text-accent-blue-700">
                         Updating...
@@ -31,7 +31,7 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
                         <DueCapsule skeleton category="Due This Week" />
                     </div>
                 </div>
-                <div className="mt-4 flex items-center justify-between rounded-2xl border border-dashed border-red-200 bg-red-50/60 px-4 py-3 text-red-600">
+                <div className="mt-4 flex items-center justify-between rounded-2xl border border-dashed border-red-200 bg-red-50/60 px-4 py-3 text-red-600 dark:border-red-400/40 dark:bg-[rgba(248,113,113,0.12)] dark:text-red-200">
                     <span className="text-base font-semibold">Overdue Tasks</span>
                     <span className="text-3xl font-semibold">0</span>
                 </div>
@@ -39,12 +39,12 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
         )
 
     return (
-        <div className="rounded-3xl bg-white/80 p-5 shadow-xl ring-1 ring-accent-blue/10">
+        <div className="rounded-3xl surface-card border p-5 shadow-xl ring-1 ring-accent-blue/10">
             <div className="flex items-center justify-between">
                 <div className="flex flex-col gap-1">
-                    <span className="text-xl font-semibold text-slate-900">Your Agenda</span>
+                    <span className="text-xl font-semibold text-primary">Your Agenda</span>
                 </div>
-                <div className="rounded-full bg-accent-blue-50 px-3 py-1 text-xs font-semibold text-accent-blue-700">
+                <div className="rounded-full bg-accent-blue-50 px-3 py-1 text-xs font-semibold text-accent-blue-700 dark:bg-[rgba(99,102,241,0.12)] dark:text-primary">
                     Live sync
                 </div>
             </div>
@@ -69,15 +69,19 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
                     }
                 </div>
             </div>
-            <div className="mt-4 flex items-center justify-between rounded-2xl border border-dashed border-red-200 bg-red-50/60 px-4 py-3 text-red-600">
-                {
-                    overdueTasks.isSuccess && (
-                        <>
-                            <span className="text-base font-semibold">Overdue Tasks</span>
-                            <span className="text-3xl font-semibold">{overdueTasks.data.count}</span>
-                        </>
-                    )
-                }
+            <div
+                className={`mt-4 flex items-center justify-between rounded-2xl border px-4 py-3 ${
+                    overdueTasks.isSuccess && overdueTasks.data.count > 0
+                        ? "border-red-300/70 bg-red-50/70 text-red-700 dark:border-red-400/50 dark:bg-[rgba(248,113,113,0.12)] dark:text-red-200"
+                        : "border-emerald-200/70 bg-emerald-50/80 text-emerald-700 dark:border-emerald-300/40 dark:bg-[rgba(52,211,153,0.12)] dark:text-emerald-200"
+                }`}
+            >
+                <span className="text-base font-semibold">
+                    Overdue Tasks
+                </span>
+                <span className="text-3xl font-semibold">
+                    {overdueTasks.isSuccess ? overdueTasks.data.count : "—"}
+                </span>
             </div>
         </div>
     )

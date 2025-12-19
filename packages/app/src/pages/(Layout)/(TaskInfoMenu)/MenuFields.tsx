@@ -40,13 +40,13 @@ export default function MenuFields({
     return (
         <div className={`flex flex-col gap-4 ${isDeleting && "blur-sm"}`}>
             {type === "add" && (
-                <div className="flex flex-col gap-2 rounded-xl border border-accent-blue/15 bg-accent-blue-50/40 px-3 py-3">
+                <div className="flex flex-col gap-2 rounded-xl border border-accent-blue/15 bg-accent-blue-50/40 px-3 py-3 dark:bg-[rgba(99,102,241,0.12)]">
                     <div className="flex items-center justify-between">
                         <div className="flex flex-col">
-                            <span className="text-sm font-semibold text-slate-700">Quick add</span>
-                            <span className="text-xs text-slate-500">Create multiple tasks at once.</span>
+                            <span className="text-sm font-semibold text-primary">Quick add</span>
+                            <span className="text-xs text-muted">Create multiple tasks at once.</span>
                         </div>
-                        <label className="flex items-center gap-2 text-xs text-slate-600">
+                        <label className="flex items-center gap-2 text-xs text-muted">
                             <input
                                 type="checkbox"
                                 className="h-4 w-4"

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface NavItemProps {
     to: string;
@@ -9,7 +9,7 @@ interface NavItemProps {
 }
 
 export default function NavItem({ to, title, children, disabled }: NavItemProps) {
-    const pathname = window.location.pathname;
+    const { pathname } = useLocation();
 
     const isActive = pathname == to;
     const hasLabel = Boolean(title);
@@ -18,13 +18,20 @@ export default function NavItem({ to, title, children, disabled }: NavItemProps)
         <Link
             to={to}
             aria-current={isActive ? "page" : undefined}
-            className={`flex flex-col items-center rounded-2xl px-2 py-1 text-[11px] font-semibold transition-colors ${disabled ? "pointer-events-none opacity-50 cursor-not-allowed hover:text-gray-500 fill-gray-500" : ""} ${isActive
-                ? "text-accent-blue-800 fill-accent-blue-800"
-                : "text-slate-500 fill-slate-500 hover:text-accent-blue-700 hover:fill-accent-blue-700"
-                }`}
+            className={`flex flex-col items-center gap-0.5 rounded-2xl px-2 py-1 text-[11px] font-semibold transition-colors ${disabled ? "pointer-events-none opacity-50 cursor-not-allowed" : ""} ${
+                isActive
+                    ? "text-accent-blue-700 fill-accent-blue-700"
+                    : "text-muted fill-muted hover:text-accent-blue-600 hover:fill-accent-blue-600"
+            }`}
         >
-            <div className={`flex items-center justify-center text-center w-9 h-9 rounded-2xl`}>
-                <div className="flex justify-center items-center w-full h-full p-[4px]">
+            <div
+                className={`flex items-center justify-center text-center w-11 h-11 rounded-2xl transition ${
+                    isActive
+                        ? "bg-accent-blue-50/90 border border-accent-blue/30 shadow-[0_10px_24px_rgba(48,122,207,0.25)] dark:bg-[rgba(99,102,241,0.18)]"
+                        : "bg-transparent border border-transparent hover:border-accent-blue/20 hover:bg-accent-blue-50/60 dark:hover:bg-[rgba(99,102,241,0.12)]"
+                }`}
+            >
+                <div className="flex justify-center items-center w-full h-full p-[6px]">
                     {children}
                 </div>
             </div>
