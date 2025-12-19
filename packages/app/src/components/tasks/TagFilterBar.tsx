@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useApp } from "@/hooks/app";
 import { Task } from "@/hooks/tasks";
+import { isTaskDone } from "@/utils/data";
 
 interface TagFilterBarProps {
   tasks: Task[];
@@ -12,8 +13,12 @@ export default function TagFilterBar({ tasks }: TagFilterBarProps) {
 
   const availableTags = useMemo(() => {
     const counts = new Map<string, number>();
+    const activeDate = appData.activeDate ?? new Date();
 
     tasks?.forEach((task) => {
+      const pending = isTaskDone(task, activeDate);
+      if (!pending) return;
+
       const tags = Array.isArray(task?.tags) ? task.tags : [];
       const subtaskTags = Array.isArray(task?.subtasks)
         ? task.subtasks.flatMap((subtask) =>
@@ -35,7 +40,7 @@ export default function TagFilterBar({ tasks }: TagFilterBarProps) {
     return Array.from(counts.entries())
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [tasks]);
+  }, [tasks, appData.activeDate]);
 
   const toggleTag = (tag: string) => {
     const next = activeTags.includes(tag)

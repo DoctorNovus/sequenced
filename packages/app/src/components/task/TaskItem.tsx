@@ -248,7 +248,7 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
                 <TaskItemDate task={item} />
               </div>
             </div>
-            {tags.length > 0 && (
+            {tags.length > 0 && isPending && (
               <div className="mt-1 flex flex-wrap gap-2 px-2">
                 {tags.map((tag) => (
                   <span
