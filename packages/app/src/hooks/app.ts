@@ -11,13 +11,15 @@ export const SERVER_IP = process.env.NODE_ENV == "development" ? `http://localho
 Logger.log(`Running in ${process.env.NODE_ENV} mode.`);
 
 // TODO: remove tempActiveDate.
+type ThemeChoice = "light" | "dark" | "auto";
+
 export interface AppOptions {
   activeDate?: Date;
   tempActiveDate?: Date;
   activeTask?: Task;
   activeParent?: Task;
 
-  theme?: "light" | "dark";
+  theme?: ThemeChoice;
 
   authorized: false;
 }
@@ -28,7 +30,7 @@ const initialData: AppOptions = {
   activeTask: undefined,
   activeParent: undefined,
 
-  theme: "light",
+  theme: "auto",
   authorized: false
 };
 
@@ -39,11 +41,11 @@ const reducer = (data: Record<string, any>, payload: Record<string, any>) => ({
 
 export function useAppReducer() {
   const initializer = () => {
-    let theme: "light" | "dark" = initialData.theme;
+    let theme: ThemeChoice = initialData.theme;
 
     if (typeof window !== "undefined") {
       const stored = window.localStorage.getItem("sequenced-theme");
-      if (stored === "light" || stored === "dark") {
+      if (stored === "light" || stored === "dark" || stored === "auto") {
         theme = stored;
       } else {
         const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;

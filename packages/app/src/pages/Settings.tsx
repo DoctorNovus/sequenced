@@ -135,8 +135,7 @@ export default function SettingsPage() {
     }
   };
 
-  const toggleTheme = () => {
-    const next = (appState?.theme ?? "light") === "dark" ? "light" : "dark";
+  const setTheme = (next: "light" | "dark" | "auto") => {
     setAppState({ ...appState, theme: next });
   };
 
@@ -178,29 +177,53 @@ export default function SettingsPage() {
         </div>
       </div>
       <div className="w-full max-w-3xl flex flex-col gap-4">
-        <div className="rounded-2xl surface-card border ring-1 ring-accent-blue/10 p-4 flex items-center justify-between">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-lg font-semibold text-primary">Appearance</h2>
-            <p className="text-sm text-muted">Switch between light and dark mode.</p>
-          </div>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="flex items-center gap-2 rounded-xl border border-accent-blue/25 bg-white/70 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-px dark:bg-transparent"
-          >
-            <span>{(appState?.theme ?? "light") === "dark" ? "Dark" : "Light"} mode</span>
-            <span
-              className={`relative inline-flex h-6 w-11 items-center rounded-full ${
-                (appState?.theme ?? "light") === "dark" ? "bg-accent-blue-600" : "bg-slate-300"
-              } transition`}
-            >
-              <span
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${
-                  (appState?.theme ?? "light") === "dark" ? "translate-x-5" : "translate-x-1"
-                }`}
-              />
+        <div className="rounded-2xl surface-card border ring-1 ring-accent-blue/10 p-4 flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-lg font-semibold text-primary">Appearance</h2>
+              <p className="text-sm text-muted">Choose light, dark, or follow your device.</p>
+            </div>
+            <span className="text-xs rounded-full bg-accent-blue-50 px-2 py-1 text-accent-blue-700 dark:bg-[rgba(48,122,207,0.14)] dark:text-primary">
+              {(appState?.theme ?? "auto") === "auto" ? "Automatic" : (appState?.theme ?? "Light")}
             </span>
-          </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { id: "light", label: "Light", desc: "Bright surfaces" },
+              { id: "dark", label: "Dark", desc: "Dimmed, low-glare" },
+              { id: "auto", label: "Auto", desc: "Match device" },
+            ].map((opt) => {
+              const isActive = (appState?.theme ?? "auto") === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setTheme(opt.id as "light" | "dark" | "auto")}
+                  className={`flex items-center gap-3 rounded-2xl border p-3 text-left transition shadow-sm ${
+                    isActive
+                      ? "border-accent-blue/50 ring-1 ring-accent-blue/30 shadow-md"
+                      : "border-slate-200/70 dark:border-slate-600/50 hover:border-accent-blue/40"
+                  }`}
+                >
+                  <span
+                    className={`inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border ${
+                      opt.id === "light"
+                        ? "bg-gradient-to-br from-white to-slate-100 text-slate-700"
+                        : opt.id === "dark"
+                          ? "bg-gradient-to-br from-slate-800 to-slate-900 text-white"
+                          : "bg-gradient-to-br from-slate-200 to-slate-800 text-white"
+                    } ${isActive ? "border-accent-blue/40" : "border-transparent"}`}
+                  >
+                    {opt.id === "auto" ? "A" : opt.label[0]}
+                  </span>
+                  <span className="flex flex-col">
+                    <span className="text-sm font-semibold text-primary">{opt.label}</span>
+                    <span className="text-xs text-muted">{opt.desc}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
         <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-2">

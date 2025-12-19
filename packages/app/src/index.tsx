@@ -40,13 +40,31 @@ export default function App() {
   const [appState] = reducer;
 
   useEffect(() => {
-    const theme = appState?.theme === "dark" ? "dark" : "light";
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    document.documentElement.setAttribute("data-theme", theme);
+    const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+    const resolveTheme = () => {
+      if (appState?.theme === "auto") {
+        return media?.matches ? "dark" : "light";
+      }
+      return appState?.theme === "dark" ? "dark" : "light";
+    };
+
+    const appliedTheme = resolveTheme();
+    document.documentElement.classList.toggle("dark", appliedTheme === "dark");
+    document.documentElement.setAttribute("data-theme", appliedTheme);
     try {
-      window.localStorage.setItem("sequenced-theme", theme);
+      window.localStorage.setItem("sequenced-theme", appState?.theme ?? "light");
     } catch (err) {
       console.warn("Failed to persist theme preference", err);
+    }
+
+    if (appState?.theme === "auto" && media?.addEventListener) {
+      const listener = () => {
+        const next = resolveTheme();
+        document.documentElement.classList.toggle("dark", next === "dark");
+        document.documentElement.setAttribute("data-theme", next);
+      };
+      media.addEventListener("change", listener);
+      return () => media.removeEventListener("change", listener);
     }
   }, [appState?.theme]);
 
