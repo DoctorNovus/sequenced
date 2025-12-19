@@ -8,12 +8,48 @@ import {
 } from "@tanstack/react-query";
 
 import { Logger } from "@/utils/logger";
-import { Task } from "@backend/task/task.entity";
-import { CountData } from "@backend/metrics/metrics.service";
 
 import { getSync } from "./settings";
 import { fetchData } from "@/utils/data";
 import { formatDateTime } from "@/utils/date";
+
+export type CountData = { count: number };
+
+export interface Task {
+  id?: string;
+  title: string;
+  description?: string;
+  date: string | Date;
+  done: boolean | string[];
+  repeater?: string;
+  reminder?: string;
+  type?: string;
+  accordion?: boolean;
+  priority?: number;
+  subtasks: Task[];
+  users?: any[];
+  tags: string[];
+}
+
+const normalizeTags = (tags?: Array<string | { title?: string; color?: string }>): string[] | undefined => {
+  if (!Array.isArray(tags)) return undefined;
+
+  const normalized = tags
+    .map((tag) => {
+      if (typeof tag === "string") return tag.trim().toLowerCase();
+      if (tag && typeof tag.title === "string") return tag.title.trim().toLowerCase();
+      return "";
+    })
+    .filter((tag) => tag.length > 0);
+
+  return Array.from(new Set(normalized));
+};
+
+const normalizeTaskFromApi = (task: any): Task => ({
+  ...task,
+  tags: normalizeTags(task?.tags) ?? [],
+  subtasks: Array.isArray(task?.subtasks) ? task.subtasks.map(normalizeTaskFromApi) : [],
+});
 
 const serializeTask = (task: Partial<Task>) => {
   const data: any = { ...task };
@@ -21,6 +57,8 @@ const serializeTask = (task: Partial<Task>) => {
     const offsetDate = new Date(task.date.getTime() - task.date.getTimezoneOffset() * 60000);
     data.date = formatDateTime(offsetDate);
   }
+  const tags = normalizeTags(task.tags);
+  if (tags !== undefined) data.tags = tags;
   return data;
 };
 
@@ -33,7 +71,8 @@ export function createInitialTaskData(): Task {
     repeater: "",
     reminder: "",
     subtasks: [],
-    priority: 0
+    priority: 0,
+    tags: []
   };
 }
 
@@ -80,7 +119,10 @@ export function filterBroken(tasks: Task[]): Task[] {
 export async function loadTasks(): Promise<Task[]> {
   const response = await fetchData(`/task`, {});
 
-  return await response.json();
+  const raw = await response.json();
+  if (!Array.isArray(raw)) return [];
+
+  return raw.map(normalizeTaskFromApi);
 }
 
 /* Loads tasks and finds the task with given id */
@@ -89,7 +131,7 @@ export async function loadTaskById(id: string): Promise<Task | Partial<Task>> {
   const task = tasks.find((task) => task.id == id);
 
   if (!task) return {};
-  return task;
+  return normalizeTaskFromApi(task);
 }
 
 /* returns query data */
@@ -149,11 +191,13 @@ export function useTasksOverdue(): UseQueryResult<CountData> {
   });
 }
 
-export async function getTasksIncomplete(): Promise<CountData> {
-  return await (await fetchData("/task/incomplete", {})).json();
+export async function getTasksIncomplete(): Promise<Task[]> {
+  const resp = await (await fetchData("/task/incomplete", {})).json();
+  if (!Array.isArray(resp)) return [];
+  return resp.map(normalizeTaskFromApi);
 }
 
-export function useTasksIncomplete(): UseQueryResult<CountData> {
+export function useTasksIncomplete(): UseQueryResult<Task[]> {
   return useQuery({
     queryKey: ["tasks", "incomplete"],
     queryFn: getTasksIncomplete,

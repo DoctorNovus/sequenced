@@ -18,8 +18,19 @@ export class TaskController {
     taskService: TaskService;
 
     @Get()
-    async getTasks({ session }: Request): Promise<Task[]> {
-        return this.taskService.getTasksByUserId(session.user.id);
+    async getTasks({ session, query }: Request): Promise<Task[]> {
+        const tagsQuery = Array.isArray(query?.tags)
+            ? query.tags
+            : typeof query?.tags === "string"
+                ? query.tags.split(",")
+                : [];
+
+        const tags = tagsQuery
+            .flatMap((tag) => tag.toString().split(","))
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0);
+
+        return this.taskService.getTasksByUserId(session.user.id, tags as string[]);
     }
 
     @Get("/:id/users")

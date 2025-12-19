@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer } from "react";
 import { Logger } from "@/utils/logger";
 
-import { Task } from "@backend/task/task.entity";
+import { Task } from "./tasks";
 
 export const AppContext = createContext(null);
 
@@ -18,6 +18,7 @@ export interface AppOptions {
   tempActiveDate?: Date;
   activeTask?: Task;
   activeParent?: Task;
+  activeTags?: string[];
 
   theme?: ThemeChoice;
 
@@ -29,6 +30,7 @@ const initialData: AppOptions = {
   tempActiveDate: undefined,
   activeTask: undefined,
   activeParent: undefined,
+  activeTags: [],
 
   theme: "auto",
   authorized: false

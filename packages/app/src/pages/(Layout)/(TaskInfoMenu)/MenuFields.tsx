@@ -3,6 +3,7 @@ import TaskInfoMenuItem from "./Shared/TaskInfoMenuItem";
 import TaskInfoMenuSubtaskMenu from "./Shared/TaskInfoMenuSubtaskMenu";
 import TaskInfoMenuSelect from "./Shared/TaskInfoMenuSelect";
 import TaskInfoMenuUser from "./Shared/TaskInfoUser/TaskInfoMenuUser";
+import TaskInfoMenuTags from "./Shared/TaskInfoMenuTags";
 
 interface MenuFieldsProps {
     type: string | undefined;
@@ -67,6 +68,13 @@ export default function MenuFields({
                             }
                         />
                     )}
+                    {isQuickAdd && (
+                        <TaskInfoMenuTags
+                            helperText="Tags will be applied to every task you add."
+                            tags={tempData.tags ?? []}
+                            onChange={(tags) => setTempData({ ...tempData, tags })}
+                        />
+                    )}
                     {isQuickAdd && validationError && (
                         <span className="px-1 text-sm font-semibold text-accent-red-500">
                             {validationError}
@@ -117,6 +125,11 @@ export default function MenuFields({
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             setTempData({ ...tempData, description: e.target.value })
                         }
+                    />
+
+                    <TaskInfoMenuTags
+                        tags={tempData.tags ?? []}
+                        onChange={(tags) => setTempData({ ...tempData, tags })}
                     />
 
                     {tempData.date.getTime() != 0 && (

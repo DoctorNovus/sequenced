@@ -139,6 +139,7 @@ export default function TaskInfoMenu({
       setTempData({
         ...appData.activeTask,
         date: new Date(appData.activeTask?.date),
+        tags: appData.activeTask.tags ?? [],
       });
 
       Logger.log("SET TEMP DATA", appData.activeTask);
@@ -320,6 +321,7 @@ export default function TaskInfoMenu({
         reminder: "",
         priority: 0,
         subtasks: [],
+        tags: tempData.tags ?? [],
       }));
 
       addTasksBulk(payload).then(() => {
