@@ -17,14 +17,14 @@
 }
 
 .dark {
-  --app-background: radial-gradient(circle at 15% 20%, rgba(67, 56, 202, 0.18) 0, transparent 26%),
-    radial-gradient(circle at 85% 10%, rgba(14, 165, 233, 0.14) 0, transparent 24%),
-    linear-gradient(180deg, #0b1220 0%, #0f172a 45%, #0b1220 100%);
-  --app-text: #e2e8f0;
-  --muted-text: #cbd5e1;
-  --surface-card: rgba(15, 23, 42, 0.9);
-  --surface-border: rgba(99, 102, 241, 0.25);
-  --nav-border: rgba(255, 255, 255, 0.08);
+  --app-background: radial-gradient(circle at 18% 20%, rgba(68, 87, 110, 0.18) 0, transparent 32%),
+    radial-gradient(circle at 80% 12%, rgba(52, 104, 168, 0.12) 0, transparent 30%),
+    linear-gradient(180deg, #0b0f14 0%, #0e141d 46%, #0b0f14 100%);
+  --app-text: #e7ebf3;
+  --muted-text: #c7d0dc;
+  --surface-card: rgba(18, 23, 32, 0.92);
+  --surface-border: rgba(96, 113, 133, 0.28);
+  --nav-border: rgba(96, 113, 133, 0.32);
   color-scheme: dark;
 }
 
@@ -99,7 +99,7 @@ body {
 
 .dark .bg-accent-blue-50,
 .dark .bg-accent-blue-50\/40 {
-  background-color: rgba(99, 102, 241, 0.12) !important;
+  background-color: rgba(48, 122, 207, 0.14) !important;
 }
 
 .dark .text-slate-900,
