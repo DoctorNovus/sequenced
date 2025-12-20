@@ -1,0 +1,10 @@
+node_modules
+packages/*/node_modules
+packages/*/dist
+dist
+.git
+.gitignore
+npm-debug.log
+Dockerfile
+Dockerfile.*
+*.log

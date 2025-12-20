@@ -42,4 +42,7 @@ export class Task extends Model {
 
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], default: [] })
     users: (User | string)[];
+
+    @Prop({ type: [String], default: [] })
+    tags: string[];
 }

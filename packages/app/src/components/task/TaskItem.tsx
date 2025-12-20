@@ -64,6 +64,15 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
   const [isCompleting, setIsCompleting] = useState(false);
 
   const [isAccordion, setAccordion] = useState(item.accordion || false);
+  const tags = Array.isArray(item.tags)
+    ? item.tags
+        .map((tag) => {
+          if (typeof tag === "string") return tag;
+          if (tag && typeof tag.title === "string") return tag.title;
+          return null;
+        })
+        .filter(Boolean) as string[]
+    : [];
 
   const handleToggleSelect = () => {
     if (!onToggleSelect || !item?.id) return;
@@ -239,6 +248,18 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
                 <TaskItemDate task={item} />
               </div>
             </div>
+            {tags.length > 0 && isPending && (
+              <div className="mt-1 flex flex-wrap gap-2 px-2">
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full bg-accent-blue/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-accent-blue-800 ring-1 ring-accent-blue/20"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </TaskItemShell>

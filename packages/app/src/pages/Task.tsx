@@ -9,6 +9,7 @@ import { getPending } from "@/utils/notifs";
 import { SERVER_IP, useApp } from "@/hooks/app";
 import TaskInfoMenu from "@/pages/(Layout)/TaskInfoMenu";
 import { Logger } from "@/utils/logger";
+import TagFilterBar from "@/components/tasks/TagFilterBar";
 
 export default function Task() {
   const [appData, setAppData] = useApp();
@@ -57,6 +58,9 @@ export default function Task() {
         <div className="flex w-full justify-center">
           <div className="flex w-full max-w-4xl flex-col items-center gap-4 px-3 md:px-6">
             <ActiveCalendar />
+            {tasks.isSuccess && (
+              <TagFilterBar tasks={tasks.data ?? []} />
+            )}
             <DayTasks
               setIsInspecting={setIsInspecting}
               tasks={tasks}

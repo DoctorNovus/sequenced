@@ -29,7 +29,7 @@ export default function TaskInfoMenuUser({ data }) {
         return (
             <div className="flex flex-col gap-3">
                 <div className="flex flex-row justify-between items-center">
-                    <label className="text-sm font-semibold text-slate-700">Users</label>
+                    <label className="text-sm font-semibold text-primary">Users</label>
                     <div className="flex w-8 h-8 justify-center items-center">
                         {!addingUser && <PlusIcon className="w-5 h-5 cursor-pointer text-accent-blue" onClick={() => setAddingUser(true)} />}
                         {addingUser && <MinusIcon className="w-5 h-5 cursor-pointer text-accent-blue" onClick={() => setAddingUser(false)} />}
@@ -37,7 +37,7 @@ export default function TaskInfoMenuUser({ data }) {
                 </div>
                 <div className="flex flex-col gap-2">
                     {userList.length === 0 && (
-                        <span className="text-sm text-slate-500">No users yet.</span>
+                        <span className="text-sm text-muted">No users yet.</span>
                     )}
                     {userList.map((user, key) => {
                         const fullName = [user.first, user.last].filter(Boolean).join(" ").trim();
@@ -45,10 +45,10 @@ export default function TaskInfoMenuUser({ data }) {
                         const isSelf = host.data?.email === user.email;
 
                         return (
-                            <div key={key} className="flex flex-row items-center gap-2 rounded-xl border border-accent-blue/20 bg-accent-blue-50/50 px-3 py-2">
+                            <div key={key} className="flex flex-row items-center gap-2 rounded-xl border border-accent-blue/20 bg-accent-blue-50/50 px-3 py-2 dark:bg-[rgba(99,102,241,0.12)]">
                                 <div className="flex flex-col">
-                                    <span className="text-sm font-semibold text-slate-800">{displayName}</span>
-                                    <span className="text-xs text-slate-600">{user.email}</span>
+                                    <span className="text-sm font-semibold text-primary">{displayName}</span>
+                                    <span className="text-xs text-muted">{user.email}</span>
                                 </div>
                                 <div className="ml-auto flex items-center">
                                     <MinusIcon

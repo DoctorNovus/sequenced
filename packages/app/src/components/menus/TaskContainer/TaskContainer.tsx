@@ -20,9 +20,12 @@ import { UseQueryResult } from "@tanstack/react-query";
 import { useUpdateTask } from "@/hooks/tasks";
 
 interface ContainerSettings {
+  skeleton?: boolean | string;
   identifier: string;
   title: string;
-  tasks: UseQueryResult<Task>;
+  tasks: UseQueryResult<Task[]> | Task[];
+  activeFilter?: string;
+  setIsInspecting?: (value: boolean) => void;
 }
 
 export default function TaskContainer({
@@ -84,6 +87,42 @@ export default function TaskContainer({
   baseTasks = baseTasks.filter(Boolean);
 
   baseTasks = sortByPriority(baseTasks);
+
+  const activeTags = appData.activeTags ?? [];
+
+  const matchesTags = (task: Task) => {
+    if (activeTags.length === 0) return true;
+
+    const ownTags = Array.isArray(task.tags)
+      ? task.tags
+        .map((tag) => {
+          if (typeof tag === "string") return tag.toLowerCase();
+          if (tag && typeof (tag as any).title === "string") return (tag as any).title.toLowerCase();
+          return "";
+        })
+        .filter(Boolean)
+      : [];
+    const subtaskTags = Array.isArray(task.subtasks)
+      ? task.subtasks.flatMap((subtask) =>
+        Array.isArray(subtask.tags)
+          ? subtask.tags
+            .map((tag) => {
+              if (typeof tag === "string") return tag.toLowerCase();
+              if (tag && typeof (tag as any).title === "string") return (tag as any).title.toLowerCase();
+              return "";
+            })
+            .filter(Boolean)
+          : []
+      )
+      : [];
+
+    const combined = [...ownTags, ...subtaskTags];
+    return activeTags.every((tag) => combined.includes(tag));
+  };
+
+  if (activeTags.length > 0) {
+    baseTasks = baseTasks.filter(matchesTags);
+  }
 
   const toggleSelection = (taskId: string) => {
     setSelectedTaskIds((prev) =>

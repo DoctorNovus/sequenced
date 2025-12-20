@@ -55,10 +55,10 @@ export default function TaskItemDate({ task }: { task: Task }) {
         <>
           <div
             className={`w-full flex justify-end items-center h-6 ${
-              isOverdue(date, new Date()) ? "text-red-500" : "text-accent-white"
+              isOverdue(date, new Date()) ? "text-red-400" : "text-muted"
             }`}
           >
-            <h1 className="text-small text-right text-accent-white-500">{checkRelative(date)}</h1>
+            <h1 className="text-small text-right">{checkRelative(date)}</h1>
           </div>
           {/* <img
             src={today_icon}

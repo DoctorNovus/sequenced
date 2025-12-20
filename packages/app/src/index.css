@@ -4,6 +4,30 @@
 
 /* @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"); */
 
+:root {
+  --app-background: radial-gradient(circle at 20% 20%, #e8f1fb 0, transparent 25%),
+    radial-gradient(circle at 80% 0%, #d8e8ff 0, transparent 22%),
+    linear-gradient(180deg, #f7f9fb 0%, #fdfefe 40%, #f5f7fb 100%);
+  --app-text: #0f172a;
+  --muted-text: #475569;
+  --surface-card: rgba(255, 255, 255, 0.92);
+  --surface-border: rgba(48, 122, 207, 0.12);
+  --nav-border: rgba(255, 255, 255, 0.7);
+  color-scheme: light;
+}
+
+.dark {
+  --app-background: radial-gradient(circle at 18% 20%, rgba(68, 87, 110, 0.18) 0, transparent 32%),
+    radial-gradient(circle at 80% 12%, rgba(52, 104, 168, 0.12) 0, transparent 30%),
+    linear-gradient(180deg, #0b0f14 0%, #0e141d 46%, #0b0f14 100%);
+  --app-text: #e7ebf3;
+  --muted-text: #c7d0dc;
+  --surface-card: rgba(18, 23, 32, 0.92);
+  --surface-border: rgba(96, 113, 133, 0.28);
+  --nav-border: rgba(96, 113, 133, 0.32);
+  color-scheme: dark;
+}
+
 html,
 body {
   width: 100%;
@@ -12,10 +36,9 @@ body {
   overflow-y: auto;
   font-family: "Manrope", "SF Pro Display", "Segoe UI", system-ui, -apple-system,
     sans-serif;
-  background: radial-gradient(circle at 20% 20%, #e8f1fb 0, transparent 25%),
-    radial-gradient(circle at 80% 0%, #d8e8ff 0, transparent 22%),
-    linear-gradient(180deg, #f7f9fb 0%, #fdfefe 40%, #f5f7fb 100%);
-  color: #0f172a;
+  background: var(--app-background);
+  color: var(--app-text);
+  transition: background-color 0.2s ease, color 0.2s ease, background 0.2s ease;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -48,6 +71,76 @@ body {
   width: 100%;
   height: 100%;
   position: absolute;
+}
+
+.surface-card {
+  background: var(--surface-card);
+  border-color: var(--surface-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.text-primary {
+  color: var(--app-text);
+}
+
+.text-muted {
+  color: var(--muted-text);
+}
+
+/* Global dark-mode overrides for common Tailwind utility combinations */
+.dark .bg-white,
+.dark .bg-white\/90,
+.dark .bg-white\/92,
+.dark .bg-white\/70,
+.dark .bg-white\/60,
+.dark .bg-white\/50 {
+  background-color: var(--surface-card) !important;
+}
+
+.dark .bg-accent-blue-50,
+.dark .bg-accent-blue-50\/40 {
+  background-color: rgba(48, 122, 207, 0.14) !important;
+}
+
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: var(--app-text) !important;
+}
+
+.dark .text-slate-600,
+.dark .text-slate-500,
+.dark .text-gray-500,
+.dark .text-slate-400 {
+  color: var(--muted-text) !important;
+}
+
+.dark .border-accent-blue\/30,
+.dark .border-accent-blue\/25,
+.dark .border-accent-blue\/20,
+.dark .border-accent-blue\/15,
+.dark .border-accent-blue\/12,
+.dark .border-accent-blue\/10,
+.dark .border-white\/70,
+.dark .border-white {
+  border-color: var(--surface-border) !important;
+}
+
+.dark .ring-accent-blue\/10 {
+  --tw-ring-color: var(--surface-border) !important;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: rgba(15, 23, 42, 0.7);
+  color: var(--app-text);
+  border-color: var(--surface-border);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--muted-text);
 }
 
 .nav-pad {

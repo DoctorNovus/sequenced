@@ -7,20 +7,53 @@ import mongoose from "mongoose";
 @Injectable()
 export class TaskService {
 
+    normalizeTags(tags?: string[] | Array<{ title?: string }>): string[] | undefined {
+        if (!Array.isArray(tags)) return undefined;
+
+        const normalized = tags
+            .map((tag) => {
+                if (typeof tag === "string") return tag.trim().toLowerCase();
+                if (tag && typeof tag.title === "string") return tag.title.trim().toLowerCase();
+                return "";
+            })
+            .filter((tag) => tag.length > 0);
+
+        return Array.from(new Set(normalized));
+    }
+
     async addTask(data: Partial<Task>): Promise<Task> {
-        return Task.create(data);
+        const tags = this.normalizeTags(data.tags);
+        return Task.create({ ...data, ...(tags ? { tags } : {}) });
     }
 
     async addTasks(data: Partial<Task>[]): Promise<Task[]> {
-        return Task.insertMany(data);
+        const withTags = data.map((task) => {
+            const tags = this.normalizeTags(task.tags);
+            return { ...task, ...(tags ? { tags } : {}) };
+        });
+
+        return Task.insertMany(withTags);
     }
 
     async updateTask(id: string, data: Partial<Task> | UpdateQuery<Task>): Promise<Task | null> {
-        return Task.findByIdAndUpdate(id, data).lean<Task>().exec();
+        const tags = this.normalizeTags((data as Partial<Task>)?.tags);
+
+        const update: Partial<Task> | UpdateQuery<Task> = tags
+            ? { ...(data as Partial<Task>), tags }
+            : data;
+
+        return Task.findByIdAndUpdate(id, update).lean<Task>().exec();
     }
 
-    async getTasksByUserId(userId: string): Promise<Task[]> {
-        return Task.find({ users: userId })
+    async getTasksByUserId(userId: string, tags: string[] = []): Promise<Task[]> {
+        const normalizedTags = this.normalizeTags(tags) ?? [];
+        const query: Record<string, unknown> = { users: userId };
+
+        if (normalizedTags.length > 0) {
+            query.tags = { $all: normalizedTags };
+        }
+
+        return Task.find(query)
             .populate("subtasks")
             .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()

@@ -1,4 +1,4 @@
-import { StrictMode, useReducer } from "react";
+import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -37,6 +37,36 @@ export const queryClient = new QueryClient({
 
 export default function App() {
   const reducer = useAppReducer();
+  const [appState] = reducer;
+
+  useEffect(() => {
+    const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+    const resolveTheme = () => {
+      if (appState?.theme === "auto") {
+        return media?.matches ? "dark" : "light";
+      }
+      return appState?.theme === "dark" ? "dark" : "light";
+    };
+
+    const appliedTheme = resolveTheme();
+    document.documentElement.classList.toggle("dark", appliedTheme === "dark");
+    document.documentElement.setAttribute("data-theme", appliedTheme);
+    try {
+      window.localStorage.setItem("sequenced-theme", appState?.theme ?? "light");
+    } catch (err) {
+      console.warn("Failed to persist theme preference", err);
+    }
+
+    if (appState?.theme === "auto" && media?.addEventListener) {
+      const listener = () => {
+        const next = resolveTheme();
+        document.documentElement.classList.toggle("dark", next === "dark");
+        document.documentElement.setAttribute("data-theme", next);
+      };
+      media.addEventListener("change", listener);
+      return () => media.removeEventListener("change", listener);
+    }
+  }, [appState?.theme]);
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -16,8 +16,11 @@ export function NavBar() {
 
   const renderBar = (isInteractive: boolean) => (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 md:px-4">
-      <div className="pointer-events-auto nav-pad w-full max-w-2xl rounded-2xl bg-white/92 ring-1 ring-accent-blue/12 border border-white/70 h-16 md:h-20 bg-white">
-        <div className="relative flex h-full items-center justify-between px-3 py-2 md:px-5">
+      <div
+        className="pointer-events-auto nav-pad w-full max-w-2xl h-[4.75rem] md:h-[5.25rem] rounded-3xl border ring-1 backdrop-blur-xl shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
+        style={{ background: "var(--surface-card)", borderColor: "var(--nav-border)" }}
+      >
+        <div className="relative flex h-full items-center justify-between px-3 py-3 md:px-6 md:py-3.5">
           <div className="flex flex-1 items-center justify-evenly gap-2 md:pr-10">
             <NavItem to="/" title="Home">
               <HomeIcon />
