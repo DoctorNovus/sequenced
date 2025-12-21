@@ -89,6 +89,11 @@ export default function TaskMenu({
     a.localeCompare(b)
   );
 
+  const formatGroupName = (name: string) => {
+    if (!name) return "";
+    return name.replace(/\b\w/g, (ch) => ch.toUpperCase());
+  };
+
   const renderGroupHeader = (groupName: string, isCollapsed: boolean, count: number) => (
     <div className="flex w-full items-center justify-between gap-2 px-1 py-1 rounded-xl">
       <div className="flex items-center gap-2">
@@ -97,7 +102,7 @@ export default function TaskMenu({
         ) : (
           <ChevronDownIcon className="h-5 w-5 text-primary" />
         )}
-        <span className="text-sm font-semibold text-primary">{groupName}</span>
+        <span className="text-sm font-semibold text-primary">{formatGroupName(groupName)}</span>
       </div>
       <span className="text-xs font-semibold text-muted">{count}</span>
     </div>
@@ -113,7 +118,7 @@ export default function TaskMenu({
           return (
             <div
               key={groupName}
-              className="w-full rounded-2xl border bg-white/90 px-3 py-2 shadow-sm ring-1 ring-accent-blue/10 dark:bg-slate-900/70"
+              className="w-full rounded-2xl px-3 py-2 dark:bg-transparent"
             >
               <button
                 type="button"
