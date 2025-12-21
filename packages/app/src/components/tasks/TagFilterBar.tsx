@@ -20,13 +20,8 @@ export default function TagFilterBar({ tasks }: TagFilterBarProps) {
       if (!pending) return;
 
       const tags = Array.isArray(task?.tags) ? task.tags : [];
-      const subtaskTags = Array.isArray(task?.subtasks)
-        ? task.subtasks.flatMap((subtask) =>
-          Array.isArray(subtask.tags) ? subtask.tags : []
-        )
-        : [];
 
-      [...tags, ...subtaskTags].forEach((tag) => {
+      tags.forEach((tag) => {
         const normalized = typeof tag === "string"
           ? tag.toLowerCase()
           : tag && typeof (tag as any).title === "string"

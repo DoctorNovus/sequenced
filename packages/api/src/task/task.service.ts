@@ -23,7 +23,10 @@ export class TaskService {
 
     async addTask(data: Partial<Task>): Promise<Task> {
         const tags = this.normalizeTags(data.tags);
-        return Task.create({ ...data, ...(tags ? { tags } : {}) });
+        return Task.create({
+            ...data,
+            ...(tags ? { tags } : {}),
+        });
     }
 
     async addTasks(data: Partial<Task>[]): Promise<Task[]> {
@@ -38,9 +41,13 @@ export class TaskService {
     async updateTask(id: string, data: Partial<Task> | UpdateQuery<Task>): Promise<Task | null> {
         const tags = this.normalizeTags((data as Partial<Task>)?.tags);
 
-        const update: Partial<Task> | UpdateQuery<Task> = tags
-            ? { ...(data as Partial<Task>), tags }
-            : data;
+        const update: Partial<Task> | UpdateQuery<Task> = {
+            ...(data as Partial<Task>),
+            ...(tags ? { tags } : {}),
+        };
+
+        // Explicitly drop any subtasks payloads
+        (update as any).subtasks = undefined;
 
         return Task.findByIdAndUpdate(id, update).lean<Task>().exec();
     }
@@ -54,7 +61,6 @@ export class TaskService {
         }
 
         return Task.find(query)
-            .populate("subtasks")
             .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
@@ -91,7 +97,6 @@ export class TaskService {
         const todayFormat = this.getTaskDateFormat(new Date());
 
         return Task.find({ users: userId, date: { $regex: todayFormat }, done: false })
-            .populate("subtasks")
             .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
@@ -104,7 +109,6 @@ export class TaskService {
         const tomorrowFormat = this.getTaskDateFormat(today);
 
         return Task.find({ users: userId, date: { $regex: tomorrowFormat }, done: false })
-            .populate("subtasks")
             .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
@@ -115,7 +119,6 @@ export class TaskService {
         const format = this.getTaskDateWeekFormat(today);
 
         return Task.find({ users: userId, date: { $regex: format }, done: false })
-            .populate("subtasks")
             .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
@@ -126,7 +129,6 @@ export class TaskService {
         today.setHours(0, 0, 0, 0);
 
         const tasks = await Task.find({ users: userId, done: false })
-            .populate("subtasks")
             .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
@@ -142,7 +144,6 @@ export class TaskService {
 
     async getTasksIncomplete(userId: string): Promise<Task[]> {
         return Task.find({ users: userId, done: false })
-            .populate("subtasks")
             .populate({ path: "users", select: "first last email id" })
             .sort({ priority: -1 })
             .lean<Task[]>()

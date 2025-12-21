@@ -26,9 +26,9 @@ export interface Task {
   type?: string;
   accordion?: boolean;
   priority?: number;
-  subtasks: Task[];
   users?: any[];
   tags: string[];
+  group?: string;
 }
 
 const normalizeTags = (tags?: Array<string | { title?: string; color?: string }>): string[] | undefined => {
@@ -48,7 +48,7 @@ const normalizeTags = (tags?: Array<string | { title?: string; color?: string }>
 const normalizeTaskFromApi = (task: any): Task => ({
   ...task,
   tags: normalizeTags(task?.tags) ?? [],
-  subtasks: Array.isArray(task?.subtasks) ? task.subtasks.map(normalizeTaskFromApi) : [],
+  group: task?.group ? String(task.group).toLowerCase() : "",
 });
 
 const serializeTask = (task: Partial<Task>) => {
@@ -70,9 +70,9 @@ export function createInitialTaskData(): Task {
     done: false,
     repeater: "",
     reminder: "",
-    subtasks: [],
     priority: 0,
-    tags: []
+    tags: [],
+    group: ""
   };
 }
 

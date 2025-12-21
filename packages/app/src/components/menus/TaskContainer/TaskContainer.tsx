@@ -102,22 +102,7 @@ export default function TaskContainer({
         })
         .filter(Boolean)
       : [];
-    const subtaskTags = Array.isArray(task.subtasks)
-      ? task.subtasks.flatMap((subtask) =>
-        Array.isArray(subtask.tags)
-          ? subtask.tags
-            .map((tag) => {
-              if (typeof tag === "string") return tag.toLowerCase();
-              if (tag && typeof (tag as any).title === "string") return (tag as any).title.toLowerCase();
-              return "";
-            })
-            .filter(Boolean)
-          : []
-      )
-      : [];
-
-    const combined = [...ownTags, ...subtaskTags];
-    return activeTags.every((tag) => combined.includes(tag));
+    return activeTags.every((tag) => ownTags.includes(tag));
   };
 
   if (activeTags.length > 0) {

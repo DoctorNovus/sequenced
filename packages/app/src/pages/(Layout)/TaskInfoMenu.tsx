@@ -265,42 +265,12 @@ export default function TaskInfoMenu({
       title: tempData.title.trim(),
     };
 
-    if (appData.activeParent) {
-      const subTaskData = cleanedTask;
-
-      Logger.log("Sub Task Data", subTaskData);
-
-      const parentData = appData.activeParent;
-
-      Logger.log("Parent Data", parentData);
-
-      const newSubs = appData.activeParent.subtasks;
-
-      Logger.log("Old Subtasks", newSubs);
-
-      for (let i = 0; i < newSubs.length; i++) {
-        if (newSubs[i].id == subTaskData.id) newSubs[i] = subTaskData;
-      }
-
-      Logger.log("New Subtasks", newSubs);
-
-      updateTask({
-        id: parentData.id,
-        data: {
-          ...parentData,
-          subtasks: newSubs,
-        },
-      });
-
-      return;
-    }
-
-      updateTask({
-        id: tempData.id,
-        data: {
-          ...cleanedTask,
-        },
-      });
+    updateTask({
+      id: tempData.id,
+      data: {
+        ...cleanedTask,
+      },
+    });
 
     Logger.log("Data To Add", {
       tempData
@@ -320,8 +290,8 @@ export default function TaskInfoMenu({
         repeater: "",
         reminder: "",
         priority: 0,
-        subtasks: [],
         tags: tempData.tags ?? [],
+        group: tempData.group ?? "",
       }));
 
       addTasksBulk(payload).then(() => {
