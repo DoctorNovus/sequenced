@@ -17,7 +17,6 @@ export interface AppOptions {
   activeDate?: Date;
   tempActiveDate?: Date;
   activeTask?: Task;
-  activeParent?: Task;
   activeTags?: string[];
 
   theme?: ThemeChoice;
@@ -29,7 +28,6 @@ const initialData: AppOptions = {
   activeDate: new Date(),
   tempActiveDate: undefined,
   activeTask: undefined,
-  activeParent: undefined,
   activeTags: [],
 
   theme: "auto",

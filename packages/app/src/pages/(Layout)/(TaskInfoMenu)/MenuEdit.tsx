@@ -12,7 +12,6 @@ export default function MenuEdit({ type, appData, tempData, isDeleting, setIsDel
             {type == "edit" && (
                 <div className="">
                     <TaskInfoMenuDelete
-                        parent={appData.activeParent}
                         task={tempData}
                         closeMenu={closeMenu}
                         isDeleting={isDeleting}

@@ -43,7 +43,7 @@ export function TaskInfoMenuDelete({
             <div className="mb-3 flex flex-col gap-1">
               <h1 className="text-lg font-semibold">Delete this task?</h1>
               <p className="text-sm text-red-700 dark:text-red-100">
-                This will permanently remove the task and any subtasks.
+                This will permanently remove the task.
               </p>
             </div>
 

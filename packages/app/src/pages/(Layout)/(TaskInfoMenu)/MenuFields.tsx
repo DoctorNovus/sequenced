@@ -1,7 +1,5 @@
 import { formatDateTime } from "@/utils/date";
 import TaskInfoMenuItem from "./Shared/TaskInfoMenuItem";
-import TaskInfoMenuSubtaskMenu from "./Shared/TaskInfoMenuSubtaskMenu";
-import TaskInfoMenuSelect from "./Shared/TaskInfoMenuSelect";
 import TaskInfoMenuUser from "./Shared/TaskInfoUser/TaskInfoMenuUser";
 import TaskInfoMenuTags from "./Shared/TaskInfoMenuTags";
 
@@ -91,30 +89,19 @@ export default function MenuFields({
                             setTempData({ ...tempData, title: e.target.value })
                         }
                     />
+                    <TaskInfoMenuItem
+                        name="Group"
+                        value={tempData?.group || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setTempData({ ...tempData, group: e.target.value })
+                        }
+                        placeholder="Optional group label"
+                    />
                     {!isQuickAdd && validationError && (
                         <span className="px-1 text-sm font-semibold text-accent-red-500">
                             {validationError}
                         </span>
                     )}
-
-            {/* <TaskInfoMenuSelect
-          name="Task Type"
-          value={tempData.type}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setTempData({ type: e.target.value });
-          }}
-          options={[
-            { name: "Standard", value: "" },
-            { name: "Group", value: "group" },
-          ]}
-        /> */}
-
-                    <TaskInfoMenuSubtaskMenu
-                        subtasks={tempData.subtasks}
-                        tempData={tempData}
-                        setTempData={setTempData}
-                        setIsOpen={setIsOpen}
-                    />
 
                     <TaskInfoMenuItem
                         name="Description"
