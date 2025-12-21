@@ -37,7 +37,7 @@ export class Task extends Model {
     @Prop({ type: Number, default: 0 })
     priority: number;
 
-    @Prop({ type: [SubTask], default: [] })
+    @Prop({ type: [mongoose.Schema.Types.Mixed], default: [] })
     subtasks: SubTask[];
 
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], default: [] })

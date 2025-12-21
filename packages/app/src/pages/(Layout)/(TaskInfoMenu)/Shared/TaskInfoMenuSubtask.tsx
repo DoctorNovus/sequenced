@@ -1,44 +1,31 @@
-import { useApp } from "@/hooks/app";
 import { Task } from "@/hooks/tasks";
 
 export interface TaskInfoMenuSubtaskParams {
   task: Task;
-  parent: Task;
-  deleteSubtask: CallableFunction;
+  onChangeTitle: (id: string | undefined, title: string) => void;
+  onDelete: (id: string | undefined) => void;
 }
 
 export default function TaskInfoMenuSubtask({
   task,
-  parent,
-  deleteSubtask,
-  setIsOpen,
+  onChangeTitle,
+  onDelete,
 }: TaskInfoMenuSubtaskParams) {
-  const [appData, setAppData] = useApp();
-
-  const openSubtaskMenu = () => {
-    setAppData({
-      ...appData,
-      activeParent: parent,
-      activeTask: task,
-    });
-  };
-
   return (
-    <div
-      className="flex flex-row items-center gap-2"
-      onClick={(e) => openSubtaskMenu()}
-    >
-      <div className="w-full text-base px-2 py-2 bg-white border border-accent-black-500 rounded-md text-accent-black overflow-x-hidden overflow-y-scroll hover:bg-accent-black-600">
-        {task.title || "No Title"}
-      </div>
-      <div>
-        <span
-          className="px-5 py-2 bg-accent-red-500 rounded-lg text-lg"
-          onClick={(e) => deleteSubtask(task)}
-        >
-          -
-        </span>
-      </div>
+    <div className="flex items-center gap-2">
+      <input
+        className="w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-sm text-primary shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]"
+        value={task.title ?? ""}
+        onChange={(e) => onChangeTitle(task.id, e.target.value)}
+        placeholder="Subtask title"
+      />
+      <button
+        type="button"
+        onClick={() => onDelete(task.id)}
+        className="rounded-lg border border-accent-red-100 bg-accent-red-500/90 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:-translate-y-px transition"
+      >
+        Remove
+      </button>
     </div>
   );
 }

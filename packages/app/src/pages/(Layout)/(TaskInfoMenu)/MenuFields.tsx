@@ -109,14 +109,12 @@ export default function MenuFields({
           ]}
         /> */}
 
-                    {tempData.type == "group" && (
-                        <TaskInfoMenuSubtaskMenu
-                            subtasks={tempData.subtasks}
-                            tempData={tempData}
-                            setTempData={setTempData}
-                            setIsOpen={setIsOpen}
-                        />
-                    )}
+                    <TaskInfoMenuSubtaskMenu
+                        subtasks={tempData.subtasks}
+                        tempData={tempData}
+                        setTempData={setTempData}
+                        setIsOpen={setIsOpen}
+                    />
 
                     <TaskInfoMenuItem
                         name="Description"

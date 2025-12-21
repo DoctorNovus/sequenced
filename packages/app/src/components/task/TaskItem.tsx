@@ -19,6 +19,7 @@ interface TaskItemParams {
 }
 
 export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFilter, selectionMode = false, isSelected = false, onToggleSelect, isAnimating = false }: TaskItemParams) {
+  const isSubtask = type === "subtask";
 
   if (skeleton) {
     return (
@@ -220,7 +221,7 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
           <div className="w-full">
             <div className="w-full flex flex-row items-center justify-between">
               <TaskItemTitle text={item.title} />
-              {item.type == "group" && item.subtasks?.length > 0 && (
+              {item.subtasks?.length > 0 && (
                 <div>
                   <div
                     onClick={(e) => {
@@ -264,8 +265,8 @@ export function TaskItem({ skeleton, item, setIsInspecting, type, parent, taskFi
         </div>
       </TaskItemShell>
       <div className="w-full flex justify-end">
-        <div className="w-full pl-10 flex flex-col justify-end gap-1">
-          {item.type == "group" &&
+        <div className="w-full pl-8 flex flex-col justify-end gap-2 mt-2">
+          {item.subtasks?.length > 0 &&
             !isAccordion &&
             item.subtasks?.map((subtask: Task, key: number) => (
               <div

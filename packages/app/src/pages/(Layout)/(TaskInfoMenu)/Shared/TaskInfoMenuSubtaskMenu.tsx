@@ -1,7 +1,7 @@
+import { useMemo, useState } from "react";
 import { Task, createInitialTaskData } from "@/hooks/tasks";
 import TaskInfoMenuSubtask from "./TaskInfoMenuSubtask";
 import { createID } from "@/utils/id";
-import { Logger } from "@/utils/logger";
 
 export interface TaskInfoMenuSubtaskMenuParams {
   subtasks: Task[];
@@ -13,66 +13,84 @@ export default function TaskInfoMenuSubtaskMenu({
   subtasks,
   tempData,
   setTempData,
-  setIsOpen
 }: TaskInfoMenuSubtaskMenuParams) {
+  const [newTitle, setNewTitle] = useState("");
+
+  const normalizedSubtasks = useMemo(
+    () => subtasks?.map((task) => ({ ...task, title: task.title ?? "" })) ?? [],
+    [subtasks]
+  );
+
   const createNewSubtask = () => {
-    Logger.log("Initial subtasks", tempData.subtasks);
+    const title = newTitle.trim();
+    if (!title) return;
 
     const tempSubtasks = [...(tempData.subtasks || [])];
-
-    Logger.log("Temp Old Subtasks", tempSubtasks);
 
     const newTask: Task = {
       ...createInitialTaskData(),
       id: createID(20),
+      title,
     };
 
     tempSubtasks.push(newTask);
 
-    Logger.log("New Task", newTask);
-
-    Logger.log("Temp New Subtasks", tempSubtasks);
-
     setTempData({
       subtasks: tempSubtasks,
     });
+    setNewTitle("");
   };
 
-  const deleteSubtask = (task: Task) => {
-    const tempSubtasks = tempData.subtasks ?? [];
+  const deleteSubtask = (id: string | undefined) => {
+    const tempSubtasks = (tempData.subtasks ?? []).filter((sub) => sub.id !== id);
 
-    const subtaskData = tempSubtasks.find((tempTask: Task) => tempTask == task);
+    setTempData({ subtasks: tempSubtasks });
+  };
 
-    if (subtaskData) {
-      tempSubtasks.splice(tempSubtasks.indexOf(subtaskData), 1);
-    }
+  const updateSubtaskTitle = (id: string | undefined, title: string) => {
+    const tempSubtasks = (tempData.subtasks ?? []).map((task) =>
+      task.id === id ? { ...task, title } : task
+    );
 
-    setTempData({
-      subtasks: tempSubtasks,
-    });
+    setTempData({ subtasks: tempSubtasks });
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-row gap-2 items-center">
-        <h1 className="text-lg">Sub Tasks</h1>
-        <button
-          onClick={(e) => createNewSubtask()}
-          className="text-lg bg-accent-blue w-8 h-8 rounded-lg"
-        >
-          +
-        </button>
+    <div className="flex flex-col gap-0.5">
+      <div className="flex flex-row items-center justify-between">
+        <h2 className="text-sm font-semibold text-primary">Subtasks</h2>
       </div>
-      <div className="flex flex-col gap-2 px-2">
-        {subtasks?.map((task: Task, key: number) => (
+      <div className="flex flex-col gap-2 px-1">
+        {normalizedSubtasks?.map((task: Task, key: number) => (
           <TaskInfoMenuSubtask
-            parent={tempData}
             task={task}
-            key={key}
-            deleteSubtask={deleteSubtask}
-            setIsOpen={setIsOpen}
+            key={task.id || key}
+            onChangeTitle={updateSubtaskTitle}
+            onDelete={deleteSubtask}
           />
         ))}
+      </div>
+      <div className="flex items-center gap-2">
+        <input
+          className="w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-sm text-primary shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]"
+          placeholder="Add a subtask and press Enter"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              createNewSubtask();
+            }
+          }}
+        />
+        <button
+          type="button"
+          onClick={createNewSubtask}
+          className="rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-sm hover:-translate-y-px transition disabled:opacity-60"
+          disabled={!newTitle.trim()}
+        >
+          Add
+        </button>
       </div>
     </div>
   );
