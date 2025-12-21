@@ -20,6 +20,7 @@ export default function TaskMenu({
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const lastHoverIdRef = useRef<string | null>(null);
+  const dragCandidateRef = useRef<{ id: string; x: number; y: number } | null>(null);
   const { mutateAsync: updateTask } = useUpdateTask();
 
   if (skeleton) {
@@ -146,11 +147,21 @@ export default function TaskMenu({
       draggable={false}
       data-task-id={task.id}
       onPointerDown={(e) => {
-        e.preventDefault();
-        setDraggingId(task.id);
-        e.currentTarget.setPointerCapture(e.pointerId);
+        dragCandidateRef.current = { id: task.id, x: e.clientX, y: e.clientY };
+        lastHoverIdRef.current = null;
       }}
       onPointerMove={(e) => {
+        const candidate = dragCandidateRef.current;
+        if (!draggingId && candidate) {
+          const dx = e.clientX - candidate.x;
+          const dy = e.clientY - candidate.y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq > 64) { // ~8px threshold
+            setDraggingId(candidate.id);
+            lastHoverIdRef.current = candidate.id;
+          }
+        }
+
         if (!draggingId) return;
         e.preventDefault();
         const targetId = findTaskIdFromPoint(e.clientX, e.clientY);
@@ -160,7 +171,11 @@ export default function TaskMenu({
         }
       }}
       onPointerUp={(e) => {
-        if (!draggingId) return;
+        if (!draggingId) {
+          dragCandidateRef.current = null;
+          lastHoverIdRef.current = null;
+          return;
+        }
 
         const dropTarget = lastHoverIdRef.current ?? findTaskIdFromPoint(e.clientX, e.clientY);
         let updated = [...orderedTasks];
@@ -172,6 +187,7 @@ export default function TaskMenu({
 
         setDraggingId(null);
         lastHoverIdRef.current = null;
+        dragCandidateRef.current = null;
         setOrderedTasks(updated);
         persistOrder(updated);
       }}
@@ -181,7 +197,11 @@ export default function TaskMenu({
           handleReorder(draggingId, task.id);
         }
       }}
-      onPointerCancel={() => setDraggingId(null)}
+      onPointerCancel={() => {
+        setDraggingId(null);
+        dragCandidateRef.current = null;
+        lastHoverIdRef.current = null;
+      }}
       style={{
         touchAction: "none",
         transition: draggingId === task.id ? "none" : "transform 120ms ease, opacity 120ms ease",

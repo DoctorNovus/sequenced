@@ -6,8 +6,7 @@ import cors from "cors";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 
-const appUrl = process.env.APP_URL
-const;
+const appUrl = process.env.APP_URL;
 const sessionSecret = process.env.SESSION_SECRET;
 
 if (!appUrl) {
