@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { TaskItem } from "../task/TaskItem";
 import { isTaskDone } from "@/utils/data";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import { useUpdateTask } from "@/hooks/tasks";
 
 export default function TaskMenu({
   skeleton,
@@ -15,6 +16,11 @@ export default function TaskMenu({
   activeDate
 }) {
   const [collapsedGroups, setCollapsedGroups] = useState<string[]>([]);
+  const [orderedTasks, setOrderedTasks] = useState<any[]>([]);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const lastHoverIdRef = useRef<string | null>(null);
+  const { mutateAsync: updateTask } = useUpdateTask();
 
   if (skeleton) {
     return (
@@ -36,11 +42,36 @@ export default function TaskMenu({
         : true
     );
 
+  useEffect(() => {
+    setOrderedTasks(visibleTasks);
+  }, [tasks, taskFilter, activeDate]);
+
+  const handleReorder = (sourceId: string, targetId: string) => {
+    if (!sourceId || !targetId || sourceId === targetId) return;
+    const current = [...orderedTasks];
+    const fromIndex = current.findIndex((t) => t.id === sourceId);
+    const toIndex = current.findIndex((t) => t.id === targetId);
+    if (fromIndex === -1 || toIndex === -1) return;
+
+    const [moved] = current.splice(fromIndex, 1);
+    current.splice(toIndex, 0, moved);
+    setOrderedTasks(current);
+  };
+
+  const persistOrder = async (list: any[]) => {
+    const total = list.length;
+    const updates = list.map((task, idx) => ({
+      id: task.id,
+      data: { ...task, priority: total - idx }
+    }));
+    await Promise.all(updates.map((payload) => updateTask(payload)));
+  };
+
   const { grouped, ungrouped } = useMemo(() => {
     const groupedTasks: Record<string, any[]> = {};
     const ungroupedTasks: any[] = [];
 
-    visibleTasks.forEach((task) => {
+    orderedTasks.forEach((task) => {
       const groupName = (task.group || "").trim();
       if (groupName.length === 0) {
         ungroupedTasks.push(task);
@@ -60,8 +91,54 @@ export default function TaskMenu({
     );
   };
 
+  const findTaskIdFromPoint = (clientX: number, clientY: number): string | null => {
+    const el = document.elementFromPoint(clientX, clientY);
+    if (!el) return null;
+    const taskNode = el.closest("[data-task-id]");
+    if (!taskNode) return null;
+    return (taskNode as HTMLElement).dataset.taskId || null;
+  };
+
   const renderTask = (task: any) => (
-    <div key={task.id || task.title} className="w-full">
+    <div
+      key={task.id || task.title}
+      className={`w-full ${draggingId === task.id ? "opacity-60 scale-[0.99] ring-2 ring-accent-blue/50 shadow-lg" : ""}`}
+      draggable={false}
+      data-task-id={task.id}
+      onPointerDown={(e) => {
+        e.preventDefault();
+        setDraggingId(task.id);
+        e.currentTarget.setPointerCapture(e.pointerId);
+      }}
+      onPointerMove={(e) => {
+        if (!draggingId) return;
+        e.preventDefault();
+        const targetId = findTaskIdFromPoint(e.clientX, e.clientY);
+        if (targetId && targetId !== lastHoverIdRef.current) {
+          lastHoverIdRef.current = targetId;
+          handleReorder(draggingId, targetId);
+        }
+      }}
+      onPointerUp={() => {
+        if (draggingId) {
+          const current = [...orderedTasks];
+          setDraggingId(null);
+          persistOrder(current);
+          lastHoverIdRef.current = null;
+        }
+      }}
+      onPointerEnter={() => {
+        if (draggingId && draggingId !== task.id) {
+          lastHoverIdRef.current = task.id;
+          handleReorder(draggingId, task.id);
+        }
+      }}
+      onPointerCancel={() => setDraggingId(null)}
+      style={{
+        touchAction: "none",
+        transition: draggingId === task.id ? "none" : "transform 120ms ease, opacity 120ms ease",
+      }}
+    >
       <TaskItem
         item={task}
         setIsInspecting={setIsInspecting}

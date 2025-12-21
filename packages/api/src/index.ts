@@ -30,7 +30,7 @@ database.plugin(leanIdPlugin);
 
 /* setup the platform and global middleware */
 const platform = new ExpressPlatform();
-platform.use(cors({ origin: [appUrl], credentials: true }));
+platform.use(cors({ origin: [appUrl, "http://192.168.1.14:5173"], credentials: true }));
 platform.set("trust proxy", 4);
 
 platform.use(session({
