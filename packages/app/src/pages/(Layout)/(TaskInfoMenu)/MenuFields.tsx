@@ -93,7 +93,7 @@ export default function MenuFields({
                         name="Group"
                         value={tempData?.group || ""}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setTempData({ ...tempData, group: e.target.value })
+                            setTempData({ ...tempData, group: e.target.value.toLowerCase() })
                         }
                         placeholder="Optional group label"
                     />

@@ -48,7 +48,7 @@ const normalizeTags = (tags?: Array<string | { title?: string; color?: string }>
 const normalizeTaskFromApi = (task: any): Task => ({
   ...task,
   tags: normalizeTags(task?.tags) ?? [],
-  group: task?.group ?? "",
+  group: task?.group ? String(task.group).toLowerCase() : "",
 });
 
 const serializeTask = (task: Partial<Task>) => {
