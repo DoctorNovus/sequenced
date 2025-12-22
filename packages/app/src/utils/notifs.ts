@@ -6,8 +6,40 @@ import {
   PermissionStatus,
   ScheduleResult,
 } from "@capacitor/local-notifications";
+import { Capacitor } from "@capacitor/core";
 import { getSettings, setSettings } from "@/hooks/settings";
 import { Logger } from "./logger";
+import { fetchData } from "./data";
+
+const FALLBACK_BODY = "Stay on track—open Sequenced to see what's due today.";
+
+const isWeb = () => Capacitor.getPlatform() === "web";
+const supportsWebNotifications = () => typeof Notification !== "undefined";
+
+export async function getTodayNotificationBody(): Promise<string> {
+  try {
+    const response = await fetchData("/task/today", {});
+    if (!response.ok) throw new Error("Failed to fetch tasks");
+    const tasks = await response.json();
+    const titles: string[] = Array.isArray(tasks)
+      ? tasks
+          .map((t) => (typeof t?.title === "string" ? t.title.trim() : ""))
+          .filter((t) => t.length > 0)
+      : [];
+
+    if (titles.length === 0) {
+      return "Nothing due today. Set a plan and stay ahead.";
+    }
+
+    const preview = titles.slice(0, 3).join(", ");
+    const more = titles.length - 3;
+    const suffix = more > 0 ? ` (+${more} more)` : "";
+    return `Due today: ${preview}${suffix}`;
+  } catch (err) {
+    Logger.logWarning(`Unable to build daily notification: ${String(err)}`);
+    return FALLBACK_BODY;
+  }
+}
 
 /* Checks if a user has been reminded */
 export async function hasRemindedToday(): Promise<boolean> {
@@ -48,10 +80,12 @@ export async function setDailyReminders(hour?: number, minute?: number) {
 
   const id = new Date().getTime();
 
+  const body = await getTodayNotificationBody();
+
   await scheduleNotification({
     title: "Sequenced: ADHD Manager",
     id,
-    body: "Don't forget to check your tasks!",
+    body,
     schedule: {
       at: timeBuilder,
       every: "day",
@@ -102,11 +136,19 @@ export async function setNotificationConfig() {
 
 /* Checks if system can send notifications */
 export async function checkPermissions(): Promise<PermissionStatus> {
+  if (isWeb() && supportsWebNotifications()) {
+    const state = await Notification.requestPermission();
+    return { display: state } as PermissionStatus;
+  }
   return await LocalNotifications.checkPermissions();
 }
 
 /* Requests the ability to request permissions from the user */
 export async function requestPermissions(): Promise<PermissionStatus> {
+  if (isWeb() && supportsWebNotifications()) {
+    const state = await Notification.requestPermission();
+    return { display: state } as PermissionStatus;
+  }
   return await LocalNotifications.requestPermissions();
 }
 
@@ -118,17 +160,33 @@ export async function scheduleNotification(
 
   const checked = await checkPermissions();
 
-  if (checked.display == "granted") {
-    const notif = await LocalNotifications.schedule({
-      notifications: [...options],
-    });
-
-    return notif;
-  } else {
+  if (checked.display !== "granted") {
     Logger.logWarning(`Unable to send notification: Missing Permissions`);
+    return undefined;
   }
 
-  return undefined;
+  if (isWeb() && supportsWebNotifications()) {
+    options.forEach((opt) => {
+      const delay =
+        opt.schedule?.at instanceof Date
+          ? Math.max(0, opt.schedule.at.getTime() - Date.now())
+          : 0;
+      window.setTimeout(() => {
+        try {
+          new Notification(opt.title || "Sequenced", { body: opt.body });
+        } catch (err) {
+          Logger.logWarning(`Web notification failed: ${String(err)}`);
+        }
+      }, delay);
+    });
+    return undefined;
+  }
+
+  const notif = await LocalNotifications.schedule({
+    notifications: [...options],
+  });
+
+  return notif;
 }
 
 export async function cancelNotifications(

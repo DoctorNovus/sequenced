@@ -20,6 +20,7 @@ import instagramIcon from "@/assets/social_icons/instagram.svg";
 import facebookIcon from "@/assets/social_icons/facebook.svg";
 import { useApp } from "@/hooks/app";
 import { useChangePassword, useExportUserData, useRequestUserDeletion, useUpdateProfile, useUser } from "@/hooks/user";
+import { getTodayNotificationBody } from "@/utils/notifs";
 import { fetchData } from "@/utils/data";
 
 export default function SettingsPage() {
@@ -231,11 +232,12 @@ export default function SettingsPage() {
   };
 
   const TestDaily = async () => {
-    const fireAt = new Date(Date.now() + 3000);
+    const fireAt = new Date(Date.now());
+    const body = await getTodayNotificationBody();
     await scheduleNotification({
       id: Math.floor(Math.random() * 2147483647),
       title: "Sequenced: Test Reminder",
-      body: "This is a test daily notification.",
+      body,
       schedule: { at: fireAt },
     });
     Logger.log("Scheduled test notification for", fireAt.toISOString());
