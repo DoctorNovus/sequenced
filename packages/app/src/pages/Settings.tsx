@@ -8,7 +8,7 @@ import { Capacitor } from "@capacitor/core";
 
 import { Settings, getSettings, setSettings } from "@/hooks/settings";
 import { PendingLocalNotificationSchema } from "@capacitor/local-notifications";
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import DailyNotifications from "./(Settings)/DailyNotifications";
 import UserLogin from "./(Settings)/UserLogin";
 import { Logger } from "@/utils/logger";
@@ -19,6 +19,9 @@ import xIcon from "@/assets/social_icons/x.svg";
 import instagramIcon from "@/assets/social_icons/instagram.svg";
 import facebookIcon from "@/assets/social_icons/facebook.svg";
 import { useApp } from "@/hooks/app";
+import { useChangePassword, useExportUserData, useRequestUserDeletion, useUpdateProfile, useUser } from "@/hooks/user";
+import { getTodayNotificationBody } from "@/utils/notifs";
+import { fetchData } from "@/utils/data";
 
 export default function SettingsPage() {
   const [tempSettings, setTempSettings] = useState<Settings>({});
@@ -27,12 +30,34 @@ export default function SettingsPage() {
   const [cleanupInterval, setCleanupInterval] = useState<string>("30");
   const [cleanupStatus, setCleanupStatus] = useState<string>("");
   const [appState, setAppState] = useApp();
+  const user = useUser();
+  const updateProfile = useUpdateProfile();
+  const changePassword = useChangePassword();
+  const exportUserData = useExportUserData();
+  const requestUserDeletion = useRequestUserDeletion();
+  const [profileForm, setProfileForm] = useState({ first: "", last: "", email: "" });
+  const [profileMessage, setProfileMessage] = useState<string>("");
+  const [passwordForm, setPasswordForm] = useState({ current: "", next: "", confirm: "" });
+  const [passwordMessage, setPasswordMessage] = useState<string>("");
+  const [dataMessage, setDataMessage] = useState<string>("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
+  const [deleteInput, setDeleteInput] = useState<string>("");
 
   useEffect(() => {
     getSettings().then(async (tempSettings) => {
       setTempSettings(tempSettings);
     });
   }, []);
+
+  useEffect(() => {
+    if (user.isSuccess && user.data) {
+      setProfileForm({
+        first: user.data.first || "",
+        last: user.data.last || "",
+        email: user.data.email || ""
+      });
+    }
+  }, [user.isSuccess, user.data]);
 
   const UpdateSettings = async (newValue: object) => {
     const settings: Settings = { ...tempSettings, ...newValue };
@@ -139,12 +164,80 @@ export default function SettingsPage() {
     setAppState({ ...appState, theme: next });
   };
 
+  const handleProfileSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setProfileMessage("");
+    try {
+      await updateProfile.mutateAsync(profileForm);
+      setProfileMessage("Profile updated.");
+    } catch (err: any) {
+      setProfileMessage(err?.message || "Unable to update profile.");
+    }
+  };
+
+  const handlePasswordSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (passwordForm.next !== passwordForm.confirm) {
+      setPasswordMessage("New passwords do not match.");
+      return;
+    }
+    setPasswordMessage("");
+    try {
+      await changePassword.mutateAsync({
+        currentPassword: passwordForm.current,
+        newPassword: passwordForm.next
+      });
+      setPasswordMessage("Password updated.");
+      setPasswordForm({ current: "", next: "", confirm: "" });
+    } catch (err: any) {
+      setPasswordMessage(err?.message || "Unable to update password.");
+    }
+  };
+
+  const handleDownloadData = async () => {
+    setDataMessage("");
+    try {
+      const data = await exportUserData.mutateAsync();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "sequenced-account-data.json";
+      link.click();
+      URL.revokeObjectURL(url);
+      setDataMessage("Download started.");
+    } catch (err: any) {
+      setDataMessage(err?.message || "Unable to download data.");
+    }
+  };
+
+  const handleDeleteData = async () => {
+    setDataMessage("");
+    if (deleteInput.trim().toUpperCase() !== "DELETE") {
+      setDataMessage("Type DELETE to confirm.");
+      return;
+    }
+    try {
+      const resp = await requestUserDeletion.mutateAsync();
+      setDataMessage(
+        `Deletion requested. Removed from ${resp.removedFromTasks} tasks; deleted ${resp.deletedTasks} tasks. This cannot be undone.`
+      );
+      setShowDeleteConfirm(false);
+      setDeleteInput("");
+      await fetchData("/auth/logout", { method: "POST" });
+      window.location.href = "/auth";
+    } catch (err: any) {
+      setDataMessage(err?.message || "Unable to process deletion.");
+    }
+  };
+
   const TestDaily = async () => {
-    const fireAt = new Date(Date.now() + 3000);
+    const fireAt = new Date(Date.now());
+    const body = await getTodayNotificationBody();
     await scheduleNotification({
       id: Math.floor(Math.random() * 2147483647),
       title: "Sequenced: Test Reminder",
-      body: "This is a test daily notification.",
+      body,
       schedule: { at: fireAt },
     });
     Logger.log("Scheduled test notification for", fireAt.toISOString());
@@ -177,6 +270,146 @@ export default function SettingsPage() {
         </div>
       </div>
       <div className="w-full max-w-3xl flex flex-col gap-4">
+        <div className="rounded-2xl surface-card border ring-1 ring-accent-blue/10 p-4 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-lg font-semibold text-primary">Profile</h2>
+              <p className="text-sm text-muted">Manage your account details and privacy.</p>
+            </div>
+            {user.isLoading && <span className="text-xs text-muted">Loading...</span>}
+          </div>
+          <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleProfileSubmit}>
+            <label className="flex flex-col gap-1 text-sm text-primary">
+              First name
+              <input
+                type="text"
+                value={profileForm.first}
+                onChange={(e) => setProfileForm({ ...profileForm, first: e.target.value })}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm text-primary">
+              Last name
+              <input
+                type="text"
+                value={profileForm.last}
+                onChange={(e) => setProfileForm({ ...profileForm, last: e.target.value })}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm text-primary md:col-span-2">
+              Email
+              <input
+                type="email"
+                value={profileForm.email}
+                onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+              />
+            </label>
+            <div className="flex items-center gap-2 md:col-span-2">
+              <button
+                type="submit"
+                className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                disabled={updateProfile.isPending || user.isLoading}
+              >
+                {updateProfile.isPending ? "Saving..." : "Save changes"}
+              </button>
+              {profileMessage && <span className="text-sm text-muted">{profileMessage}</span>}
+            </div>
+          </form>
+          <div className="rounded-xl border border-slate-200/80 p-3 dark:border-slate-800/80 dark:bg-slate-900/40">
+            <h3 className="text-sm font-semibold text-primary mb-2">Change password</h3>
+            <form className="grid grid-cols-1 md:grid-cols-3 gap-3" onSubmit={handlePasswordSubmit}>
+              <label className="flex flex-col gap-1 text-sm text-primary">
+                Current
+                <input
+                  type="password"
+                  value={passwordForm.current}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
+                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm text-primary">
+                New
+                <input
+                  type="password"
+                  value={passwordForm.next}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, next: e.target.value })}
+                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm text-primary">
+                Confirm
+                <input
+                  type="password"
+                  value={passwordForm.confirm}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
+                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                />
+              </label>
+              <div className="flex items-center gap-2 md:col-span-3">
+                <button
+                  type="submit"
+                  className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                  disabled={changePassword.isPending}
+                >
+                  {changePassword.isPending ? "Updating..." : "Update password"}
+                </button>
+                {passwordMessage && <span className="text-sm text-muted">{passwordMessage}</span>}
+              </div>
+            </form>
+          </div>
+          <div className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-3 dark:border-slate-800/80 dark:bg-slate-900/50">
+            <h3 className="text-sm font-semibold text-primary mb-2 dark:text-white">Privacy</h3>
+            <div className="flex flex-wrap gap-3 items-center">
+              <button
+                type="button"
+                onClick={handleDownloadData}
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:-translate-y-px transition dark:border-slate-600 dark:bg-slate-900 dark:text-white"
+                disabled={exportUserData.isPending}
+              >
+                {exportUserData.isPending ? "Preparing..." : "Download my data"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDeleteConfirm((prev) => !prev);
+                  setDataMessage("");
+                }}
+                className="rounded-lg border border-red-400 bg-white px-3 py-2 text-sm font-semibold text-red-700 shadow-sm hover:-translate-y-px transition dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-100"
+              >
+                {showDeleteConfirm ? "Cancel" : "Confirm deletion"}
+              </button>
+              {showDeleteConfirm && (
+                <div className="w-full rounded-xl border border-red-200/70 bg-red-50/70 p-3 text-left shadow-sm dark:border-red-500/50 dark:bg-red-500/10">
+                  <p className="text-sm font-semibold text-red-800 dark:text-red-100">
+                    This will permanently delete all of your Sequenced data (tasks, tags, account). There is no way to recover it.
+                  </p>
+                  <div className="mt-2 flex flex-col gap-2">
+                    <label className="text-xs font-semibold text-primary dark:text-white">Type DELETE to confirm</label>
+                    <input
+                      type="text"
+                      value={deleteInput}
+                      onChange={(e) => setDeleteInput(e.target.value)}
+                      placeholder="DELETE"
+                      className="w-full rounded-lg border border-red-300 bg-white px-2 py-2 text-sm shadow-inner focus:border-red-500 focus:outline-none dark:border-red-500/60 dark:bg-slate-900 dark:text-white"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleDeleteData}
+                      className="self-start rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-red-400/40 hover:-translate-y-px transition disabled:opacity-70"
+                      disabled={requestUserDeletion.isPending}
+                    >
+                      {requestUserDeletion.isPending ? "Deleting..." : "Delete everything"}
+                    </button>
+                  </div>
+                </div>
+              )}
+              {dataMessage && <span className="text-sm text-muted">{dataMessage}</span>}
+            </div>
+          </div>
+        </div>
+
         <div className="rounded-2xl surface-card border ring-1 ring-accent-blue/10 p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
