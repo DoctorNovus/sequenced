@@ -10,10 +10,8 @@ export default function NameProvider() {
         const first = e.target[0].value;
         const last = e.target[1].value;
 
-        const resp = await updateName(first, last);
-
-        if(resp?.email)
-            navigate(0);
+        await updateName(first, last);
+        navigate(0);
     }
 
     return (
