@@ -85,6 +85,13 @@ export function occursOnDate(task: Task, target: Date): boolean {
 
 export function isTaskDone(task, activeDate) {
   const day = normalizeDay(activeDate ?? new Date());
+
+  // Non-repeating tasks: show as pending until explicitly marked done, regardless of date.
+  if (!task?.repeater) {
+    return task?.done === false || typeof task?.done === "undefined";
+  }
+
+  // Repeating tasks only count on their active occurrence day(s).
   if (!occursOnDate(task, day)) return false;
 
   const isCompletedForDay = Array.isArray(task.done)
