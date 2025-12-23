@@ -1,6 +1,8 @@
 type WebhookMessage = string | Record<string, unknown>;
 
 export default async function sendToWebhook(message: WebhookMessage): Promise<void> {
+    // Avoid spamming Discord during local development.
+    // if (process.env.NODE_ENV === "development") return;
     if (!process.env.UPDATES_WEBHOOK_URL) return;
 
     const payload =
