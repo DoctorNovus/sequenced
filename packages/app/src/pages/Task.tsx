@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTasks, filterBroken } from "@/hooks/tasks";
 import { sortByDate } from "@/utils/data";
 
@@ -15,6 +15,7 @@ export default function Task() {
   const [appData, setAppData] = useApp();
   const [activeDate, setActiveDate] = useState(appData.activeDate);
   const [isInspecting, setIsInspecting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const tasks = useTasks();
 
@@ -48,6 +49,38 @@ export default function Task() {
     }
   }, [isInspecting, appData.activeTask?.id, tasks.isSuccess, tasks.data, setAppData]);
 
+  const filteredTasks = useMemo(() => {
+    if (!tasks.isSuccess) return [];
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return tasks.data;
+
+    return tasks.data.filter((task) => {
+      const title = (task.title ?? "").toLowerCase();
+      const description = (task.description ?? "").toLowerCase();
+      const group = (task.group ?? "").toLowerCase();
+      const tags = Array.isArray(task.tags)
+        ? task.tags
+            .map((tag) =>
+              typeof tag === "string"
+                ? tag.toLowerCase()
+                : tag && typeof (tag as any).title === "string"
+                  ? (tag as any).title.toLowerCase()
+                  : ""
+            )
+            .join(" ")
+        : "";
+
+      return (
+        title.includes(term) ||
+        description.includes(term) ||
+        group.includes(term) ||
+        tags.includes(term)
+      );
+    });
+  }, [tasks.isSuccess, tasks.data, searchTerm]);
+
+  const tasksForDay = tasks.isSuccess ? { ...tasks, data: filteredTasks } : tasks;
+
   if (tasks.isLoading) {
     return (
       <div className="w-full h-full text-accent-black">
@@ -71,18 +104,29 @@ export default function Task() {
         <div className="flex w-full justify-center">
           <div className="flex w-full max-w-4xl flex-col items-center gap-4 px-3 md:px-6">
             <ActiveCalendar />
-            {tasks.isSuccess && (
-              <TagFilterBar tasks={tasks.data ?? []} />
-            )}
+            <div className="w-full flex flex-col gap-2">
+              <div className="flex w-full items-center rounded-xl bg-white/90 px-3 py-2 shadow-sm ring-1 ring-accent-blue/10 dark:bg-slate-900/70">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search tasks by title, description, or tag..."
+                  className="w-full bg-transparent text-sm text-primary outline-none placeholder:text-slate-400"
+                />
+              </div>
+              {tasks.isSuccess && (
+                <TagFilterBar tasks={filteredTasks ?? []} />
+              )}
+            </div>
             <DayTasks
               setIsInspecting={setIsInspecting}
-              tasks={tasks}
+              tasks={tasksForDay}
             />
             <TaskContainer
               identifier="all"
               setIsInspecting={setIsInspecting}
               title="All Tasks"
-              tasks={tasks}
+              tasks={filteredTasks}
               activeFilter="dailyTasks"
             />
           </div>
