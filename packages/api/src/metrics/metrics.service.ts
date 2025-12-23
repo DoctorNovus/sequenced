@@ -13,42 +13,22 @@ export class MetricsService {
     }
 
     async getTaskTodayCount(userId: string): Promise<{ count: number }> {
-        const todayFormat = this.taskService.getTaskDateFormat(new Date());
-        const count = await Task.countDocuments({ users: userId, date: { $regex: todayFormat }, done: false }).exec();
-
-        return { count };
+        const tasks = await this.taskService.getTasksToday(userId);
+        return { count: tasks.length };
     }
 
     async getTaskTomorrowCount(userId: string): Promise<{ count: number }> {
-        const today = new Date();
-        today.setDate(today.getDate() + 1);
-
-        const tomorrowFormat = this.taskService.getTaskDateFormat(today);
-        const count = await Task.countDocuments({ users: userId, date: { $regex: tomorrowFormat }, done: false }).exec();
-
-        return { count };
+        const tasks = await this.taskService.getTasksTomorrow(userId);
+        return { count: tasks.length };
     }
 
     async getTaskWeekCount(userId: string): Promise<{ count: number }> {
-        const format = this.taskService.getTaskDateWeekFormat(new Date());
-        const count = await Task.countDocuments({ users: userId, date: { $regex: format }, done: false }).exec();
-
-        return { count };
+        const tasks = await this.taskService.getTasksWeek(userId);
+        return { count: tasks.length };
     }
 
     async getTaskOverdueCount(userId: string): Promise<{ count: number }> {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const tasks = await Task.find({ users: userId, done: false }).lean<Task[]>().exec();
-        const count = tasks.filter((task) => {
-            if (!task.date) return false;
-            const taskDate = new Date(task.date);
-            const time = taskDate.getTime();
-            if (Number.isNaN(time) || time <= 0) return false;
-            return taskDate < today;
-        }).length;
-
-        return { count };
+        const tasks = await this.taskService.getTasksOverdue(userId);
+        return { count: tasks.length };
     }
 }

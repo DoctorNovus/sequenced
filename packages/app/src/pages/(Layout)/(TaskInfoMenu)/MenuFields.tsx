@@ -2,6 +2,7 @@ import { formatDateTime } from "@/utils/date";
 import TaskInfoMenuItem from "./Shared/TaskInfoMenuItem";
 import TaskInfoMenuUser from "./Shared/TaskInfoUser/TaskInfoMenuUser";
 import TaskInfoMenuTags from "./Shared/TaskInfoMenuTags";
+import TaskInfoMenuSelect from "./Shared/TaskInfoMenuSelect";
 
 interface MenuFieldsProps {
     type: string | undefined;
@@ -117,6 +118,24 @@ export default function MenuFields({
                         onChange={(tags) => setTempData({ ...tempData, tags })}
                     />
 
+                    <TaskInfoMenuSelect
+                        name="Repeating"
+                        value={tempData.repeater}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                            setTempData({ repeater: e.target.value });
+                        }}
+                        options={[
+                            { name: "Do Not Repeat", value: "" },
+                            { name: "Every Day", value: "daily" },
+                            { name: "Every Week", value: "weekly" },
+                            { name: "Every 2 Weeks", value: "bi-weekly" },
+                            { name: "Every Month", value: "monthly" },
+                        ]}
+                    />
+                    <span className="text-xs text-muted px-1">
+                        Repeating tasks can be completed once per due day; completion is tracked per occurrence.
+                    </span>
+
                     {tempData.date.getTime() != 0 && (
                         <TaskInfoMenuItem
                             name="Due Date"
@@ -181,40 +200,6 @@ export default function MenuFields({
                     </div>
 
                     {type == "edit" && <TaskInfoMenuUser data={tempData} />}
-
-            {/* <TaskInfoMenuSelect
-                name="Remind Me"
-                value={tempData.reminder}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setTempData({ reminder: e.target.value });
-                }}
-                options={[
-                    { name: "Do not remind", value: "" },
-                    { name: "0min before", value: "0" },
-                    { name: "15min before", value: "15" },
-                    { name: "30min before", value: "30" },
-                    { name: "45min before", value: "45" },
-                    { name: "1hr Before", value: "60" },
-                    { name: "2hr Before", value: "120" },
-                    { name: "12hr before", value: "720" },
-                    { name: "1 day before", value: "1440" },
-                ]}
-            />
-
-            <TaskInfoMenuSelect
-                name="Repeating"
-                value={tempData.repeater}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setTempData({ repeater: e.target.value });
-                }}
-                options={[
-                    { name: "Do Not Repeat", value: "" },
-                    { name: "Every Day", value: "daily" },
-                    { name: "Every Week", value: "weekly" },
-                    { name: "Every 2 Weeks", value: "bi-weekly" },
-                    { name: "Every Month", value: "monthly" },
-                ]}
-            /> */}
 
                     <div className="flex flex-col gap-2">
                         <span className="text-sm font-semibold text-primary px-1">Priority</span>

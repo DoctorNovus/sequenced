@@ -2,6 +2,14 @@ import { Task } from "@/hooks/tasks";
 import { matchDate } from "./date";
 import { SERVER_IP } from "@/hooks/app";
 
+const DAY_MS = 1000 * 60 * 60 * 24;
+
+const normalizeDay = (value: Date | string | number | undefined) => {
+  const date = new Date(value as any);
+  date.setHours(0, 0, 0, 0);
+  return date;
+};
+
 export async function fetchData(url: string, options: any) {
   const payload = {
     headers: {
@@ -47,65 +55,44 @@ export function isDateGreater(a, b) {
  * @returns true/false if within proximity
  */
 export function isDateWithinProximity(mode, a, b) {
-  let tempDate = new Date(a.date);
+  return occursOnDate({ ...a, repeater: mode }, b);
+}
 
-  switch (mode) {
+export function occursOnDate(task: Task, target: Date): boolean {
+  if (!task?.date) return false;
+
+  const start = normalizeDay(task.date);
+  const day = normalizeDay(target);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(day.getTime())) return false;
+  if (day < start) return false;
+
+  switch (task.repeater) {
     case "daily":
-      tempDate = new Date(a.date);
-      if (isDateGreater(tempDate, b)) return true;
-      break;
-
+      return true;
     case "weekly":
-      tempDate = new Date(a.date);
-      return new Date(a.date).getDay() == new Date(b).getDay();
-
-    case "bi-weekly":
-      tempDate = new Date(a.date);
-      for (let i = 0; i < 100; i++) {
-        tempDate.setDate(new Date(a.date).getDate() + i * 14);
-        if (matchDate(tempDate, b)) {
-          return true;
-        }
-      }
-
-      return false;
-
+      return start.getDay() === day.getDay();
+    case "bi-weekly": {
+      const diffDays = Math.floor(Math.abs(day.getTime() - start.getTime()) / DAY_MS);
+      return diffDays % 14 === 0;
+    }
     case "monthly":
-      tempDate = new Date(a.date);
-      for (let i = 0; i < 12; i++) {
-        tempDate.setMonth(tempDate.getMonth() + i);
-        if (
-          tempDate.getFullYear() == b.getFullYear() &&
-          tempDate.getMonth() == b.getMonth() &&
-          tempDate.getDate() == b.getDate()
-        ) {
-          return true;
-        }
-      }
-
-      return false;
+      return start.getDate() === day.getDate();
+    default:
+      return start.getTime() === day.getTime();
   }
 }
 
-/**
- *
- * @param {Object} task task
- * @param {Object} activeDate context date
- * @returns
- */
 export function isTaskDone(task, activeDate) {
-  if (Array.isArray(task.done)) {
-    if (task.done.length == 0) return true;
-    else if (task.done.length > 0) {
-      return !task.done.find((task) =>
-        matchDate(new Date(task), new Date(activeDate))
-      );
-    }
-  } else {
-    return task.done == false;
-  }
+  const day = normalizeDay(activeDate ?? new Date());
+  if (!occursOnDate(task, day)) return false;
 
-  return false;
+  const isCompletedForDay = Array.isArray(task.done)
+    ? task.done.some((entry) => matchDate(new Date(entry), day))
+    : (!task.repeater && Boolean(task.done));
+
+  // Return true when the task is still pending for the selected day.
+  return !isCompletedForDay;
 }
 
 export function sortByPriority(tasks: Task[]) {
