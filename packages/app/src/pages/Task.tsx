@@ -105,7 +105,21 @@ export default function Task() {
           <div className="flex w-full max-w-4xl flex-col items-center gap-4 px-3 md:px-6">
             <ActiveCalendar />
             <div className="w-full flex flex-col gap-2">
-              <div className="flex w-full items-center rounded-xl bg-white/90 px-3 py-2 shadow-sm ring-1 ring-accent-blue/10 dark:bg-slate-900/70">
+              <div className="flex w-full items-center gap-2 rounded-xl bg-white/90 px-3 py-2 shadow-sm ring-1 ring-accent-blue/10 dark:bg-slate-900/70">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-slate-400"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="7" />
+                  <line x1="16.65" y1="16.65" x2="21" y2="21" />
+                </svg>
                 <input
                   type="text"
                   value={searchTerm}
