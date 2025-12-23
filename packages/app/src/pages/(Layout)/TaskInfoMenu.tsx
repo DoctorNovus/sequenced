@@ -258,6 +258,11 @@ export default function TaskInfoMenu({
   };
 
   const saveAll = () => {
+    if (!tempData.title || tempData.title.trim().length === 0) {
+      alert("Please add a task title.");
+      return;
+    }
+
     if (!validateBeforeSubmit(false)) return;
 
     const cleanedTask = {
@@ -308,6 +313,10 @@ export default function TaskInfoMenu({
     }
 
     if (!validateBeforeSubmit(false)) return;
+    if (!tempData.title || tempData.title.trim().length === 0) {
+      alert("Please add a task title.");
+      return;
+    }
 
     if (!tempData.id) tempData.id = createID(20);
 
