@@ -7,7 +7,7 @@ export default function DataContainer() {
     return (
         <div className="relative min-h-screen w-full">
             <div className="absolute inset-0 transition-[background] duration-200" style={{ background: "var(--app-background)" }} />
-            <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-4 md:px-10 lg:px-12">
+            <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-4 md:px-10 lg:px-12 pt-2 md:pt-28">
                 <div className="flex flex-row justify-center items-center w-full">
                     <div className="my-1" />
                 </div>
