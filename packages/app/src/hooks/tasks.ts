@@ -253,15 +253,18 @@ export function useAddTasksBulk(): UseMutationResult<void, Error, Partial<Task>[
 export function useUpdateTask(): UseMutationResult<
   void,
   Error,
-  { id: string; data: Object },
+  { id: string; data: Partial<Task> },
   unknown
 > {
   const queryClient = useQueryClient();
 
-  const mutationFn = async ({ id, data }: { id: string; data: Object }) => {
+  const mutationFn = async ({ id, data }: { id: string; data: Partial<Task> }) => {
+    // Users are managed via dedicated invite/remove endpoints; omit them to avoid clobbering membership.
+    const { users: _omitUsers, ...rest } = data ?? {};
+
     await fetchData("/task", {
       method: "PATCH",
-      body: serializeTask(data as Partial<Task>)
+      body: serializeTask(rest)
     });
   };
 

@@ -14,14 +14,14 @@ export function NavBar() {
 
   const [isAdding, setIsAdding] = useState(false);
 
-  const renderBar = (isInteractive: boolean) => (
-    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 md:px-4">
+  const renderMobileBar = (isInteractive: boolean) => (
+    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 md:hidden">
       <div
-        className="pointer-events-auto nav-pad w-full max-w-2xl h-[4.75rem] md:h-[5.25rem] rounded-3xl border ring-1 backdrop-blur-xl shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
+        className="pointer-events-auto nav-pad w-full max-w-2xl h-[4.75rem] rounded-3xl border ring-1 backdrop-blur-xl shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
         style={{ background: "var(--surface-card)", borderColor: "var(--nav-border)" }}
       >
-        <div className="relative flex h-full items-center justify-between px-3 py-3 md:px-6 md:py-3.5">
-          <div className="flex flex-1 items-center justify-evenly gap-2 md:pr-10">
+        <div className="relative flex h-full items-center justify-between px-3 py-3">
+          <div className="flex flex-1 items-center justify-evenly gap-2">
             <NavItem to="/" title="Home">
               <HomeIcon />
             </NavItem>
@@ -42,7 +42,7 @@ export function NavBar() {
             </button>
           </div>
 
-          <div className="flex flex-1 items-center justify-evenly gap-2 md:pl-10">
+          <div className="flex flex-1 items-center justify-evenly gap-2">
             <NavItem to="#" title="Calendar" disabled>
               <CalendarViewIcon className="opacity-50 cursor-not-allowed" />
             </NavItem>
@@ -50,6 +50,53 @@ export function NavBar() {
               <SettingsIcon />
             </NavItem>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderDesktopBar = (isInteractive: boolean) => (
+    <div className="hidden md:flex fixed inset-x-0 top-4 z-40 justify-center px-6">
+      <div
+        className="flex w-full max-w-5xl items-center gap-4 rounded-3xl border ring-1 backdrop-blur-xl bg-white/90 px-5 py-3 shadow-[0_14px_40px_rgba(15,23,42,0.12)] dark:bg-slate-900/85"
+        style={{ borderColor: "var(--nav-border)" }}
+      >
+        <div className="flex items-center gap-3 pr-4">
+          <span className="h-10 w-10 rounded-2xl bg-gradient-to-br from-accent-blue-700 to-accent-blue-500 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-accent-blue/25">
+            S
+          </span>
+          <div className="flex flex-col leading-tight">
+            <span className="text-sm font-semibold text-primary">Sequenced</span>
+            <span className="text-xs text-muted">Plan • Track • Repeat</span>
+          </div>
+        </div>
+
+        <div className="flex flex-1 items-center gap-2">
+          <NavItem to="/" title="Home">
+            <HomeIcon />
+          </NavItem>
+          <NavItem to="/tasks" title="Tasks">
+            <TasksIcon />
+          </NavItem>
+          <NavItem to="#" title="Calendar" disabled>
+            <CalendarViewIcon className="opacity-50 cursor-not-allowed" />
+          </NavItem>
+          <NavItem to="/settings" title="Settings">
+            <SettingsIcon />
+          </NavItem>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            disabled={!isInteractive}
+            onClick={isInteractive ? () => setIsAdding(true) : undefined}
+            className="flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 px-4 text-sm font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-white transition hover:-translate-y-0.5 hover:scale-[1.02] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/15">
+              <AddIcon />
+            </div>
+            New Task
+          </button>
         </div>
       </div>
     </div>
@@ -63,7 +110,8 @@ export function NavBar() {
     <>
       {showBar && (
         <>
-          {renderBar(isAuthed)}
+          {renderMobileBar(isAuthed)}
+          {renderDesktopBar(isAuthed)}
           <TaskInfoMenu type="add" isOpen={isAdding} setIsOpen={setIsAdding} />
         </>
       )}

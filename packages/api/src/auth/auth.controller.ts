@@ -3,7 +3,6 @@ import { BadRequest, Unauthorized } from "@outwalk/firefly/errors";
 import { UserService } from "@/user/user.service";
 import { User } from "@/user/user.entity";
 import { Request } from "express";
-import sendToWebhook from "@/logging/webhook";
 
 @Controller()
 export class AuthController {
@@ -14,7 +13,6 @@ export class AuthController {
     @Get("/")
     async getAuth({ session }: Request): Promise<{ message: string }> {
         if (!session.user) throw new Unauthorized("Not Logged In");
-        await sendToWebhook(`${session.user.id} (${session.user.first}) has logged in.`);
         return { message: "Logged In" };
     }
 

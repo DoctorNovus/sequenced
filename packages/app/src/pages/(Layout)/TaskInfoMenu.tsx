@@ -258,6 +258,11 @@ export default function TaskInfoMenu({
   };
 
   const saveAll = () => {
+    if (!tempData.title || tempData.title.trim().length === 0) {
+      alert("Please add a task title.");
+      return;
+    }
+
     if (!validateBeforeSubmit(false)) return;
 
     const cleanedTask = {
@@ -308,6 +313,10 @@ export default function TaskInfoMenu({
     }
 
     if (!validateBeforeSubmit(false)) return;
+    if (!tempData.title || tempData.title.trim().length === 0) {
+      alert("Please add a task title.");
+      return;
+    }
 
     if (!tempData.id) tempData.id = createID(20);
 
@@ -346,7 +355,7 @@ export default function TaskInfoMenu({
           className="relative z-50"
         >
           <div
-            className="fixed inset-0 flex w-full h-full items-end justify-center bg-black/25 dark:bg-black/60 backdrop-blur-sm px-3 pb-4 pt-10 md:items-center"
+            className="fixed inset-0 flex w-full h-full items-center justify-center bg-black/25 dark:bg-black/60 backdrop-blur-sm px-3 pb-6 pt-10"
           >
             <DialogPanel
               className="flex w-full max-w-xl max-h-screen flex-col overflow-y-auto rounded-3xl surface-card border text-primary shadow-2xl ring-1 ring-accent-blue/15 p-4 md:p-6"

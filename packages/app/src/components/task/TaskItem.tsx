@@ -83,27 +83,24 @@ export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectio
     let newData = {};
 
     if (item.repeater && item.repeater.length != 0) {
-      let newDone = item.done || [];
-      let activeDate = appData.activeDate;
-
-      if (!Array.isArray(item.done)) item.done = newDone;
+      const activeDate = appData.activeDate;
+      const newDone = Array.isArray(item.done) ? [...item.done] : [];
 
       let rawDate = new Date(activeDate);
       rawDate.setHours(0, 0, 0, 0);
 
-      let foundDate = [...item.done].find((ite) =>
-        matchDate(new Date(ite), rawDate)
-      );
+      const foundIdx = newDone.findIndex((entry) => matchDate(new Date(entry), rawDate));
 
-      if (!foundDate) newDone.push(rawDate);
-      else newDone.splice(newDone.indexOf(rawDate), 1);
+      if (foundIdx === -1) {
+        newDone.push(rawDate);
+      } else {
+        newDone.splice(foundIdx, 1);
+      }
 
       updateTask({ id: item.id, data: { ...item, done: newDone } });
     } else {
       updateTask({ id: item.id, data: { ...item, done: !item.done } });
     }
-
-    setIsManaging(false);
 
     // allow fade-out before hiding when filtering incomplete
     setTimeout(() => setIsCompleting(false), 600);

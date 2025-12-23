@@ -42,6 +42,7 @@ export default function SettingsPage() {
   const [dataMessage, setDataMessage] = useState<string>("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [deleteInput, setDeleteInput] = useState<string>("");
+  const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
 
   useEffect(() => {
     getSettings().then(async (tempSettings) => {
@@ -318,46 +319,58 @@ export default function SettingsPage() {
             </div>
           </form>
           <div className="rounded-xl border border-slate-200/80 p-3 dark:border-slate-800/80 dark:bg-slate-900/40">
-            <h3 className="text-sm font-semibold text-primary mb-2">Change password</h3>
-            <form className="grid grid-cols-1 md:grid-cols-3 gap-3" onSubmit={handlePasswordSubmit}>
-              <label className="flex flex-col gap-1 text-sm text-primary">
-                Current
-                <input
-                  type="password"
-                  value={passwordForm.current}
-                  onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
-                />
-              </label>
-              <label className="flex flex-col gap-1 text-sm text-primary">
-                New
-                <input
-                  type="password"
-                  value={passwordForm.next}
-                  onChange={(e) => setPasswordForm({ ...passwordForm, next: e.target.value })}
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
-                />
-              </label>
-              <label className="flex flex-col gap-1 text-sm text-primary">
-                Confirm
-                <input
-                  type="password"
-                  value={passwordForm.confirm}
-                  onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
-                />
-              </label>
-              <div className="flex items-center gap-2 md:col-span-3">
-                <button
-                  type="submit"
-                  className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
-                  disabled={changePassword.isPending}
-                >
-                  {changePassword.isPending ? "Updating..." : "Update password"}
-                </button>
-                {passwordMessage && <span className="text-sm text-muted">{passwordMessage}</span>}
-              </div>
-            </form>
+            <button
+              type="button"
+              onClick={() => setShowChangePassword((prev) => !prev)}
+              className="flex w-full items-center justify-between text-left"
+            >
+              <h3 className="text-sm font-semibold text-primary">Change password</h3>
+              <span className="text-xs font-semibold text-accent-blue">
+                {showChangePassword ? "Hide" : "Show"}
+              </span>
+            </button>
+
+            {showChangePassword && (
+              <form className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3" onSubmit={handlePasswordSubmit}>
+                <label className="flex flex-col gap-1 text-sm text-primary">
+                  Current
+                  <input
+                    type="password"
+                    value={passwordForm.current}
+                    onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-sm text-primary">
+                  New
+                  <input
+                    type="password"
+                    value={passwordForm.next}
+                    onChange={(e) => setPasswordForm({ ...passwordForm, next: e.target.value })}
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-sm text-primary">
+                  Confirm
+                  <input
+                    type="password"
+                    value={passwordForm.confirm}
+                    onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                  />
+                </label>
+                <div className="flex items-center gap-2 md:col-span-3">
+                  <button
+                    type="submit"
+                    className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                    disabled={changePassword.isPending}
+                  >
+                    {changePassword.isPending ? "Updating..." : "Update password"}
+                  </button>
+                  {passwordMessage && <span className="text-sm text-muted">{passwordMessage}</span>}
+                </div>
+              </form>
+            )}
           </div>
           <div className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-3 dark:border-slate-800/80 dark:bg-slate-900/50">
             <h3 className="text-sm font-semibold text-primary mb-2 dark:text-white">Privacy</h3>

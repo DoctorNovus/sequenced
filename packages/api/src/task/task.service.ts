@@ -7,6 +7,93 @@ import mongoose from "mongoose";
 @Injectable()
 export class TaskService {
 
+    private readonly ONE_DAY_MS = 1000 * 60 * 60 * 24;
+
+    private normalizeDay(date: Date): Date {
+        const normalized = new Date(date);
+        normalized.setHours(0, 0, 0, 0);
+        return normalized;
+    }
+
+    private matchDay(a: string | Date | undefined, b: Date): boolean {
+        if (!a) return false;
+        const dayA = this.normalizeDay(new Date(a));
+        const dayB = this.normalizeDay(b);
+        if (Number.isNaN(dayA.getTime()) || Number.isNaN(dayB.getTime())) return false;
+        return dayA.getTime() === dayB.getTime();
+    }
+
+    private occursOnDate(task: Task, target: Date): boolean {
+        if (!task?.date) return false;
+        const startDay = this.normalizeDay(new Date(task.date));
+        const targetDay = this.normalizeDay(target);
+
+        if (Number.isNaN(startDay.getTime()) || Number.isNaN(targetDay.getTime())) return false;
+        if (targetDay < startDay) return false;
+
+        if (!task.repeater) return startDay.getTime() === targetDay.getTime();
+
+        switch (task.repeater) {
+            case "daily":
+                return true;
+            case "weekly":
+                return startDay.getDay() === targetDay.getDay();
+            case "bi-weekly": {
+                const diffDays = Math.floor(Math.abs(targetDay.getTime() - startDay.getTime()) / this.ONE_DAY_MS);
+                return diffDays % 14 === 0;
+            }
+            case "monthly":
+                return startDay.getDate() === targetDay.getDate();
+            default:
+                return false;
+        }
+    }
+
+    private isCompletedOnDate(task: Task, target: Date): boolean {
+        // For repeating tasks, ignore legacy boolean `done` and rely on per-day markers.
+        if (task.repeater && !Array.isArray(task.done)) return false;
+
+        if (Array.isArray(task.done)) {
+            return task.done.some((entry) => this.matchDay(entry as any, target));
+        }
+
+        return Boolean(task.done);
+    }
+
+    private isPendingOnDate(task: Task, target: Date): boolean {
+        return this.occursOnDate(task, target) && !this.isCompletedOnDate(task, target);
+    }
+
+    private hasPendingWithinDays(task: Task, start: Date, days: number): boolean {
+        const startDay = this.normalizeDay(start);
+        for (let i = 0; i < days; i++) {
+            const checkDay = new Date(startDay);
+            checkDay.setDate(startDay.getDate() + i);
+            if (this.isPendingOnDate(task, checkDay)) return true;
+        }
+        return false;
+    }
+
+    private hasPendingBefore(task: Task, target: Date): boolean {
+        if (!task?.date) return false;
+
+        const targetDay = this.normalizeDay(target);
+        const dayBefore = new Date(targetDay);
+        dayBefore.setDate(targetDay.getDate() - 1);
+
+        const startDay = this.normalizeDay(new Date(task.date));
+        if (Number.isNaN(startDay.getTime()) || startDay > dayBefore) return false;
+
+        const totalDays = Math.floor((dayBefore.getTime() - startDay.getTime()) / this.ONE_DAY_MS) + 1;
+        for (let i = 0; i < totalDays; i++) {
+            const checkDay = new Date(startDay);
+            checkDay.setDate(startDay.getDate() + i);
+            if (this.isPendingOnDate(task, checkDay)) return true;
+        }
+
+        return false;
+    }
+
     normalizeTags(tags?: string[] | Array<{ title?: string }>): string[] | undefined {
         if (!Array.isArray(tags)) return undefined;
 
@@ -94,60 +181,65 @@ export class TaskService {
     }
 
     async getTasksToday(userId: string): Promise<Task[]> {
-        const todayFormat = this.getTaskDateFormat(new Date());
+        const today = this.normalizeDay(new Date());
 
-        return Task.find({ users: userId, date: { $regex: todayFormat }, done: false })
+        const tasks = await Task.find({ users: userId })
             .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
+
+        return tasks.filter((task) => this.isPendingOnDate(task, today));
     }
 
     async getTasksTomorrow(userId: string): Promise<Task[]> {
-        const today = new Date();
-        today.setDate(today.getDate() + 1);
+        const tomorrow = this.normalizeDay(new Date());
+        tomorrow.setDate(tomorrow.getDate() + 1);
 
-        const tomorrowFormat = this.getTaskDateFormat(today);
-
-        return Task.find({ users: userId, date: { $regex: tomorrowFormat }, done: false })
+        const tasks = await Task.find({ users: userId })
             .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
+
+        return tasks.filter((task) => this.isPendingOnDate(task, tomorrow));
     }
 
     async getTasksWeek(userId: string): Promise<Task[]> {
-        const today = new Date();
-        const format = this.getTaskDateWeekFormat(today);
+        const startDay = this.normalizeDay(new Date());
 
-        return Task.find({ users: userId, date: { $regex: format }, done: false })
+        const tasks = await Task.find({ users: userId })
             .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
+
+        return tasks.filter((task) => this.hasPendingWithinDays(task, startDay, 7));
     }
 
     async getTasksOverdue(userId: string): Promise<Task[]> {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = this.normalizeDay(new Date());
 
-        const tasks = await Task.find({ users: userId, done: false })
+        const tasks = await Task.find({ users: userId })
             .populate({ path: "users", select: "first last email id" })
             .lean<Task[]>()
             .exec();
 
-        return tasks.filter((task) => {
-            if (!task.date) return false;
-            const taskDate = new Date(task.date);
-            const time = taskDate.getTime();
-            if (Number.isNaN(time) || time <= 0) return false;
-            return taskDate < today;
-        });
+        return tasks.filter((task) => this.hasPendingBefore(task, today));
     }
 
     async getTasksIncomplete(userId: string): Promise<Task[]> {
-        return Task.find({ users: userId, done: false })
+        const today = this.normalizeDay(new Date());
+
+        const tasks = await Task.find({ users: userId })
             .populate({ path: "users", select: "first last email id" })
             .sort({ priority: -1 })
             .lean<Task[]>()
             .exec();
+
+        // Consider tasks that are pending today, within the next 90 days, or overdue.
+        return tasks.filter((task) =>
+            this.isPendingOnDate(task, today) ||
+            this.hasPendingWithinDays(task, today, 90) ||
+            this.hasPendingBefore(task, today)
+        );
     }
 
     async deleteTask(id: string): Promise<Task | null> {

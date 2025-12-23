@@ -4,6 +4,7 @@ import { session } from "@/_middleware/session";
 import { Request } from "express";
 import { User } from "./user.entity";
 import { BadRequest } from "@outwalk/firefly/errors";
+import sendToWebhook from "@/logging/webhook";
 
 @Controller()
 @Middleware(session)
@@ -45,12 +46,34 @@ export class UserController {
 
     @Get("/export")
     async exportData({ session }: Request): Promise<{ user: User | null; tasks: any[] }> {
-        return this.userService.exportUserData(session.user.id);
+        const user = await this.userService.getUserById(session.user.id);
+        const data = await this.userService.exportUserData(session.user.id);
+        await sendToWebhook({
+            embeds: [
+                {
+                    title: "User Data Exported",
+                    description: `User **${session.user.id}** (${user?.first ?? "Unknown"} ${user?.last ?? ""} | ${user?.email ?? "No email"}) exported their data.`,
+                    timestamp: new Date()
+                }
+            ]
+        });
+        return data;
     }
 
     @Post("/delete")
     async deleteData({ session }: Request): Promise<{ deletedUser: boolean; removedFromTasks: number; deletedTasks: number }> {
-        return this.userService.deleteUserData(session.user.id);
+        const user = await this.userService.getUserById(session.user.id);
+        const result = await this.userService.deleteUserData(session.user.id);
+        await sendToWebhook({
+            embeds: [
+                {
+                    title: "User Requested Deletion",
+                    description: `User **${session.user.id}** (${user?.first ?? "Unknown"} ${user?.last ?? ""} | ${user?.email ?? "No email"}) requested account deletion.\nRemoved from ${result.removedFromTasks} tasks; deleted ${result.deletedTasks} tasks.`,
+                    timestamp: new Date()
+                }
+            ]
+        });
+        return result;
     }
 
     @Get("/synced")

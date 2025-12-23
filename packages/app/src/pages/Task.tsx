@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTasks, filterBroken } from "@/hooks/tasks";
 import { sortByDate } from "@/utils/data";
 
@@ -15,6 +15,7 @@ export default function Task() {
   const [appData, setAppData] = useApp();
   const [activeDate, setActiveDate] = useState(appData.activeDate);
   const [isInspecting, setIsInspecting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const tasks = useTasks();
 
@@ -34,6 +35,51 @@ export default function Task() {
       }
     }
   }, [appData, isInspecting, setAppData]);
+
+  // Close the TaskInfoMenu if the active task no longer exists (e.g., after deletion).
+  useEffect(() => {
+    if (!isInspecting) return;
+    if (!appData.activeTask?.id) return;
+    if (!tasks.isSuccess) return;
+
+    const exists = tasks.data?.some((task) => task?.id === appData.activeTask?.id);
+    if (!exists) {
+      setIsInspecting(false);
+      setAppData({ activeTask: undefined });
+    }
+  }, [isInspecting, appData.activeTask?.id, tasks.isSuccess, tasks.data, setAppData]);
+
+  const filteredTasks = useMemo(() => {
+    if (!tasks.isSuccess) return [];
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return tasks.data;
+
+    return tasks.data.filter((task) => {
+      const title = (task.title ?? "").toLowerCase();
+      const description = (task.description ?? "").toLowerCase();
+      const group = (task.group ?? "").toLowerCase();
+      const tags = Array.isArray(task.tags)
+        ? task.tags
+            .map((tag) =>
+              typeof tag === "string"
+                ? tag.toLowerCase()
+                : tag && typeof (tag as any).title === "string"
+                  ? (tag as any).title.toLowerCase()
+                  : ""
+            )
+            .join(" ")
+        : "";
+
+      return (
+        title.includes(term) ||
+        description.includes(term) ||
+        group.includes(term) ||
+        tags.includes(term)
+      );
+    });
+  }, [tasks.isSuccess, tasks.data, searchTerm]);
+
+  const tasksForDay = tasks.isSuccess ? { ...tasks, data: filteredTasks } : tasks;
 
   if (tasks.isLoading) {
     return (
@@ -58,18 +104,43 @@ export default function Task() {
         <div className="flex w-full justify-center">
           <div className="flex w-full max-w-4xl flex-col items-center gap-4 px-3 md:px-6">
             <ActiveCalendar />
-            {tasks.isSuccess && (
-              <TagFilterBar tasks={tasks.data ?? []} />
-            )}
+            <div className="w-full flex flex-col gap-2">
+              <div className="flex w-full items-center gap-2 rounded-xl bg-white/90 px-3 py-2 shadow-sm ring-1 ring-accent-blue/10 dark:bg-slate-900/70">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-slate-400"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="7" />
+                  <line x1="16.65" y1="16.65" x2="21" y2="21" />
+                </svg>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search tasks by title, description, or tag..."
+                  className="w-full bg-transparent text-sm text-primary outline-none placeholder:text-slate-400"
+                />
+              </div>
+              {tasks.isSuccess && (
+                <TagFilterBar tasks={filteredTasks ?? []} />
+              )}
+            </div>
             <DayTasks
               setIsInspecting={setIsInspecting}
-              tasks={tasks}
+              tasks={tasksForDay}
             />
             <TaskContainer
               identifier="all"
               setIsInspecting={setIsInspecting}
               title="All Tasks"
-              tasks={tasks}
+              tasks={filteredTasks}
               activeFilter="dailyTasks"
             />
           </div>

@@ -9,12 +9,11 @@ export function TaskInfoMenuDelete({
 }) {
   const { mutate: deleteTask } = useDeleteTask();
 
-  const setDeleteTask = () => {
-    deleteTask(task);
-
+  const setDeleteTask = async () => {
+    // Close the menu immediately to avoid lingering after deletion.
+    closeMenu?.();
     setIsDeleting(false);
-
-    closeMenu();
+    await deleteTask(task);
   };
 
   return (
