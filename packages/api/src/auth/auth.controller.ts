@@ -3,6 +3,7 @@ import { BadRequest, Unauthorized } from "@outwalk/firefly/errors";
 import { UserService } from "@/user/user.service";
 import { User } from "@/user/user.entity";
 import { Request } from "express";
+import sendToWebhook from "@/logging/webhook";
 
 @Controller()
 export class AuthController {
