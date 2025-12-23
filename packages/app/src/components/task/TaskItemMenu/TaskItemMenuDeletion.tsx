@@ -12,6 +12,8 @@ export default function TaskItemMenuDeletion({
   const handleDelete = () => {
     deleteTask(item);
 
+    // Close both deletion dialog and the parent task action menu.
+    setIsManaging?.(false);
     setIsDeleting(false);
   };
 

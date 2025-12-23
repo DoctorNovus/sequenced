@@ -35,6 +35,19 @@ export default function Task() {
     }
   }, [appData, isInspecting, setAppData]);
 
+  // Close the TaskInfoMenu if the active task no longer exists (e.g., after deletion).
+  useEffect(() => {
+    if (!isInspecting) return;
+    if (!appData.activeTask?.id) return;
+    if (!tasks.isSuccess) return;
+
+    const exists = tasks.data?.some((task) => task?.id === appData.activeTask?.id);
+    if (!exists) {
+      setIsInspecting(false);
+      setAppData({ activeTask: undefined });
+    }
+  }, [isInspecting, appData.activeTask?.id, tasks.isSuccess, tasks.data, setAppData]);
+
   if (tasks.isLoading) {
     return (
       <div className="w-full h-full text-accent-black">
