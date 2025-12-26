@@ -4,8 +4,6 @@ import {
   setDailyReminders,
   scheduleNotification,
 } from "@/utils/notifs";
-import { Capacitor } from "@capacitor/core";
-
 import { Settings, getSettings, setSettings } from "@/hooks/settings";
 import { PendingLocalNotificationSchema } from "@capacitor/local-notifications";
 import { useEffect, useState, FormEvent } from "react";
@@ -22,6 +20,7 @@ import { useApp } from "@/hooks/app";
 import { useChangePassword, useExportUserData, useRequestUserDeletion, useUpdateProfile, useUser } from "@/hooks/user";
 import { getTodayNotificationBody } from "@/utils/notifs";
 import { fetchData } from "@/utils/data";
+import { StarIcon } from "@heroicons/react/24/solid";
 
 export default function SettingsPage() {
   const [tempSettings, setTempSettings] = useState<Settings>({});
@@ -43,6 +42,9 @@ export default function SettingsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [deleteInput, setDeleteInput] = useState<string>("");
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
+  const [reviewRating, setReviewRating] = useState<number>(5);
+  const [reviewMessage, setReviewMessage] = useState<string>("");
+  const [reviewStatus, setReviewStatus] = useState<string>("");
 
   useEffect(() => {
     getSettings().then(async (tempSettings) => {
@@ -244,22 +246,24 @@ export default function SettingsPage() {
     Logger.log("Scheduled test notification for", fireAt.toISOString());
   };
 
-  const openStoreReview = () => {
-    const APP_STORE_ID = "6478198104";
-    const PLAY_STORE_ID = "com.ottegi.sequenced";
-    const platform = Capacitor.getPlatform();
-
-    if (platform === "ios") {
-      window.open(`itms-apps://apps.apple.com/app/id${APP_STORE_ID}?action=write-review`, "_system");
+  const submitReview = async (e: FormEvent) => {
+    e.preventDefault();
+    setReviewStatus("");
+    if (reviewRating < 1 || reviewRating > 5) {
+      setReviewStatus("Please pick a rating between 1 and 5 stars.");
       return;
     }
-
-    if (platform === "android") {
-      window.open(`market://details?id=${PLAY_STORE_ID}`, "_system");
-      return;
+    try {
+      await fetchData("/review", {
+        method: "POST",
+        body: { rating: reviewRating, message: reviewMessage.trim() }
+      });
+      setReviewStatus("Thanks for your feedback!");
+      setReviewMessage("");
+      setReviewRating(5);
+    } catch (err: any) {
+      setReviewStatus(err?.message || "Unable to submit review right now.");
     }
-
-    window.open(`https://apps.apple.com/app/id${APP_STORE_ID}?action=write-review`, "_blank");
   };
 
   return (
@@ -555,20 +559,47 @@ export default function SettingsPage() {
 
         <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold text-slate-900">Support Sequenced</h2>
-            <div className="flex flex-wrap gap-2">
-              <a
-                href="#review"
-                className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
-                onClick={(e) => {
-                  e.preventDefault();
-                  openStoreReview();
-                }}
-              >
-                <span className="text-lg"></span>
-                Review on App Store
-              </a>
-            </div>
+            <h2 className="text-lg font-semibold text-primary">Share Feedback</h2>
+            <p className="text-sm text-muted">Leave an internal 1–5 star review with an optional note.</p>
+            <form className="flex flex-col gap-3" onSubmit={submitReview}>
+              <div className="flex flex-wrap items-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => {
+                  const active = reviewRating >= star;
+                  return (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewRating(star)}
+                      className={`flex items-center justify-center rounded-xl border px-2 py-1 transition ${
+                        active
+                          ? "border-amber-300 bg-amber-100 text-amber-700 shadow-sm"
+                          : "border-slate-200 bg-white text-muted hover:border-amber-200"
+                      }`}
+                    >
+                      <StarIcon className={`h-5 w-5 ${active ? "text-amber-500" : "text-slate-400"}`} />
+                    </button>
+                  );
+                })}
+                <span className="text-sm font-semibold text-primary">{reviewRating} / 5</span>
+              </div>
+              <textarea
+                value={reviewMessage}
+                onChange={(e) => setReviewMessage(e.target.value)}
+                placeholder="Optional message"
+                className="min-h-[96px] resize-none rounded-xl border border-accent-blue/20 bg-white/90 px-3 py-2 text-sm text-primary shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]"
+              />
+              <div className="flex items-center gap-3">
+                <button
+                  type="submit"
+                  className="rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-sm hover:-translate-y-px transition"
+                >
+                  Submit review
+                </button>
+                {reviewStatus && (
+                  <span className="text-sm font-semibold text-primary">{reviewStatus}</span>
+                )}
+              </div>
+            </form>
           </div>
         </div>
 
