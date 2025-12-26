@@ -10,7 +10,7 @@ import invisible_icon from "@/assets/invisible.svg";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
 
-import { Disclosure } from "@headlessui/react";
+import { Disclosure, Menu } from "@headlessui/react";
 import { matchDate } from "@/utils/date";
 import { isTaskDone, sortByDate, sortByPriority } from "@/utils/data";
 import { Task } from "@/hooks/tasks";
@@ -18,6 +18,7 @@ import { useUpdateSettings, useSettings } from "@/hooks/settings";
 import { useApp, useAppReducer } from "@/hooks/app";
 import { UseQueryResult } from "@tanstack/react-query";
 import { useUpdateTask } from "@/hooks/tasks";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
 
 interface ContainerSettings {
   skeleton?: boolean | string;
@@ -41,6 +42,11 @@ export default function TaskContainer({
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
   const [animatingIds, setAnimatingIds] = useState<string[]>([]);
+  const [bulkGroup, setBulkGroup] = useState("");
+  const [bulkTag, setBulkTag] = useState("");
+  const [workingTags, setWorkingTags] = useState<string[]>([]);
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
+  const [bulkAction, setBulkAction] = useState<"" | "group" | "tags">("");
   const { mutate: setSettings } = useUpdateSettings();
   const settings = useSettings();
   const { mutateAsync: updateTask } = useUpdateTask();
@@ -118,11 +124,15 @@ export default function TaskContainer({
   const exitSelection = () => {
     setSelectionMode(false);
     setSelectedTaskIds([]);
+    setBulkGroup("");
+    setBulkTag("");
+    setBulkAction("");
   };
 
   const completeSelected = async () => {
     if (selectedTaskIds.length === 0) return;
 
+    setIsBulkUpdating(true);
     setAnimatingIds(selectedTaskIds);
 
     setTimeout(async () => {
@@ -143,11 +153,127 @@ export default function TaskContainer({
         return { id: task.id, data: { ...task, done: true } };
       });
 
-      await Promise.all(updates.map((payload) => updateTask(payload)));
-
-      setAnimatingIds([]);
-      exitSelection();
+      try {
+        await Promise.all(updates.map((payload) => updateTask(payload)));
+        exitSelection();
+      } finally {
+        setAnimatingIds([]);
+        setIsBulkUpdating(false);
+      }
     }, 240);
+  };
+
+  const normalizeTag = (value: string) => value.trim().toLowerCase();
+  const normalizeGroup = (value: string) => value.trim().toLowerCase();
+
+  const selectedTasks = baseTasks.filter((task) => selectedTaskIds.includes(task.id));
+  const uniqueTags = Array.from(
+    new Set(
+      selectedTasks.flatMap((task) =>
+        Array.isArray(task.tags)
+          ? task.tags.map((tag) =>
+              typeof tag === "string" ? normalizeTag(tag) : ""
+            )
+          : []
+      ).filter(Boolean)
+    )
+  );
+
+  const sharedGroup = (() => {
+    const groups = new Set(
+      selectedTasks
+        .map((task) => normalizeGroup(task.group ?? ""))
+        .filter((g) => g.length > 0)
+    );
+    if (groups.size === 1) return Array.from(groups)[0];
+    return "";
+  })();
+
+  const startBulkAction = (action: "" | "group" | "tags") => {
+    setBulkAction(action);
+
+    if (action === "group") {
+      setBulkGroup(sharedGroup);
+    } else if (action === "tags") {
+      setWorkingTags(uniqueTags);
+      setBulkTag("");
+    }
+  };
+
+  const clearBulkAction = () => {
+    setBulkAction("");
+    setBulkGroup("");
+    setBulkTag("");
+    setWorkingTags([]);
+  };
+
+  const bulkUpdateSelected = async (build: (task: Task) => Partial<Task> | null | undefined) => {
+    if (selectedTaskIds.length === 0) return;
+    setIsBulkUpdating(true);
+
+    const toUpdate = baseTasks.filter((task) => selectedTaskIds.includes(task.id));
+    const updates = toUpdate
+      .map((task) => {
+        const changes = build(task);
+        if (!changes) return null;
+        return updateTask({ id: task.id, data: { id: task.id, ...changes } });
+      })
+      .filter(Boolean) as Promise<void>[];
+
+    if (updates.length === 0) {
+      setIsBulkUpdating(false);
+      return;
+    }
+
+    try {
+      await Promise.all(updates);
+      exitSelection();
+    } finally {
+      setIsBulkUpdating(false);
+    }
+  };
+
+  const addGroupToSelected = async () => {
+    const groupName = normalizeGroup(bulkGroup);
+    await bulkUpdateSelected((task) => {
+      if ((task.group ?? "").toLowerCase() === groupName) return null;
+      return { group: groupName };
+    });
+
+    setBulkGroup("");
+  };
+
+  const removeGroupFromSelected = async () => {
+    await bulkUpdateSelected((task) => {
+      if (!task.group) return null;
+      return { group: "" };
+    });
+  };
+
+  const addTagToSelected = async () => {
+    const normalized = Array.from(
+      new Set(
+        workingTags
+          .map((tag) => normalizeTag(tag))
+          .filter((tag) => tag.length > 0)
+      )
+    );
+
+    await bulkUpdateSelected((task) => {
+      const tags = Array.isArray(task.tags)
+        ? task.tags.map((tag) => (typeof tag === "string" ? normalizeTag(tag) : ""))
+        : [];
+
+      const existing = Array.from(new Set(tags.filter(Boolean)));
+      const equal =
+        existing.length === normalized.length &&
+        existing.every((tag) => normalized.includes(tag));
+
+      if (equal) return null;
+      return { tags: normalized };
+    });
+
+    setBulkTag("");
   };
 
   const handleClick = async (open: boolean) => {
@@ -171,6 +297,201 @@ export default function TaskContainer({
     return task;
   });
 
+  const hasSelection = selectedTaskIds.length > 0;
+
+  const renderBulkActionCard = () => {
+    if (!selectionMode || !bulkAction) return null;
+
+    const normalizedGroup = normalizeGroup(bulkGroup);
+    const normalizedTags = Array.from(
+      new Set(workingTags.map((tag) => normalizeTag(tag)).filter(Boolean))
+    );
+
+    const groupSummary =
+      sharedGroup && hasSelection
+        ? `Current group: ${sharedGroup}`
+        : hasSelection
+          ? "Group: mixed or none"
+          : "No selection";
+
+    const tagSummary =
+      uniqueTags.length > 0 && hasSelection
+        ? `Tags: ${uniqueTags.join(", ")}`
+        : hasSelection
+          ? "No tags yet"
+          : "No selection";
+
+    const tagInputChip = (tag: string) => (
+      <span
+        key={tag}
+        className="flex items-center gap-1 rounded-full bg-accent-blue/10 px-2 py-1 text-xs font-semibold text-accent-blue-800 ring-1 ring-accent-blue/20"
+      >
+        <span>#{tag}</span>
+        <button
+          type="button"
+          onClick={() => setWorkingTags((prev) => prev.filter((t) => t !== tag))}
+          className="rounded-full p-0.5 text-accent-blue-700 hover:bg-accent-blue/20"
+        >
+          ×
+        </button>
+      </span>
+    );
+
+    return (
+      <div className="fixed inset-x-0 bottom-0 top-24 z-[140] flex items-start justify-center bg-slate-900/20 px-4 py-8 backdrop-blur-sm">
+        <div className="w-full max-w-xl rounded-2xl bg-white px-4 py-4 shadow-2xl ring-1 ring-accent-blue/10 dark:bg-slate-900/95">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-primary">
+              {bulkAction === "group" ? "Update group" : "Edit tags"}
+            </span>
+            <button
+              type="button"
+              className="text-xs font-semibold text-accent-blue hover:text-accent-blue-700"
+              onClick={(e) => {
+                e.stopPropagation();
+                clearBulkAction();
+              }}
+            >
+              Close
+            </button>
+          </div>
+          <div className="mt-3 flex flex-col gap-3">
+            {bulkAction === "group" && (
+              <>
+                <div className="flex items-center justify-between rounded-lg bg-accent-blue/5 px-3 py-2 text-xs font-semibold text-primary ring-1 ring-accent-blue/20">
+                  <span>{groupSummary}</span>
+                  {hasSelection && (
+                    <span className="text-muted">Selected: {selectedTaskIds.length}</span>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={bulkGroup}
+                  onChange={(e) => setBulkGroup(e.target.value)}
+                  placeholder="Set a group or leave blank to clear"
+                  className="w-full rounded-lg border border-accent-blue/20 bg-white px-3 py-2 text-sm text-primary shadow-inner focus:outline-none focus:ring-2 focus:ring-accent-blue/40 dark:bg-[rgba(15,23,42,0.7)]"
+                />
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="rounded-lg bg-accent-blue px-3 py-2 text-xs font-semibold text-white shadow-sm hover:-translate-y-px transition disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={!hasSelection || isBulkUpdating}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addGroupToSelected();
+                    }}
+                  >
+                    Apply group
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:-translate-y-px transition disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={!hasSelection || isBulkUpdating}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setBulkGroup("");
+                      addGroupToSelected();
+                    }}
+                  >
+                    Clear group
+                  </button>
+                </div>
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+                  Applies the same group to all selected tasks.
+                </span>
+              </>
+            )}
+
+            {bulkAction === "tags" && (
+              <>
+                <div className="flex items-center justify-between rounded-lg bg-accent-blue/5 px-3 py-2 text-xs font-semibold text-primary ring-1 ring-accent-blue/20">
+                  <span>{tagSummary}</span>
+                  {hasSelection && (
+                    <span className="text-muted">Selected: {selectedTaskIds.length}</span>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-accent-blue/20 bg-white/90 p-2 shadow-inner focus-within:border-accent-blue dark:bg-[rgba(15,23,42,0.7)]">
+                  {normalizedTags.length === 0 && (
+                    <span className="text-sm text-muted px-1">No tags yet</span>
+                  )}
+                  {normalizedTags.map(tagInputChip)}
+                  <input
+                    type="text"
+                    value={bulkTag}
+                    onChange={(e) => setBulkTag(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === ",") {
+                        e.preventDefault();
+                        const normalized = normalizeTag(bulkTag);
+                        if (!normalized) return;
+                        setWorkingTags((prev) =>
+                          Array.from(new Set([...prev, normalized]))
+                        );
+                        setBulkTag("");
+                      }
+                    }}
+                    placeholder="Add tag…"
+                    className="min-w-[140px] flex-1 border-none bg-transparent text-sm text-primary placeholder:text-slate-400 focus:outline-none"
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {uniqueTags.map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                        normalizedTags.includes(tag)
+                          ? "bg-accent-blue text-white shadow-sm shadow-accent-blue/30"
+                          : "bg-white text-primary ring-1 ring-accent-blue/20 hover:ring-accent-blue/40"
+                      }`}
+                      onClick={() => {
+                        setWorkingTags((prev) =>
+                          normalizedTags.includes(tag)
+                            ? prev.filter((t) => t !== tag)
+                            : [...prev, tag]
+                        );
+                      }}
+                    >
+                      #{tag}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="rounded-lg bg-accent-blue px-3 py-2 text-xs font-semibold text-white shadow-sm hover:-translate-y-px transition disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={!hasSelection || isBulkUpdating}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addTagToSelected();
+                    }}
+                  >
+                    Apply tags
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:-translate-y-px transition disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={!hasSelection || isBulkUpdating}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setWorkingTags([]);
+                      addTagToSelected();
+                    }}
+                  >
+                    Clear tags
+                  </button>
+                </div>
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+                  Sets this tag list on every selected task.
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="group flex flex-col items-center w-full h-full my-2 px-0 md:px-0">
       {/* Migrate to dynamic loading content */}
@@ -185,7 +506,7 @@ export default function TaskContainer({
               <Disclosure.Button
                 onClick={async () => await handleClick(open)}
                 as="div"
-                className="w-full flex flex-row items-center rounded-2xl bg-white/90 px-3 py-3 text-slate-900 shadow-md ring-1 ring-accent-blue/10 transition hover:-translate-y-0.5 hover:ring-accent-blue/30 [&:has(.task-container-accordian:hover)]:ring-accent-blue/30"
+                className="w-full flex flex-row items-center rounded-2xl bg-white/90 px-3 py-3 text-slate-900 shadow-md ring-1 ring-accent-blue/10"
               >
                 <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-row items-center py-1">
@@ -249,8 +570,8 @@ export default function TaskContainer({
                         <>
                           <button
                             type="button"
-                            className="rounded-lg border border-emerald-300 bg-emerald-500/90 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:-translate-y-px transition disabled:opacity-60"
-                            disabled={selectedTaskIds.length === 0}
+                            className="rounded-lg border border-emerald-300 bg-emerald-500/90 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:-translate-y-px transition disabled:opacity-60 disabled:cursor-not-allowed"
+                            disabled={!hasSelection || isBulkUpdating}
                             onClick={(e) => {
                               e.stopPropagation();
                               completeSelected();
@@ -258,9 +579,51 @@ export default function TaskContainer({
                           >
                             Complete ({selectedTaskIds.length})
                           </button>
+                          <Menu as="div" className="relative z-[110] inline-block text-left">
+                            <Menu.Button
+                              disabled={!hasSelection || isBulkUpdating}
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:-translate-y-px transition disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                              <EllipsisHorizontalIcon className="h-4 w-4" />
+                              <span>Actions</span>
+                            </Menu.Button>
+                            <Menu.Items className="absolute left-0 right-auto z-[130] mt-2 w-52 max-w-[90vw] origin-top-left rounded-xl bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-slate-900/90 md:left-auto md:right-0 md:origin-top-right">
+                              {[
+                                { key: "group", label: "Edit group" },
+                                { key: "tags", label: "Edit tags" },
+                              ].map((item) => (
+                                <Menu.Item key={item.key}>
+                                  {({ active }) => (
+                                    <button
+                                      type="button"
+                                      className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm ${
+                                        active
+                                          ? "bg-accent-blue/10 text-slate-900 dark:text-white"
+                                          : "text-slate-800 dark:text-slate-100"
+                                      }`}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        startBulkAction(item.key as "group" | "tags");
+                                      }}
+                                    >
+                                      <span>{item.label}</span>
+                                      {item.key === "group" && sharedGroup && (
+                                        <span className="text-[11px] text-slate-500 dark:text-slate-300">#{sharedGroup}</span>
+                                      )}
+                                      {item.key === "tags" && uniqueTags.length > 0 && (
+                                        <span className="text-[11px] text-slate-500 dark:text-slate-300">{uniqueTags.length} tags</span>
+                                      )}
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                              ))}
+                            </Menu.Items>
+                          </Menu>
                           <button
                             type="button"
-                            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:-translate-y-px transition"
+                            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:-translate-y-px transition disabled:opacity-60 disabled:cursor-not-allowed"
+                            disabled={isBulkUpdating}
                             onClick={(e) => {
                               e.stopPropagation();
                               exitSelection();
@@ -275,6 +638,7 @@ export default function TaskContainer({
                 </div>
               </Disclosure.Button>
               <Disclosure.Panel className="w-full h-full">
+                {renderBulkActionCard()}
                 {/* {!settings.data.groupsActive?.includes(identifier) && ( */}
                 <TaskMenu
                   tasks={baseTasks}
