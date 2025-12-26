@@ -281,6 +281,11 @@ export default function SettingsPage() {
             <div className="flex flex-col gap-1">
               <h2 className="text-lg font-semibold text-primary">Profile</h2>
               <p className="text-sm text-muted">Manage your account details and privacy.</p>
+              {user.isSuccess && user.data?.lastLoggedIn && (
+                <span className="text-xs font-semibold text-primary">
+                  Last logged in: {new Date(user.data.lastLoggedIn).toLocaleString()}
+                </span>
+              )}
             </div>
             {user.isLoading && <span className="text-xs text-muted">Loading...</span>}
           </div>

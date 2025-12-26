@@ -29,6 +29,7 @@ export class AuthController {
         }
 
         req.session.user = { id: user.id, first: user.first };
+        await this.userService.updateUser(user.id, { lastLoggedIn: new Date() });
         return user;
     }
 
@@ -40,7 +41,7 @@ export class AuthController {
             throw new BadRequest("Email Already Exists");
         }
 
-        const user = await this.userService.createUser({ first, last, email, password });
+        const user = await this.userService.createUser({ first, last, email, password, lastLoggedIn: new Date() });
         req.session.user = { id: user.id, first: user.first };
 
         sendToWebhook({
@@ -62,6 +63,7 @@ export class AuthController {
         if (!controlled) throw new Unauthorized("Account not found.");
 
         req.session.user = { id: controlled.id, first: user.first, isControlled: true };
+        await this.userService.updateUser(controlled.id, { lastLoggedIn: new Date() });
         return controlled;
     }
 

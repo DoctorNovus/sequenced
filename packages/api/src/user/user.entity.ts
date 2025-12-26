@@ -1,7 +1,7 @@
 import { Entity, Model, Prop } from "@/_lib/mongoose";
 import bcrypt from "bcrypt";
 
-@Entity()
+@Entity({ timestamps: true })
 export class User extends Model {
 
     id: string;
@@ -23,4 +23,7 @@ export class User extends Model {
 
     @Prop({ type: Boolean, default: false })
     synced: boolean;
+
+    @Prop({ type: Date, default: null })
+    lastLoggedIn?: Date;
 }
