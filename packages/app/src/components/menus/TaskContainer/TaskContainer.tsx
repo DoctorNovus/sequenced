@@ -10,7 +10,7 @@ import invisible_icon from "@/assets/invisible.svg";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
 
-import { Disclosure, Menu } from "@headlessui/react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { matchDate } from "@/utils/date";
 import { isTaskDone, sortByDate, sortByPriority } from "@/utils/data";
 import { Task } from "@/hooks/tasks";
@@ -18,7 +18,7 @@ import { useUpdateSettings, useSettings } from "@/hooks/settings";
 import { useApp, useAppReducer } from "@/hooks/app";
 import { UseQueryResult } from "@tanstack/react-query";
 import { useUpdateTask } from "@/hooks/tasks";
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
+import { EllipsisHorizontalIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 
 interface ContainerSettings {
   skeleton?: boolean | string;
@@ -47,6 +47,7 @@ export default function TaskContainer({
   const [workingTags, setWorkingTags] = useState<string[]>([]);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   const [bulkAction, setBulkAction] = useState<"" | "group" | "tags">("");
+  const [completionToast, setCompletionToast] = useState<string | null>(null);
   const { mutate: setSettings } = useUpdateSettings();
   const settings = useSettings();
   const { mutateAsync: updateTask } = useUpdateTask();
@@ -153,13 +154,14 @@ export default function TaskContainer({
         return { id: task.id, data: { ...task, done: true } };
       });
 
-      try {
-        await Promise.all(updates.map((payload) => updateTask(payload)));
-        exitSelection();
-      } finally {
-        setAnimatingIds([]);
-        setIsBulkUpdating(false);
-      }
+    try {
+      await Promise.all(updates.map((payload) => updateTask(payload)));
+      showCompletionToast(`Marked ${selectedTaskIds.length} task${selectedTaskIds.length === 1 ? "" : "s"} complete`);
+      exitSelection();
+    } finally {
+      setAnimatingIds([]);
+      setIsBulkUpdating(false);
+    }
     }, 240);
   };
 
@@ -205,6 +207,11 @@ export default function TaskContainer({
     setBulkGroup("");
     setBulkTag("");
     setWorkingTags([]);
+  };
+
+  const showCompletionToast = (text: string) => {
+    setCompletionToast(text);
+    setTimeout(() => setCompletionToast(null), 2200);
   };
 
   const bulkUpdateSelected = async (build: (task: Task) => Partial<Task> | null | undefined) => {
@@ -649,6 +656,7 @@ export default function TaskContainer({
                   toggleSelection={toggleSelection}
                   animatingIds={animatingIds}
                   activeDate={appData.activeDate}
+                  onTaskComplete={(task) => showCompletionToast(`Task completed: ${task.title || "Untitled"}`)}
                 />
                 {/* )} */}
               </Disclosure.Panel>
@@ -656,6 +664,22 @@ export default function TaskContainer({
           )}
         </Disclosure>
       )}
+      <Transition
+        show={!!completionToast}
+        enter="transition duration-200 ease-out"
+        enterFrom="translate-y-2 opacity-0"
+        enterTo="translate-y-0 opacity-100"
+        leave="transition duration-300 ease-in"
+        leaveFrom="translate-y-0 opacity-100"
+        leaveTo="translate-y-2 opacity-0"
+      >
+        <div className="pointer-events-none fixed inset-x-0 top-28 md:top-32 z-[150] flex justify-center px-4">
+          <div className="pointer-events-auto flex items-center gap-3 rounded-2xl bg-accent-blue text-white px-4 py-3 text-sm font-semibold shadow-lg shadow-accent-blue/30 ring-1 ring-accent-blue/30">
+            <CheckCircleIcon className="h-5 w-5" />
+            <span>{completionToast}</span>
+          </div>
+        </div>
+      </Transition>
     </div>
   );
 }
