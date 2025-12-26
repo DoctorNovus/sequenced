@@ -374,7 +374,7 @@ export default function TaskContainer({
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className="rounded-lg bg-accent-blue px-3 py-2 text-xs font-semibold text-white shadow-sm hover:-translate-y-px transition disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-lg bg-accent-blue px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:shadow-md hover:ring-2 hover:ring-accent-blue/30 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={!hasSelection || isBulkUpdating}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -385,7 +385,7 @@ export default function TaskContainer({
                   </button>
                   <button
                     type="button"
-                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:-translate-y-px transition disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:shadow-md hover:ring-2 hover:ring-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={!hasSelection || isBulkUpdating}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -459,7 +459,7 @@ export default function TaskContainer({
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className="rounded-lg bg-accent-blue px-3 py-2 text-xs font-semibold text-white shadow-sm hover:-translate-y-px transition disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-lg bg-accent-blue px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:shadow-md hover:ring-2 hover:ring-accent-blue/30 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={!hasSelection || isBulkUpdating}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -470,7 +470,7 @@ export default function TaskContainer({
                   </button>
                   <button
                     type="button"
-                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:-translate-y-px transition disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:shadow-md hover:ring-2 hover:ring-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={!hasSelection || isBulkUpdating}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -557,7 +557,7 @@ export default function TaskContainer({
                       {!selectionMode && (
                         <button
                           type="button"
-                          className="rounded-lg border border-accent-blue/30 bg-white px-3 py-1.5 text-xs font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                          className="rounded-lg border border-accent-blue/30 bg-white px-3 py-1.5 text-xs font-semibold text-accent-blue shadow-sm transition hover:shadow-md hover:ring-1 hover:ring-accent-blue/30"
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectionMode(true);
@@ -570,7 +570,7 @@ export default function TaskContainer({
                         <>
                           <button
                             type="button"
-                            className="rounded-lg border border-emerald-300 bg-emerald-500/90 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:-translate-y-px transition disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="rounded-lg border border-emerald-300 bg-emerald-500/90 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:shadow-md hover:ring-1 hover:ring-emerald-300 disabled:opacity-60 disabled:cursor-not-allowed"
                             disabled={!hasSelection || isBulkUpdating}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -583,7 +583,7 @@ export default function TaskContainer({
                             <Menu.Button
                               disabled={!hasSelection || isBulkUpdating}
                               onClick={(e) => e.stopPropagation()}
-                              className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:-translate-y-px transition disabled:opacity-60 disabled:cursor-not-allowed"
+                              className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:shadow-md hover:ring-1 hover:ring-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                               <EllipsisHorizontalIcon className="h-4 w-4" />
                               <span>Actions</span>
@@ -622,7 +622,7 @@ export default function TaskContainer({
                           </Menu>
                           <button
                             type="button"
-                            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:-translate-y-px transition disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:shadow-md hover:ring-1 hover:ring-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
                             disabled={isBulkUpdating}
                             onClick={(e) => {
                               e.stopPropagation();
