@@ -345,7 +345,13 @@ export default function TaskContainer({
     );
 
     return (
-      <div className="fixed inset-x-0 bottom-0 top-24 z-[140] flex items-start justify-center bg-slate-900/20 px-4 py-8 backdrop-blur-sm">
+      <div
+        className="fixed inset-x-0 bottom-0 top-24 z-[140] flex items-start justify-center bg-slate-900/20 px-4 py-8 backdrop-blur-sm"
+        style={{
+          paddingTop: "calc(env(safe-area-inset-top, 0px) + 2rem)",
+          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)",
+        }}
+      >
         <div className="w-full max-w-xl rounded-2xl bg-white px-4 py-4 shadow-2xl ring-1 ring-accent-blue/10 dark:bg-slate-900/95">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-primary">
@@ -673,7 +679,12 @@ export default function TaskContainer({
         leaveFrom="translate-y-0 opacity-100"
         leaveTo="translate-y-2 opacity-0"
       >
-        <div className="pointer-events-none fixed inset-x-0 top-28 md:top-32 z-[150] flex justify-center px-4">
+        <div
+          className="pointer-events-none fixed inset-x-0 z-[150] flex justify-center px-4"
+          style={{
+            top: "calc(env(safe-area-inset-top, 0px) + 2.5rem)",
+          }}
+        >
           <div className="pointer-events-auto flex items-center gap-3 rounded-2xl bg-accent-blue text-white px-4 py-3 text-sm font-semibold shadow-lg shadow-accent-blue/30 ring-1 ring-accent-blue/30">
             <CheckCircleIcon className="h-5 w-5" />
             <span>{completionToast}</span>
