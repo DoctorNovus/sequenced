@@ -16,6 +16,7 @@ import { useTasks, useDeleteTask } from "@/hooks/tasks";
 import xIcon from "@/assets/social_icons/x.svg";
 import instagramIcon from "@/assets/social_icons/instagram.svg";
 import facebookIcon from "@/assets/social_icons/facebook.svg";
+import discordIcon from "@/assets/social_icons/discord.svg";
 import { useApp } from "@/hooks/app";
 import { useChangePassword, useExportUserData, useRequestUserDeletion, useUpdateProfile, useUser } from "@/hooks/user";
 import { getTodayNotificationBody } from "@/utils/notifs";
@@ -559,55 +560,18 @@ export default function SettingsPage() {
 
         <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold text-primary">Share Feedback</h2>
-            <p className="text-sm text-muted">Leave an internal 1–5 star review with an optional note.</p>
-            <form className="flex flex-col gap-3" onSubmit={submitReview}>
-              <div className="flex flex-wrap items-center gap-2">
-                {[1, 2, 3, 4, 5].map((star) => {
-                  const active = reviewRating >= star;
-                  return (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setReviewRating(star)}
-                      className={`flex items-center justify-center rounded-xl border px-2 py-1 transition ${
-                        active
-                          ? "border-amber-300 bg-amber-100 text-amber-700 shadow-sm"
-                          : "border-slate-200 bg-white text-muted hover:border-amber-200"
-                      }`}
-                    >
-                      <StarIcon className={`h-5 w-5 ${active ? "text-amber-500" : "text-slate-400"}`} />
-                    </button>
-                  );
-                })}
-                <span className="text-sm font-semibold text-primary">{reviewRating} / 5</span>
-              </div>
-              <textarea
-                value={reviewMessage}
-                onChange={(e) => setReviewMessage(e.target.value)}
-                placeholder="Optional message"
-                className="min-h-[96px] resize-none rounded-xl border border-accent-blue/20 bg-white/90 px-3 py-2 text-sm text-primary shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]"
-              />
-              <div className="flex items-center gap-3">
-                <button
-                  type="submit"
-                  className="rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-sm hover:-translate-y-px transition"
-                >
-                  Submit review
-                </button>
-                {reviewStatus && (
-                  <span className="text-sm font-semibold text-primary">{reviewStatus}</span>
-                )}
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-          <div className="flex flex-col gap-3">
             <h2 className="text-lg font-semibold text-slate-900">Follow Ottegi</h2>
             <p className="text-sm text-slate-600">Stay up to date with releases and progress.</p>
             <div className="flex flex-wrap gap-3">
+              <a
+                href="https://discord.gg/qeKgAKVhXa"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                aria-label="Ottegi on Discord"
+              >
+                <img src={discordIcon} alt="Discord logo" className="h-5 w-5" />
+              </a>
               <a
                 href="https://twitter.com/OttegiLLC"
                 target="_blank"
