@@ -23,6 +23,10 @@ export class UserService {
         return User.findOne({ email }).lean<User>().exec();
     }
 
+    async touchLastLoggedIn(id: string): Promise<void> {
+        await User.findByIdAndUpdate(id, { lastLoggedIn: new Date() }).exec();
+    }
+
     async updateUser(id: string, data: Partial<User>): Promise<User | null> {
         return User.findByIdAndUpdate(id, data).lean<User>().exec();
     }

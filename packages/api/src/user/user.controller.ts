@@ -15,6 +15,7 @@ export class UserController {
 
     @Get()
     async getUser({ session }: Request): Promise<User | null> {
+        await this.userService.touchLastLoggedIn(session.user.id);
         return this.userService.getUserById(session.user.id);
     }
 
