@@ -118,13 +118,13 @@ export default function ActiveCalendar({ skeleton }: ActiveCalendarProps) {
               <span className="text-lg font-semibold text-primary">This Week</span>
             </div>
           </div>
-          <div className="flex flex-row w-44 md:w-56">
-            <div className="flex justify-center w-full rounded-2xl border border-accent-blue/20 bg-accent-blue-50/60 shadow-inner dark:bg-[rgba(99,102,241,0.12)]">
+          <div className="flex flex-row w-48 md:w-60">
+            <div className="flex justify-center w-full rounded-2xl border border-accent-blue/30 bg-white shadow-sm ring-1 ring-accent-blue/10 focus-within:ring-2 focus-within:ring-accent-blue/30 dark:bg-[rgba(15,23,42,0.85)] dark:border-accent-blue/40">
               <input
                 type="date"
                 value={formatDate(appData.activeDate)}
                 onChange={changeActiveMonth}
-                className="w-full h-full rounded-2xl border-none bg-transparent px-2 py-1 text-center text-sm font-semibold text-primary focus:outline-none"
+                className="w-full h-full rounded-2xl border-none bg-transparent px-3 py-2 text-center text-sm font-semibold text-primary focus:outline-none"
               />
             </div>
           </div>

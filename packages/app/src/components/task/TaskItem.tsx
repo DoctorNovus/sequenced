@@ -18,9 +18,10 @@ interface TaskItemParams {
   isSelected?: boolean;
   onToggleSelect?: (id: string) => void;
   isAnimating?: boolean;
+  onComplete?: (task: Task) => void;
 }
 
-export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectionMode = false, isSelected = false, onToggleSelect, isAnimating = false }: TaskItemParams) {
+export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectionMode = false, isSelected = false, onToggleSelect, isAnimating = false, onComplete }: TaskItemParams) {
   if (skeleton) {
     return (
       <div className="w-full flex flex-col gap-2">
@@ -101,6 +102,8 @@ export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectio
     } else {
       updateTask({ id: item.id, data: { ...item, done: !item.done } });
     }
+
+    if (onComplete) onComplete(item as Task);
 
     // allow fade-out before hiding when filtering incomplete
     setTimeout(() => setIsCompleting(false), 600);

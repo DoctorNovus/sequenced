@@ -12,7 +12,8 @@ export default function TaskMenu({
   selectedTaskIds = [],
   toggleSelection,
   animatingIds = [],
-  activeDate
+  activeDate,
+  onTaskComplete
 }) {
   const [collapsedGroups, setCollapsedGroups] = useState<string[]>([]);
   const [orderedTasks, setOrderedTasks] = useState<any[]>([]);
@@ -81,6 +82,7 @@ export default function TaskMenu({
         isSelected={selectedTaskIds.includes(task.id)}
         onToggleSelect={toggleSelection}
         isAnimating={animatingIds.includes(task.id)}
+        onComplete={onTaskComplete}
       />
     </div>
   );

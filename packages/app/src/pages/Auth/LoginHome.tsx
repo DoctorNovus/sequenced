@@ -8,7 +8,7 @@ export default function LoginHome() {
 
     return (
         <div
-            className="relative flex w-full h-screen items-center justify-center px-5 py-8"
+            className="relative flex h-screen w-full items-center justify-center px-5 py-10 overflow-hidden"
             style={{ background: "var(--app-background)" }}
         >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,rgba(48,122,207,0.12),transparent_35%),radial-gradient(circle_at_90%_0%,rgba(48,122,207,0.1),transparent_30%)] dark:bg-[radial-gradient(circle_at_12%_22%,rgba(99,102,241,0.18),transparent_40%),radial-gradient(circle_at_85%_12%,rgba(14,165,233,0.18),transparent_35%)]" />

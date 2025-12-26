@@ -40,6 +40,19 @@ export default function TaskInfoMenuItem({
         autoFocus={false}
       ></textarea>
     );
+  } else if (type === "datetime-local") {
+    inputPiece = (
+      <input
+        id={name.toLowerCase()}
+        name={name.toLowerCase()}
+        type={type}
+        className="text-base px-3 py-2 rounded-xl border border-accent-blue/30 bg-white text-primary shadow-inner focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/30 focus:outline-none dark:bg-[rgba(15,23,42,0.85)] dark:border-accent-blue/40"
+        placeholder={placeholder ?? `${name}...`}
+        value={value as any}
+        onChange={onChange}
+        autoFocus={false}
+      />
+    );
   }
 
   return (

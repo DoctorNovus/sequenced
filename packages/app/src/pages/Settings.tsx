@@ -4,8 +4,6 @@ import {
   setDailyReminders,
   scheduleNotification,
 } from "@/utils/notifs";
-import { Capacitor } from "@capacitor/core";
-
 import { Settings, getSettings, setSettings } from "@/hooks/settings";
 import { PendingLocalNotificationSchema } from "@capacitor/local-notifications";
 import { useEffect, useState, FormEvent } from "react";
@@ -18,10 +16,12 @@ import { useTasks, useDeleteTask } from "@/hooks/tasks";
 import xIcon from "@/assets/social_icons/x.svg";
 import instagramIcon from "@/assets/social_icons/instagram.svg";
 import facebookIcon from "@/assets/social_icons/facebook.svg";
+import discordIcon from "@/assets/social_icons/discord.svg";
 import { useApp } from "@/hooks/app";
 import { useChangePassword, useExportUserData, useRequestUserDeletion, useUpdateProfile, useUser } from "@/hooks/user";
 import { getTodayNotificationBody } from "@/utils/notifs";
 import { fetchData } from "@/utils/data";
+import { StarIcon } from "@heroicons/react/24/solid";
 
 export default function SettingsPage() {
   const [tempSettings, setTempSettings] = useState<Settings>({});
@@ -43,6 +43,9 @@ export default function SettingsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [deleteInput, setDeleteInput] = useState<string>("");
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
+  const [reviewRating, setReviewRating] = useState<number>(5);
+  const [reviewMessage, setReviewMessage] = useState<string>("");
+  const [reviewStatus, setReviewStatus] = useState<string>("");
 
   useEffect(() => {
     getSettings().then(async (tempSettings) => {
@@ -244,22 +247,24 @@ export default function SettingsPage() {
     Logger.log("Scheduled test notification for", fireAt.toISOString());
   };
 
-  const openStoreReview = () => {
-    const APP_STORE_ID = "6478198104";
-    const PLAY_STORE_ID = "com.ottegi.sequenced";
-    const platform = Capacitor.getPlatform();
-
-    if (platform === "ios") {
-      window.open(`itms-apps://apps.apple.com/app/id${APP_STORE_ID}?action=write-review`, "_system");
+  const submitReview = async (e: FormEvent) => {
+    e.preventDefault();
+    setReviewStatus("");
+    if (reviewRating < 1 || reviewRating > 5) {
+      setReviewStatus("Please pick a rating between 1 and 5 stars.");
       return;
     }
-
-    if (platform === "android") {
-      window.open(`market://details?id=${PLAY_STORE_ID}`, "_system");
-      return;
+    try {
+      await fetchData("/review", {
+        method: "POST",
+        body: { rating: reviewRating, message: reviewMessage.trim() }
+      });
+      setReviewStatus("Thanks for your feedback!");
+      setReviewMessage("");
+      setReviewRating(5);
+    } catch (err: any) {
+      setReviewStatus(err?.message || "Unable to submit review right now.");
     }
-
-    window.open(`https://apps.apple.com/app/id${APP_STORE_ID}?action=write-review`, "_blank");
   };
 
   return (
@@ -555,28 +560,18 @@ export default function SettingsPage() {
 
         <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold text-slate-900">Support Sequenced</h2>
-            <div className="flex flex-wrap gap-2">
-              <a
-                href="#review"
-                className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
-                onClick={(e) => {
-                  e.preventDefault();
-                  openStoreReview();
-                }}
-              >
-                <span className="text-lg"></span>
-                Review on App Store
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-          <div className="flex flex-col gap-3">
             <h2 className="text-lg font-semibold text-slate-900">Follow Ottegi</h2>
             <p className="text-sm text-slate-600">Stay up to date with releases and progress.</p>
             <div className="flex flex-wrap gap-3">
+              <a
+                href="https://discord.gg/qeKgAKVhXa"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                aria-label="Ottegi on Discord"
+              >
+                <img src={discordIcon} alt="Discord logo" className="h-5 w-5" />
+              </a>
               <a
                 href="https://twitter.com/OttegiLLC"
                 target="_blank"
