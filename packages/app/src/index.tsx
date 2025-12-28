@@ -9,6 +9,7 @@ import Meds from "./pages/Meds";
 import Mood from "./pages/Mood";
 import Task from "@/pages/Task";
 import Settings from "./pages/Settings";
+import Calendar from "./pages/Calendar";
 import Layout from "@/pages/Layout";
 import NoPage from "@/pages/NoPage";
 import Login from "@/pages/Auth/Login";
@@ -79,6 +80,7 @@ export default function App() {
 
               <Route index element={<Home />} />
               <Route path="/tasks" element={<Task />} />
+              <Route path="/calendar" element={<Calendar />} />
               <Route path="/settings" element={<Settings />}></Route>
               <Route path="*" element={<NoPage />} />
 

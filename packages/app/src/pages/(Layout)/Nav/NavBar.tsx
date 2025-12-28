@@ -43,8 +43,8 @@ export function NavBar() {
           </div>
 
           <div className="flex flex-1 items-center justify-evenly gap-2">
-            <NavItem to="#" title="Calendar" disabled>
-              <CalendarViewIcon className="opacity-50 cursor-not-allowed" />
+            <NavItem to="/calendar" title="Calendar">
+              <CalendarViewIcon />
             </NavItem>
             <NavItem to="/settings" title="Settings">
               <SettingsIcon />
@@ -78,8 +78,8 @@ export function NavBar() {
           <NavItem to="/tasks" title="Tasks">
             <TasksIcon />
           </NavItem>
-          <NavItem to="#" title="Calendar" disabled>
-            <CalendarViewIcon className="opacity-50 cursor-not-allowed" />
+          <NavItem to="/calendar" title="Calendar">
+            <CalendarViewIcon />
           </NavItem>
           <NavItem to="/settings" title="Settings">
             <SettingsIcon />

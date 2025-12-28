@@ -4,7 +4,7 @@ import { SERVER_IP } from "@/hooks/app";
 
 const DAY_MS = 1000 * 60 * 60 * 24;
 
-const normalizeDay = (value: Date | string | number | undefined) => {
+export const normalizeDay = (value: Date | string | number | undefined) => {
   const date = new Date(value as any);
   date.setHours(0, 0, 0, 0);
   return date;
