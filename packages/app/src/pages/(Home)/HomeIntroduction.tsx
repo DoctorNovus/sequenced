@@ -34,17 +34,13 @@ export default function HomeIntroduction({ skeleton, user, today }: Introduction
                         </span>
                     </div>
                 </div>
-                <div className="flex items-center gap-3 text-lg text-white/80">
-                    <div className="rounded-2xl bg-white/10 px-3 py-1 text-base font-semibold">
-                        {getNameByDate(activeDay.getDay() as DaysAsNumbers)}
-                    </div>
-                    <span>
-                        {getNameByMonth(activeDay.getMonth() as MonthsAsNumbers)} {getDateDD(activeDay)}
-                    </span>
-                </div>
-                <p className="text-sm text-white/80">
-                    Sequenced keeps the day light and focused—just the essentials you need to move forward.
-                </p>
+                <a
+                    href={`/calendar?scope=today&view=week`}
+                    className="inline-flex w-fit items-center gap-2 rounded-2xl bg-white/12 text-base font-semibold text-white"
+                >
+                    <span>{getNameByDate(activeDay.getDay() as DaysAsNumbers)},</span>
+                    <span>{getNameByMonth(activeDay.getMonth() as MonthsAsNumbers)} {getDateDD(activeDay)}</span>
+                </a>
             </div>
         </div>
     )

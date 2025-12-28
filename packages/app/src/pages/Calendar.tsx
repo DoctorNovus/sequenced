@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTasks, Task } from "@/hooks/tasks";
 import { occursOnDate, isTaskDone } from "@/utils/data";
+import TaskInfoMenu from "@/pages/(Layout)/TaskInfoMenu";
+import { useApp } from "@/hooks/app";
 
 type Scope = "today" | "tomorrow" | "week" | "month" | "overdue" | "all";
 type ViewMode = "week" | "month";
@@ -45,13 +47,24 @@ function buildWeekDays(anchor: Date) {
   });
 }
 
-function buildMonthDays(anchor: Date) {
-  const first = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
-  const last = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 0);
-  const days = [];
-  for (let d = new Date(first); d <= last; d.setDate(d.getDate() + 1)) {
+function buildMonthDays(anchor: Date): Array<Date | null> {
+  const firstOfMonth = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
+  const lastOfMonth = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 0);
+
+  // Start on Monday of the first week containing the 1st.
+  const gridStart = startOfWeek(firstOfMonth);
+
+  const days: Array<Date | null> = [];
+  for (let d = new Date(gridStart); d <= lastOfMonth; d.setDate(d.getDate() + 1)) {
     days.push(new Date(d));
   }
+
+  // Pad trailing cells to keep 7 per row, but do not show next-month dates.
+  const remainder = days.length % 7;
+  if (remainder !== 0) {
+    for (let i = remainder; i < 7; i++) days.push(null);
+  }
+
   return days;
 }
 
@@ -103,11 +116,14 @@ export default function CalendarPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const tasks = useTasks();
+  const [appState, setAppState] = useApp();
+  const [isTaskMenuOpen, setIsTaskMenuOpen] = useState(false);
 
   const today = normalizeDay(new Date());
   const initialScope = (params.get("scope") as Scope) || "week";
   const initialView = (params.get("view") as ViewMode) || "week";
   const initialWeekParam = params.get("week");
+  const initialMonthParam = params.get("month");
 
   const resolveWeekStart = (scope: Scope) => {
     if (scope === "tomorrow") {
@@ -123,7 +139,10 @@ export default function CalendarPage() {
   const [weekStart, setWeekStart] = useState<Date>(
     initialWeekParam ? normalizeDay(new Date(initialWeekParam)) : resolveWeekStart(initialScope)
   );
-  const [monthAnchor, setMonthAnchor] = useState<Date>(today);
+  const [monthAnchor, setMonthAnchor] = useState<Date>(() => {
+    const base = initialMonthParam ? new Date(initialMonthParam) : today;
+    return new Date(base.getFullYear(), base.getMonth(), 1);
+  });
 
   const { start, end } = useMemo(() => {
     if (view === "week") {
@@ -146,6 +165,13 @@ export default function CalendarPage() {
 
   const weekDays = useMemo(() => buildWeekDays(weekStart), [weekStart]);
   const monthDays = useMemo(() => buildMonthDays(monthAnchor), [monthAnchor]);
+  const monthWeeks = useMemo(() => {
+    const weeks: Array<Array<Date | null>> = [];
+    for (let i = 0; i < monthDays.length; i += 7) {
+      weeks.push(monthDays.slice(i, i + 7));
+    }
+    return weeks;
+  }, [monthDays]);
 
   const overdueList = useMemo(() => {
     if (!tasks.data) return [];
@@ -162,7 +188,12 @@ export default function CalendarPage() {
 
   const handleViewChange = (next: ViewMode) => {
     setView(next);
-    navigate(`/calendar?scope=${scope}&view=${next}&week=${dayKey(weekStart)}`, { replace: true });
+    if (next === "week") {
+      navigate(`/calendar?scope=${scope}&view=${next}&week=${dayKey(weekStart)}`, { replace: true });
+    } else {
+      const monthKey = new Date(monthAnchor.getFullYear(), monthAnchor.getMonth(), 1).toISOString().slice(0, 10);
+      navigate(`/calendar?scope=${scope}&view=${next}&month=${monthKey}`, { replace: true });
+    }
   };
 
   const changeWeek = (delta: number) => {
@@ -173,8 +204,40 @@ export default function CalendarPage() {
     navigate(`/calendar?scope=week&view=week&week=${dayKey(next)}`, { replace: true });
   };
 
-  const renderTask = (task: Task) => (
-    <div key={task.id ?? task.title} className="flex flex-col rounded-xl border border-slate-200/60 bg-white px-3 py-2 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/70">
+  const goToWeek = (startDate: Date) => {
+    const startNormalized = startOfWeek(startDate);
+    setWeekStart(startNormalized);
+    setScope("week");
+    setView("week");
+    navigate(`/calendar?scope=week&view=week&week=${dayKey(startNormalized)}`, { replace: true });
+  };
+
+  const changeMonth = (delta: number) => {
+    const next = new Date(monthAnchor);
+    next.setMonth(monthAnchor.getMonth() + delta);
+    next.setDate(1);
+    setMonthAnchor(next);
+    setView("month");
+    const monthKey = next.toISOString().slice(0, 10);
+    navigate(`/calendar?scope=${scope}&view=month&month=${monthKey}`, { replace: true });
+  };
+
+  const openTask = (task: Task, activeDay?: Date) => {
+    setAppState({
+      ...appState,
+      activeTask: task,
+      activeDate: activeDay ?? new Date(task.date),
+    });
+    setIsTaskMenuOpen(true);
+  };
+
+  const renderTask = (task: Task, day?: Date) => (
+    <button
+      key={task.id ?? task.title}
+      type="button"
+      onClick={() => openTask(task, day)}
+      className="flex flex-col rounded-xl border border-slate-200/60 bg-white px-3 py-2 text-left shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700/60 dark:bg-slate-900/70"
+    >
       <div className="flex items-center justify-between">
         <span className="text-sm font-semibold text-primary">{task.title}</span>
         {task.priority ? <span className="text-[11px] font-semibold text-amber-600">P{task.priority}</span> : null}
@@ -191,7 +254,7 @@ export default function CalendarPage() {
           ))}
         </div>
       )}
-    </div>
+    </button>
   );
 
   const renderWeek = () => (
@@ -221,7 +284,7 @@ export default function CalendarPage() {
                   Nothing due.
                 </div>
               )}
-              {dayTasks.map(renderTask)}
+              {dayTasks.map((task) => renderTask(task, day))}
             </div>
           </div>
         );
@@ -230,33 +293,89 @@ export default function CalendarPage() {
   );
 
   const renderMonth = () => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-      {monthDays.map((day) => {
-        const key = dayKey(day);
-        const dayTasks = grouped[key] || [];
-        const isToday = dayKey(day) === dayKey(today);
-        return (
-          <div key={key} className={`rounded-2xl border p-3 shadow-sm ${isToday ? "border-accent-blue/50 ring-1 ring-accent-blue/20 bg-accent-blue-50/30 dark:bg-[rgba(99,102,241,0.1)]" : "border-slate-200/70 bg-white/80 dark:border-slate-700/60 dark:bg-slate-900/60"}`}>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-primary">
-                {formatLabel(day, { month: "short", day: "numeric" })}
-              </span>
-              <span className="text-[11px] font-semibold text-muted">{dayTasks.length} due</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              {dayTasks.slice(0, 3).map((task) => (
-                <span key={task.id ?? task.title} className="truncate rounded-lg bg-white/80 px-2 py-1 text-xs font-semibold text-primary shadow-sm ring-1 ring-slate-100 dark:bg-slate-800">
-                  {task.title}
-                </span>
-              ))}
-              {dayTasks.length > 3 && (
-                <span className="text-[11px] font-semibold text-accent-blue">+{dayTasks.length - 3} more</span>
-              )}
-              {dayTasks.length === 0 && <span className="text-[11px] text-muted">Free day</span>}
-            </div>
-          </div>
-        );
-      })}
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => changeMonth(-1)}
+            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+          >
+            ←
+          </button>
+          <button
+            type="button"
+            onClick={() => changeMonth(1)}
+            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+          >
+            →
+          </button>
+        </div>
+        <div className="text-lg font-semibold text-primary text-center flex-1">
+          {formatLabel(monthAnchor, { month: "long", year: "numeric" })}
+        </div>
+        <div className="w-[96px]" />
+      </div>
+      <div className="flex flex-col gap-2">
+        {monthWeeks.map((week, idx) => (
+          <button
+            key={`week-${idx}-${week[0] ? week[0].toISOString() : idx}`}
+            type="button"
+            onClick={() => week[0] && goToWeek(week[0])}
+            className="grid grid-cols-7 gap-2 sm:gap-3 rounded-2xl border border-slate-200/70 bg-white/70 p-1 shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700/60 dark:bg-slate-900/70"
+          >
+            {week.map((day) => {
+              if (!day) {
+                return <div key={`empty-${Math.random()}`} className="flex flex-col rounded-xl border border-transparent p-1 sm:p-2" />;
+              }
+              const key = dayKey(day);
+              const dayTasks = grouped[key] || [];
+              const isToday = dayKey(day) === dayKey(today);
+              const isCurrentMonth = day.getMonth() === monthAnchor.getMonth();
+              return (
+                <div
+                  key={key}
+                  className={`flex flex-col rounded-xl border p-1 sm:p-2 ${
+                    isToday
+                      ? "border-accent-blue/50 ring-1 ring-accent-blue/20 bg-accent-blue-50/30 dark:bg-[rgba(99,102,241,0.1)]"
+                      : "border-transparent"
+                  }`}
+                >
+                  <span
+                    className={`text-center text-xs sm:text-sm font-semibold ${isCurrentMonth ? "text-primary" : "text-muted/70"}`}
+                  >
+                    {day.getDate()}
+                  </span>
+                  <div className="mt-1 flex flex-col gap-1">
+                    <span className="text-[10px] font-semibold text-muted sm:hidden">
+                      {dayTasks.length > 0 ? `${dayTasks.length} due` : "—"}
+                    </span>
+                    <div className="hidden sm:flex flex-col gap-1">
+                      {dayTasks.slice(0, 3).map((task) => (
+                        <button
+                          key={task.id ?? task.title}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openTask(task, day);
+                          }}
+                          className="truncate rounded-lg bg-white/80 px-1.5 py-0.5 text-[10px] font-semibold text-primary shadow-sm ring-1 ring-slate-100 transition hover:border-accent-blue/40 hover:ring-accent-blue/20 dark:bg-slate-800"
+                        >
+                          {task.title}
+                        </button>
+                      ))}
+                      {dayTasks.length > 3 && (
+                        <span className="text-[10px] font-semibold text-accent-blue">+{dayTasks.length - 3} more</span>
+                      )}
+                      {dayTasks.length === 0 && <span className="text-[10px] text-muted">—</span>}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </button>
+        ))}
+      </div>
     </div>
   );
 
@@ -287,7 +406,7 @@ export default function CalendarPage() {
             <button
               type="button"
               onClick={() => changeWeek(-1)}
-              className="rounded-full border border-transparent px-2 py-1 text-xl font-semibold text-primary hover:-translate-y-px transition"
+              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
               aria-label="Previous week"
             >
               ←
@@ -298,7 +417,7 @@ export default function CalendarPage() {
             <button
               type="button"
               onClick={() => changeWeek(1)}
-              className="rounded-full border border-transparent px-2 py-1 text-xl font-semibold text-primary hover:-translate-y-px transition"
+              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
               aria-label="Next week"
             >
               →
@@ -324,7 +443,7 @@ export default function CalendarPage() {
               {overdueList.map(renderTask)}
             </div>
           </div>
-        )}
+      )}
 
         <div className="w-full">
           {tasks.isLoading && (
@@ -335,6 +454,7 @@ export default function CalendarPage() {
           {tasks.isSuccess && (
             <>
               {view === "week" ? renderWeek() : renderMonth()}
+              <TaskInfoMenu type="edit" isOpen={isTaskMenuOpen} setIsOpen={setIsTaskMenuOpen} />
             </>
           )}
         </div>
