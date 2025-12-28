@@ -264,10 +264,19 @@ export default function CalendarPage() {
         const dayTasks = grouped[key] || [];
         const isToday = dayKey(day) === dayKey(today);
         return (
-          <div key={key} className="rounded-2xl border border-slate-200/70 bg-white/80 p-4 shadow-sm ring-1 ring-accent-blue/10 dark:border-slate-700/60 dark:bg-slate-900/70">
+          <div
+            key={key}
+            className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm ring-1 ring-slate-100/90 dark:border-slate-800/70 dark:bg-slate-900/80 dark:ring-slate-800"
+          >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold ${isToday ? "bg-accent-blue text-white shadow-sm" : "bg-slate-100 text-primary dark:bg-slate-800"}`}>
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold ring-1 ${
+                    isToday
+                      ? "bg-accent-blue/90 text-white ring-white/60 shadow-sm shadow-accent-blue/25"
+                      : "bg-slate-100 text-primary ring-slate-200 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
+                  }`}
+                >
                   {formatLabel(day, { weekday: "short" })}
                 </div>
                 <div className="flex flex-col">
@@ -294,34 +303,40 @@ export default function CalendarPage() {
 
   const renderMonth = () => (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => changeMonth(-1)}
-            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
-          >
-            ←
-          </button>
-          <button
-            type="button"
-            onClick={() => changeMonth(1)}
-            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
-          >
-            →
-          </button>
-        </div>
-        <div className="text-lg font-semibold text-primary text-center flex-1">
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <button
+          type="button"
+          onClick={() => changeMonth(-1)}
+          className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+          aria-label="Previous month"
+        >
+          ←
+        </button>
+        <span className="text-lg font-semibold text-primary">
           {formatLabel(monthAnchor, { month: "long", year: "numeric" })}
-        </div>
-        <div className="w-[96px]" />
+        </span>
+        <button
+          type="button"
+          onClick={() => changeMonth(1)}
+          className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+          aria-label="Next month"
+        >
+          →
+        </button>
       </div>
       <div className="flex flex-col gap-2">
         {monthWeeks.map((week, idx) => (
-          <button
+          <div
             key={`week-${idx}-${week[0] ? week[0].toISOString() : idx}`}
-            type="button"
+            role="button"
+            tabIndex={0}
             onClick={() => week[0] && goToWeek(week[0])}
+            onKeyDown={(e) => {
+              if ((e.key === "Enter" || e.key === " ") && week[0]) {
+                e.preventDefault();
+                goToWeek(week[0]);
+              }
+            }}
             className="grid grid-cols-7 gap-2 sm:gap-3 rounded-2xl border border-slate-200/70 bg-white/70 p-1 shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700/60 dark:bg-slate-900/70"
           >
             {week.map((day) => {
@@ -373,7 +388,7 @@ export default function CalendarPage() {
                 </div>
               );
             })}
-          </button>
+          </div>
         ))}
       </div>
     </div>
@@ -402,7 +417,7 @@ export default function CalendarPage() {
         </div>
 
         {view === "week" && (
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
               onClick={() => changeWeek(-1)}
@@ -411,7 +426,7 @@ export default function CalendarPage() {
             >
               ←
             </button>
-            <span className="text-sm font-semibold text-primary">
+            <span className="text-lg font-semibold text-primary">
               Week of {formatLabel(weekStart, { month: "long", day: "numeric" })}
             </span>
             <button
