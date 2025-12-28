@@ -115,22 +115,27 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
                 }
             </div>
             <div
-                className={`mt-4 flex items-center justify-between rounded-2xl border px-4 py-3 ${
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate("/calendar?scope=overdue&view=week")}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        navigate("/calendar?scope=overdue&view=week");
+                    }
+                }}
+                className={`group mt-4 flex items-center justify-between rounded-2xl border px-4 py-3 cursor-pointer transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/25 ${
                     tasks.isSuccess && counts.overdue > 0
                         ? "border-red-300/70 bg-red-50/70 text-red-700 dark:border-red-400/50 dark:bg-[rgba(248,113,113,0.12)] dark:text-red-200"
                         : "border-emerald-200/70 bg-emerald-50/80 text-emerald-700 dark:border-emerald-300/40 dark:bg-[rgba(52,211,153,0.12)] dark:text-emerald-200"
                 }`}
             >
-                <span className="text-base font-semibold">
-                    Overdue Tasks
-                </span>
-                <button
-                    type="button"
-                    onClick={() => navigate("/calendar?scope=overdue&view=week")}
-                    className="text-3xl font-semibold text-left hover:-translate-y-px transition"
-                >
+                <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-base font-semibold text-primary">Overdue Tasks</span>
+                </div>
+                <span className="text-3xl font-semibold text-left">
                     {tasks.isSuccess ? counts.overdue : "—"}
-                </button>
+                </span>
             </div>
         </div>
     )
