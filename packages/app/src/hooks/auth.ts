@@ -60,6 +60,42 @@ export function useRegister() {
     })
 }
 
+export function useRequestPasswordReset() {
+    return useMutation({
+        mutationFn: async (body: { email: string }) => {
+            const response = await fetchData("/auth/forgot-password", {
+                method: "POST",
+                body
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data?.message || "Unable to send reset email.");
+            }
+
+            return data;
+        }
+    });
+}
+
+export function useCompletePasswordReset() {
+    return useMutation({
+        mutationFn: async (body: { token: string; password: string }) => {
+            const response = await fetchData("/auth/reset-password", {
+                method: "POST",
+                body
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data?.message || "Unable to reset password.");
+            }
+
+            return data;
+        }
+    });
+}
+
 export async function signout() {
     queryClient.invalidateQueries({ queryKey: ["auth"] });
     queryClient.invalidateQueries({ queryKey: ["user"] });

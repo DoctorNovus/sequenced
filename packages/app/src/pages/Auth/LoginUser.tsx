@@ -66,7 +66,13 @@ export default function LoginUser() {
                     {status.length > 0 && <span className="text-red-500 text-sm">{status}</span>}
                     <button type="submit" className="w-full rounded-xl bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 py-3 text-lg font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:translate-y-[-1px]">Sign In</button>
                     <div className="flex w-full justify-center">
-                        <em className="text-center text-sm text-muted">Forgot Password?</em>
+                        <button
+                            type="button"
+                            onClick={() => navigate("/auth/forgotPassword")}
+                            className="text-center text-sm font-semibold text-accent-blue hover:underline"
+                        >
+                            Forgot Password?
+                        </button>
                     </div>
                 </form>
             </div>

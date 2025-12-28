@@ -14,6 +14,7 @@ import NoPage from "@/pages/NoPage";
 import Login from "@/pages/Auth/Login";
 import LoginUser from "@/pages/Auth/LoginUser";
 import RegisterUser from "@/pages/Auth/RegisterUser";
+import ForgotPassword from "@/pages/Auth/ForgotPassword";
 
 // Styles
 import "./index.css";
@@ -85,6 +86,7 @@ export default function App() {
             <Route path="/auth" element={<Login />} />
             <Route path="/auth/login" element={<LoginUser />} />
             <Route path="/auth/register" element={<RegisterUser />} />
+            <Route path="/auth/forgotPassword" element={<ForgotPassword />} />
           </Routes>
         </BrowserRouter>
       </AppContext.Provider>
