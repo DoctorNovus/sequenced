@@ -2,6 +2,8 @@ import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Capacitor } from "@capacitor/core";
+import { StatusBar, Style } from "@capacitor/status-bar";
 
 // Pages
 import Home from "./pages/Home";
@@ -42,6 +44,31 @@ export default function App() {
   const [appState] = reducer;
 
   useEffect(() => {
+    const updateThemeMeta = (theme: "light" | "dark") => {
+      const themeMeta = document.querySelector<HTMLMetaElement>("#theme-color");
+      const statusBar = document.querySelector<HTMLMetaElement>("#status-bar-style");
+
+      if (statusBar) {
+        statusBar.content = theme === "dark" ? "black" : "default";
+      }
+
+      if (themeMeta) {
+        themeMeta.content = theme === "dark" ? "#0b0f14" : "#f7f9fb";
+      }
+    };
+
+    const updateStatusBar = async (theme: "light" | "dark") => {
+      if (Capacitor.getPlatform() !== "ios") return;
+      try {
+        await StatusBar.setOverlaysWebView({ overlay: false });
+        await StatusBar.setBackgroundColor({ color: theme === "dark" ? "#0b0f14" : "#f7f9fb" });
+        // Style.Dark = light text for dark backgrounds, Style.Light = dark text for light backgrounds
+        await StatusBar.setStyle({ style: theme === "dark" ? Style.Dark : Style.Light });
+      } catch (err) {
+        console.warn("Failed to update native status bar", err);
+      }
+    };
+
     const media = window.matchMedia?.("(prefers-color-scheme: dark)");
     const resolveTheme = () => {
       if (appState?.theme === "auto") {
@@ -53,6 +80,8 @@ export default function App() {
     const appliedTheme = resolveTheme();
     document.documentElement.classList.toggle("dark", appliedTheme === "dark");
     document.documentElement.setAttribute("data-theme", appliedTheme);
+    updateThemeMeta(appliedTheme);
+    updateStatusBar(appliedTheme);
     try {
       window.localStorage.setItem("sequenced-theme", appState?.theme ?? "light");
     } catch (err) {
@@ -64,6 +93,8 @@ export default function App() {
         const next = resolveTheme();
         document.documentElement.classList.toggle("dark", next === "dark");
         document.documentElement.setAttribute("data-theme", next);
+        updateThemeMeta(next);
+        updateStatusBar(next);
       };
       media.addEventListener("change", listener);
       return () => media.removeEventListener("change", listener);

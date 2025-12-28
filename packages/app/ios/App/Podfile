@@ -15,6 +15,7 @@ def capacitor_pods
   pod 'CapacitorCommunitySqlite', :path => '../../../../node_modules/@capacitor-community/sqlite'
   pod 'CapacitorFilesystem', :path => '../../../../node_modules/@capacitor/filesystem'
   pod 'CapacitorLocalNotifications', :path => '../../../../node_modules/@capacitor/local-notifications'
+  pod 'CapacitorStatusBar', :path => '../../../../node_modules/@capacitor/status-bar'
   pod 'CapacitorPreferences', :path => '../../../../node_modules/@capacitor/preferences'
 end
 
