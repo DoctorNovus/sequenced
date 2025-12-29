@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router";
 import ArrowBack from "../(Login)/ArrowBack";
 import { useCompletePasswordReset, useRequestPasswordReset } from "@/hooks/auth";
 

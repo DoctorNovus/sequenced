@@ -1,7 +1,7 @@
 import { Task, useUpdateTask } from "@/hooks/tasks";
 import { matchDate } from "@/utils/date";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import TaskItemShell from "./TaskItemShell";
 import TaskItemCheckBox from "./TaskItemCheckbox";
 import TaskItemTitle from "./TaskItemTitle";

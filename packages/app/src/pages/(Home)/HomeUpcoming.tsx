@@ -1,6 +1,6 @@
 import { TaskItem } from "@/components/task/TaskItem"
 import { useTasksIncomplete } from "@/hooks/tasks";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useApp } from "@/hooks/app";
 
 interface UpcomingParams {
