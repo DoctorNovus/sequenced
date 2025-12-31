@@ -5,9 +5,9 @@ import { Task } from "./tasks";
 
 
 // Allow docker / hosted environments to inject an API base URL at build time.
-export const SERVER_IP = import.meta.env.NODE_ENV == "development" ? `http://localhost:8080` : `https://api.sequenced.ottegi.com`;
+export const SERVER_IP = import.meta.env.DEV ? `http://localhost:8080` : `https://api.sequenced.ottegi.com`;
 
-Logger.log(`Running in ${import.meta.env.NODE_ENV} mode.`);
+Logger.log(`Running in ${import.meta.env.DEV ? "Development" : "Production"} mode.`);
 
 // TODO: remove tempActiveDate.
 type ThemeChoice = "light" | "dark" | "auto";
