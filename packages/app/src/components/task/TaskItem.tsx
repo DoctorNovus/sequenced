@@ -1,7 +1,6 @@
 import { Task, useUpdateTask } from "@/hooks/tasks";
 import { matchDate } from "@/utils/date";
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import TaskItemShell from "./TaskItemShell";
 import TaskItemCheckBox from "./TaskItemCheckbox";
 import TaskItemTitle from "./TaskItemTitle";
@@ -10,7 +9,7 @@ import { isTaskDone } from "@/utils/data";
 import { useApp } from "@/hooks/app";
 
 interface TaskItemParams {
-  skeleton: boolean;
+  skeleton?: boolean;
   item?: Task;
   setIsInspecting?: (open: boolean) => void;
   taskFilter?: string;
@@ -25,16 +24,16 @@ export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectio
   if (skeleton) {
     return (
       <div className="w-full flex flex-col gap-2">
-        <TaskItemShell skeleton>
+        <TaskItemShell skeleton={true}>
           <div className="w-full h-full flex flex-row items-center">
-            <TaskItemCheckBox skeleton="true" />
+            <TaskItemCheckBox />
             <div className="w-full">
               <div className="w-full flex flex-row items-center justify-between">
                 <TaskItemTitle text="Loading..." />
               </div>
               <div className="w-fit flex flex-row flex-end items-center justify-start px-2">
                 <div className="w-full h-full flex items-center justify-evenly">
-                  <TaskItemDate task={item} />
+                  <TaskItemDate task={item!} />
                 </div>
               </div>
             </div>
@@ -51,9 +50,7 @@ export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectio
   // TODO: Remove Later
   if (!setIsInspecting) setIsInspecting = () => { };
 
-  if (!item) item = {};
-
-  const navigate = useNavigate();
+  if (!item) item = { title: "", date: new Date(), done: false, tags: [] };
 
   const { mutate: updateTask } = useUpdateTask();
 
@@ -61,15 +58,7 @@ export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectio
 
   const [isCompleting, setIsCompleting] = useState(false);
 
-  const tags = Array.isArray(item.tags)
-    ? item.tags
-        .map((tag) => {
-          if (typeof tag === "string") return tag;
-          if (tag && typeof tag.title === "string") return tag.title;
-          return null;
-        })
-        .filter(Boolean) as string[]
-    : [];
+  const tags = Array.isArray(item.tags) ? item.tags.map((tag) => (typeof tag === "string" ? tag : null)).filter(Boolean) as string[] : [];
 
   const handleToggleSelect = () => {
     if (!onToggleSelect || !item?.id) return;
@@ -77,30 +66,28 @@ export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectio
   };
 
 
-  const handleMarkComplete = (e) => {
+  const handleMarkComplete = (e: React.ChangeEvent) => {
     e.stopPropagation();
     setIsCompleting(true);
-
-    let newData = {};
 
     if (item.repeater && item.repeater.length != 0) {
       const activeDate = appData.activeDate;
       const newDone = Array.isArray(item.done) ? [...item.done] : [];
 
-      let rawDate = new Date(activeDate);
+      let rawDate = new Date(activeDate!);
       rawDate.setHours(0, 0, 0, 0);
 
       const foundIdx = newDone.findIndex((entry) => matchDate(new Date(entry), rawDate));
 
       if (foundIdx === -1) {
-        newDone.push(rawDate);
+        newDone.push(rawDate.toString());
       } else {
         newDone.splice(foundIdx, 1);
       }
 
-      updateTask({ id: item.id, data: { ...item, done: newDone } });
+      updateTask({ id: item.id!, data: { ...item, done: newDone } });
     } else {
-      updateTask({ id: item.id, data: { ...item, done: !item.done } });
+      updateTask({ id: item.id!, data: { ...item, done: !item.done } });
     }
 
     if (onComplete) onComplete(item as Task);
@@ -109,7 +96,7 @@ export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectio
     setTimeout(() => setIsCompleting(false), 600);
   };
 
-  const handleInteractive = (e) => {
+  const handleInteractive = (e: React.MouseEvent) => {
     if (selectionMode) {
       e.stopPropagation();
       handleToggleSelect();
@@ -137,7 +124,7 @@ export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectio
       ? "opacity-0 translate-y-1 scale-[0.98] pointer-events-none"
       : "";
 
-  const isPending = isTaskDone(item, appData.activeDate);
+  const isPending = isTaskDone(item!, appData.activeDate!);
 
   return (
     <div
@@ -150,19 +137,19 @@ export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectio
         task={item}
         activeDate={appData.activeDate}
         className={`${fadeClass} ${selectionClass}`}
-        onClick={(e) => handleInteractive(e)}
+        onClick={handleInteractive}
       >
         <div className="w-full h-full flex flex-row items-center">
           <TaskItemCheckBox
-            checked={!isTaskDone(item, appData.activeDate)}
-            onChange={(e) => {
+            checked={!isTaskDone(item!, appData.activeDate!)}
+            onChange={(e: React.ChangeEvent) => {
               if (selectionMode) {
                 handleToggleSelect();
                 return;
               }
               handleMarkComplete(e);
             }}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               if (selectionMode) handleToggleSelect();
             }}

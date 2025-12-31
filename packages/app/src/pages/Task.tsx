@@ -1,19 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { useTasks, filterBroken } from "@/hooks/tasks";
-import { sortByDate } from "@/utils/data";
+import { useTasks } from "@/hooks/tasks";
 
 import DayTasks from "../components/calendar/DayTasks";
 import ActiveCalendar from "../components/calendar/ActiveCalendar";
 import TaskContainer from "@/components/menus/TaskContainer/TaskContainer";
-import { getPending } from "@/utils/notifs";
-import { SERVER_IP, useApp } from "@/hooks/app";
+import { useApp } from "@/hooks/app";
 import TaskInfoMenu from "@/pages/(Layout)/TaskInfoMenu";
 import { Logger } from "@/utils/logger";
 import TagFilterBar from "@/components/tasks/TagFilterBar";
 
 export default function Task() {
   const [appData, setAppData] = useApp();
-  const [activeDate, setActiveDate] = useState(appData.activeDate);
   const [isInspecting, setIsInspecting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -86,9 +83,9 @@ export default function Task() {
       <div className="w-full h-full text-accent-black">
         <div className="h-full">
           <div className="flex flex-col items-center gap-4 px-3 md:px-6">
-            <ActiveCalendar skeleton="true" />
-            <DayTasks skeleton="true" />
-            <TaskContainer title="All Tasks" skeleton="true" />
+            <ActiveCalendar skeleton={true} />
+            <DayTasks skeleton={true} />
+            <TaskContainer title="All Tasks" skeleton={true} />
           </div>
           <div>
             {/* <TaskInfoMenu skeleton="true" /> */}

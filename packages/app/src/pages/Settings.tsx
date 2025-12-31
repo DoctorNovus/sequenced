@@ -132,7 +132,7 @@ export default function SettingsPage() {
     const minute = parseInt(timeParts[1]);
 
     await cancelNotification(await FindDailyTask());
-    const newReminder = await setDailyReminders(hour, minute);
+    await setDailyReminders(hour, minute);
 
     Logger.log(`Set Daily Reminders!`);
   };
@@ -158,7 +158,7 @@ export default function SettingsPage() {
       const hour = parseInt(timeParts[0]);
       const minute = parseInt(timeParts[1]);
 
-      const newReminder = await setDailyReminders(hour, minute);
+      await setDailyReminders(hour, minute);
 
       Logger.log(`Set Daily Reminders!`);
     }

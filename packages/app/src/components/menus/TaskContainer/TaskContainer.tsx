@@ -1,30 +1,21 @@
 import { useState } from "react";
 import TaskMenu from "../../tasks/TaskMenu";
-
-import dropdown_icon from "@/assets/dropdown.svg";
-import dropup_icon from "@/assets/dropup.svg";
-
-import visible_icon from "@/assets/visible.svg";
-import invisible_icon from "@/assets/invisible.svg";
-
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
-import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
-
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { matchDate } from "@/utils/date";
-import { isTaskDone, sortByDate, sortByPriority } from "@/utils/data";
+import { sortByDate, sortByPriority } from "@/utils/data";
 import { Task } from "@/hooks/tasks";
 import { useUpdateSettings, useSettings } from "@/hooks/settings";
-import { useApp, useAppReducer } from "@/hooks/app";
+import { useApp } from "@/hooks/app";
 import { UseQueryResult } from "@tanstack/react-query";
 import { useUpdateTask } from "@/hooks/tasks";
 import { EllipsisHorizontalIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 
 interface ContainerSettings {
   skeleton?: boolean | string;
-  identifier: string;
-  title: string;
-  tasks: UseQueryResult<Task[]> | Task[];
+  identifier?: string;
+  title?: string;
+  tasks?: UseQueryResult<Task[]> | Task[];
   activeFilter?: string;
   setIsInspecting?: (value: boolean) => void;
 }
@@ -34,10 +25,9 @@ export default function TaskContainer({
   identifier,
   title,
   tasks,
-  activeFilter,
   setIsInspecting,
 }: ContainerSettings) {
-  const [appData, setAppData] = useApp();
+  const [appData] = useApp();
   const [taskFilter, setTaskFilter] = useState("incomplete");
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
@@ -140,18 +130,18 @@ export default function TaskContainer({
       const activeDay = new Date(appData.activeDate ?? new Date());
       activeDay.setHours(0, 0, 0, 0);
 
-      const toUpdate = baseTasks.filter((task) => selectedTaskIds.includes(task.id));
+      const toUpdate = baseTasks.filter((task) => selectedTaskIds.includes(task.id!));
 
       const updates = toUpdate.map((task) => {
         if (task.repeater && task.repeater.length > 0) {
           const doneList = Array.isArray(task.done) ? [...task.done] : [];
           const alreadyMarked = doneList.find((d) => matchDate(new Date(d), activeDay));
-          if (!alreadyMarked) doneList.push(activeDay);
+          if (!alreadyMarked) doneList.push(activeDay.toString());
 
-          return { id: task.id, data: { ...task, done: doneList } };
+          return { id: task.id!, data: { ...task, done: doneList } };
         }
 
-        return { id: task.id, data: { ...task, done: true } };
+        return { id: task.id!, data: { ...task, done: true } };
       });
 
     try {
@@ -168,7 +158,7 @@ export default function TaskContainer({
   const normalizeTag = (value: string) => value.trim().toLowerCase();
   const normalizeGroup = (value: string) => value.trim().toLowerCase();
 
-  const selectedTasks = baseTasks.filter((task) => selectedTaskIds.includes(task.id));
+  const selectedTasks = baseTasks.filter((task) => selectedTaskIds.includes(task.id!));
   const uniqueTags = Array.from(
     new Set(
       selectedTasks.flatMap((task) =>
@@ -218,12 +208,12 @@ export default function TaskContainer({
     if (selectedTaskIds.length === 0) return;
     setIsBulkUpdating(true);
 
-    const toUpdate = baseTasks.filter((task) => selectedTaskIds.includes(task.id));
+    const toUpdate = baseTasks.filter((task) => selectedTaskIds.includes(task.id!));
     const updates = toUpdate
       .map((task) => {
         const changes = build(task);
         if (!changes) return null;
-        return updateTask({ id: task.id, data: { id: task.id, ...changes } });
+        return updateTask({ id: task.id!, data: { id: task.id, ...changes } });
       })
       .filter(Boolean) as Promise<void>[];
 
@@ -248,13 +238,6 @@ export default function TaskContainer({
     });
 
     setBulkGroup("");
-  };
-
-  const removeGroupFromSelected = async () => {
-    await bulkUpdateSelected((task) => {
-      if (!task.group) return null;
-      return { group: "" };
-    });
   };
 
   const addTagToSelected = async () => {
@@ -289,9 +272,9 @@ export default function TaskContainer({
     if (typeof groupsActive == "undefined") groupsActive = [];
 
     if (open) {
-      groupsActive?.splice(groupsActive.indexOf(identifier), 1);
+      groupsActive?.splice(groupsActive.indexOf(identifier!), 1);
     } else {
-      groupsActive?.push(identifier);
+      groupsActive?.push(identifier!);
     }
 
     setSettings({ groupsActive });
@@ -309,7 +292,6 @@ export default function TaskContainer({
   const renderBulkActionCard = () => {
     if (!selectionMode || !bulkAction) return null;
 
-    const normalizedGroup = normalizeGroup(bulkGroup);
     const normalizedTags = Array.from(
       new Set(workingTags.map((tag) => normalizeTag(tag)).filter(Boolean))
     );
@@ -512,7 +494,7 @@ export default function TaskContainer({
       {settings.isError && <span>Error: {settings.error.message}</span>}
       {settings.isSuccess && (
         <Disclosure
-          defaultOpen={settings.data.groupsActive?.includes(identifier)}
+          defaultOpen={settings.data.groupsActive?.includes(identifier!)}
         >
           {({ open }) => (
             <>
@@ -662,7 +644,7 @@ export default function TaskContainer({
                   toggleSelection={toggleSelection}
                   animatingIds={animatingIds}
                   activeDate={appData.activeDate}
-                  onTaskComplete={(task) => showCompletionToast(`Task completed: ${task.title || "Untitled"}`)}
+                  onTaskComplete={(task: Task) => showCompletionToast(`Task completed: ${task.title || "Untitled"}`)}
                 />
                 {/* )} */}
               </Disclosure.Panel>

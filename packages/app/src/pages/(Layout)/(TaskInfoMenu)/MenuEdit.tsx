@@ -1,6 +1,15 @@
+import { Task } from "@/hooks/tasks";
 import { TaskInfoMenuDelete } from "./Shared/TaskInfoMenuDelete";
 
-export default function MenuEdit({ type, appData, tempData, isDeleting, setIsDeleting, setIsOpen }) {
+interface MenuEditProps {
+    type: string;
+    tempData: Task;
+    isDeleting: boolean;
+    setIsDeleting: (state: boolean) => void;
+    setIsOpen: (state: boolean) => void;
+}
+
+export default function MenuEdit({ type, tempData, isDeleting, setIsDeleting, setIsOpen }: MenuEditProps) {
     const closeMenu = (e?: React.MouseEvent<any>) => {
         if (e) e.stopPropagation();
 

@@ -1,4 +1,11 @@
-export default function DueCapsule({ skeleton, count, category, important, onClick }) {
+interface DueCapsule {
+    skeleton?: boolean;
+    count?: number;
+    category?: string;
+    onClick?: (e: React.MouseEvent) => void;
+}
+
+export default function DueCapsule({ skeleton, count, category, onClick }: DueCapsule) {
     if (skeleton)
         return (
             <div className="relative flex h-full items-center overflow-hidden rounded-2xl surface-card border p-3 shadow-sm ring-1 ring-accent-blue/15">

@@ -10,7 +10,7 @@ export default function DailyNotifications({ tempSettings, UpdateSettings }: Dai
     return (
         <InputToggle
             title="Daily Notifications"
-            defaultValue={tempSettings.sendDailyReminders}
+            defaultValue={tempSettings.sendDailyReminders!}
             onChange={(val: boolean) =>
                 UpdateSettings({ sendDailyReminders: val })
             }

@@ -1,4 +1,4 @@
-import { useTasks } from "@/hooks/tasks";
+import { Task, useTasks } from "@/hooks/tasks";
 import DueCapsule from "./DueCapsule";
 import { useNavigate } from "react-router";
 import { occursOnDate, isTaskDone, normalizeDay } from "@/utils/data";
@@ -15,8 +15,8 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
     const today = normalizeDay(new Date());
     const tomorrow = normalizeDay(new Date(Date.now() + 24 * 60 * 60 * 1000));
 
-    const isPendingOnDate = (task, day) => occursOnDate(task, day) && isTaskDone(task, day);
-    const hasPendingWithinDays = (task, startDay: Date, days: number) => {
+    const isPendingOnDate = (task: Task, day: Date) => occursOnDate(task, day) && isTaskDone(task, day);
+    const hasPendingWithinDays = (task: Task, startDay: Date, days: number) => {
         for (let i = 0; i < days; i++) {
             const check = new Date(startDay);
             check.setDate(startDay.getDate() + i);
@@ -24,7 +24,7 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
         }
         return false;
     };
-    const hasPendingBefore = (task, target: Date) => {
+    const hasPendingBefore = (task: Task, target: Date) => {
         const startDay = normalizeDay(task.date as any);
         if (Number.isNaN(startDay.getTime()) || startDay > target) return false;
 
@@ -88,7 +88,6 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
                         <DueCapsule
                             count={counts.today}
                             category="today"
-                            important
                             onClick={() => navigate("/calendar?scope=today&view=week")}
                         />
                     )
@@ -98,7 +97,6 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
                         <DueCapsule
                             count={counts.tomorrow}
                             category="tomorrow"
-                            important
                             onClick={() => navigate("/calendar?scope=tomorrow&view=week")}
                         />
                     )
@@ -108,7 +106,6 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
                         <DueCapsule
                             count={counts.week}
                             category="this week"
-                            important
                             onClick={() => navigate("/calendar?scope=week&view=week")}
                         />
                     )

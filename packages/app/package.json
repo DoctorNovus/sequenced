@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "build:full": "npm run build && npm run sync",
     "sync": "npx cap sync",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",

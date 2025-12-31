@@ -1,6 +1,6 @@
 import { useUser } from "@/hooks/user";
 
-export default function DeveloperSettings({ children }) {
+export default function DeveloperSettings({ children }: React.PropsWithChildren) {
     const user = useUser();
 
     if (user.isLoading)

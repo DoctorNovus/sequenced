@@ -3,17 +3,17 @@ import { Logger } from "@/utils/logger";
 
 import { Task } from "./tasks";
 
-export const AppContext = createContext(null);
 
 // Allow docker / hosted environments to inject an API base URL at build time.
-export const SERVER_IP = process.env.NODE_ENV == "development" ? `http://localhost:8080` : `https://api.sequenced.ottegi.com`;
+export const SERVER_IP = import.meta.env.NODE_ENV == "development" ? `http://localhost:8080` : `https://api.sequenced.ottegi.com`;
 
-Logger.log(`Running in ${process.env.NODE_ENV} mode.`);
+Logger.log(`Running in ${import.meta.env.NODE_ENV} mode.`);
 
 // TODO: remove tempActiveDate.
 type ThemeChoice = "light" | "dark" | "auto";
 
 export interface AppOptions {
+  storedDate?: Date;
   activeDate?: Date;
   tempActiveDate?: Date;
   activeTask?: Task;
@@ -21,10 +21,11 @@ export interface AppOptions {
 
   theme?: ThemeChoice;
 
-  authorized: false;
+  authorized: boolean;
 }
 
 const initialData: AppOptions = {
+  storedDate: undefined,
   activeDate: new Date(),
   tempActiveDate: undefined,
   activeTask: undefined,
@@ -34,14 +35,11 @@ const initialData: AppOptions = {
   authorized: false
 };
 
-const reducer = (data: Record<string, any>, payload: Record<string, any>) => ({
-  ...data,
-  ...payload,
-});
+const reducer = (data: AppOptions, payload: Partial<AppOptions>): AppOptions => ({ ...data, ...payload });
 
-export function useAppReducer() {
+export function useAppReducer(): [AppOptions, React.Dispatch<Partial<AppOptions>>] {
   const initializer = () => {
-    let theme: ThemeChoice = initialData.theme;
+    let theme = initialData.theme;
 
     if (typeof window !== "undefined") {
       const stored = window.localStorage.getItem("sequenced-theme");
@@ -59,6 +57,14 @@ export function useAppReducer() {
   return useReducer(reducer, initialData, initializer);
 }
 
-export function useApp(): Iterator<AppOptions> | null {
-  return useContext(AppContext);
+export const AppContext = createContext<[AppOptions, React.Dispatch<Partial<AppOptions>>] | null>(null);
+
+export function useApp(): [AppOptions, React.Dispatch<Partial<AppOptions>>] {
+  const context = useContext(AppContext);
+
+  if (!context) {
+    throw new Error("AppContext must have it's provider initialized before useApp() is called.");
+  }
+
+  return context;
 }

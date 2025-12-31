@@ -5,7 +5,7 @@ export default function ControllerUser() {
     const navigate = useNavigate();
 
     const loginAsUser = async () => {
-        const id = document.getElementById("developer_uid")?.value;
+        const id = (document.getElementById("developer_uid") as HTMLInputElement).value;
 
         const res = await (await fetchData("/auth/loginAsUser", {
             method: "POST",

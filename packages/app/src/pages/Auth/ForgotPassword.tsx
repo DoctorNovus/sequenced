@@ -17,7 +17,7 @@ export default function ForgotPassword() {
   const requestReset = useRequestPasswordReset();
   const completeReset = useCompletePasswordReset();
 
-  const handleRequest = async (e) => {
+  const handleRequest = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setStatus("");
@@ -30,7 +30,7 @@ export default function ForgotPassword() {
     }
   };
 
-  const handleReset = async (e) => {
+  const handleReset = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setStatus("");

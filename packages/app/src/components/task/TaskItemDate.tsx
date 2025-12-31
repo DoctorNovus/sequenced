@@ -1,11 +1,8 @@
-import today_icon from "@/assets/today.svg";
-import { useApp } from "@/hooks/app";
 import { Task } from "@/hooks/tasks";
 import { isOverdue } from "@/utils/date";
 import { formatDigits } from "@/utils/math";
 
 export default function TaskItemDate({ task }: { task: Task }) {
-  const [appData, setAppData] = useApp();
 
   if (!task?.date) return <></>;
 

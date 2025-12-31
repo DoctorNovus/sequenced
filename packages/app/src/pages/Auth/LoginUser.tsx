@@ -13,11 +13,12 @@ export default function LoginUser() {
 
     const [status, setStatus] = useState("");
 
-    const loginUser = async (e) => {
+    const loginUser = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const email = e.target[0].value;
-        const password = e.target[1].value;
+        const form = e.currentTarget;
+        const email = (form.elements[0] as HTMLInputElement).value;
+        const password = (form.elements[1] as HTMLInputElement).value;
 
         const resp = await login({ email, password });
 

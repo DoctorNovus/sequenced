@@ -5,7 +5,6 @@ import {
   createInitialTaskData,
   useAddTask,
   useAddTasksBulk,
-  useTaskById,
   useUpdateTask,
 } from "@/hooks/tasks";
 
@@ -158,17 +157,10 @@ export default function TaskInfoMenu({
     });
   };
 
-  const changeTempAppDate = (date: Date) => {
-    setAppData({
-      ...appData,
-      tempActiveDate: date,
-    });
-  };
-
   const createNotification = async (task: Task) => {
     if (!task || task.reminder == "") return;
 
-    const setDate: Date = task.date || new Date();
+    const setDate: Date = new Date(task.date);
 
     const second = 1000;
     const minute = second * 60;
@@ -229,8 +221,6 @@ export default function TaskInfoMenu({
     setAppData({ ...appData, activeTask: undefined });
     setIsOpen(false);
   };
-
-  const oldTask = useTaskById(tempData.id);
 
   const showToast = (text: string, variant: "create" | "update" | "bulk") => {
     setToast({ text, variant });
@@ -324,7 +314,7 @@ export default function TaskInfoMenu({
       setAppData({
         ...appData,
         activeDate: appData.storedDate,
-        storedDate: null
+        storedDate: undefined
       });
     }
 
@@ -333,8 +323,8 @@ export default function TaskInfoMenu({
       title: tempData.title.trim(),
     };
 
-    addTask(cleanedTask);
-    createNotification(cleanedTask);
+    addTask(cleanedTask as Task);
+    createNotification(cleanedTask as Task);
 
     showToast("Task created", "create");
     resetForm();
@@ -358,7 +348,7 @@ export default function TaskInfoMenu({
             <DialogPanel className="flex w-full max-w-xl max-h-full flex-col overflow-y-auto rounded-3xl surface-card border text-primary shadow-2xl bg-[var(--surface-card)] ring-1 ring-accent-blue/15 p-4 md:p-6">
               <div className="flex flex-col gap-5 ">
                 <MenuHeader
-                  type={type}
+                  type={type!}
                   isDeleting={isDeleting}
                 />
                 <MenuFields
@@ -371,25 +361,16 @@ export default function TaskInfoMenu({
                   setQuickTasksInput={setQuickTasksInput}
                   isQuickAdd={isQuickAdd}
                   setIsQuickAdd={setIsQuickAdd}
-
-                  setIsOpen={setIsOpen}
-
                   changeAppDate={changeAppDate}
-                  changeTempAppDate={changeTempAppDate}
-
                   appData={appData}
                   setAppData={setAppData}
                   validationError={validationError}
                 />
                 <MenuEdit
-                  type={type}
-
+                  type={type!}
                   isDeleting={isDeleting}
                   setIsDeleting={setIsDeleting}
-
-                  appData={appData}
-                  tempData={tempData}
-
+                  tempData={tempData as Task}
                   setIsOpen={setIsOpen}
                 />
                 <MenuFooter

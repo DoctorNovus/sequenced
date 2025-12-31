@@ -1,6 +1,12 @@
 import { CheckIcon } from "@heroicons/react/24/solid";
 
-export default function TaskItemCheckBox({ checked, ...props }) {
+interface TaskItemCheckBoxProps {
+  checked?: boolean;
+  onChange?: (e: React.ChangeEvent) => void;
+  onClick?: (e: React.MouseEvent) => void;
+}
+
+export default function TaskItemCheckBox({ checked, ...props }: TaskItemCheckBoxProps) {
   return (
     <label
       className={`relative flex h-7 w-7 items-center justify-center rounded-lg border-2 px-0.5 py-0.5 transition ${

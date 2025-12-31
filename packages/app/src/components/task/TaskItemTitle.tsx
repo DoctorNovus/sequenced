@@ -1,4 +1,4 @@
-export default function TaskItemTitle({ text }) {
+export default function TaskItemTitle({ text }: { text: string }) {
   return (
     <div
       className="w-full text-lg mx-3 ml-2 mr-6 whitespace-normal break-words text-primary"

@@ -1,7 +1,13 @@
 import { Switch } from "@headlessui/react";
 import { useEffect, useState } from "react";
 
-export default function InputToggle({ title, defaultValue, onChange }) {
+interface InputToggleProps {
+  title: string;
+  defaultValue: boolean;
+  onChange: (state: boolean) => void;
+}
+
+export default function InputToggle({ title, defaultValue, onChange }: InputToggleProps) {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {

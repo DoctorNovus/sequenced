@@ -178,14 +178,6 @@ export default function CalendarPage() {
     return tasks.data.filter((task) => isOverdue(task, today));
   }, [tasks.data, today]);
 
-  const handleScopeChange = (next: Scope) => {
-    setScope(next);
-    const base = next === "tomorrow" ? new Date(today.getTime() + 86400000) : today;
-    const nextWeekStart = startOfWeek(base);
-    setWeekStart(nextWeekStart);
-    navigate(`/calendar?scope=${next}&view=${view}&week=${dayKey(nextWeekStart)}`, { replace: true });
-  };
-
   const handleViewChange = (next: ViewMode) => {
     setView(next);
     if (next === "week") {
@@ -249,7 +241,7 @@ export default function CalendarPage() {
         <div className="mt-2 flex flex-wrap gap-2">
           {task.tags.map((tag) => (
             <span key={String(tag)} className="rounded-full bg-accent-blue/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-accent-blue-800 ring-1 ring-accent-blue/20">
-              #{typeof tag === "string" ? tag : tag?.title ?? ""}
+              #{tag}
             </span>
           ))}
         </div>
@@ -455,7 +447,7 @@ export default function CalendarPage() {
                   All caught up!
                 </div>
               )}
-              {overdueList.map(renderTask)}
+              {overdueList.map((task) => renderTask(task))}
             </div>
           </div>
       )}
