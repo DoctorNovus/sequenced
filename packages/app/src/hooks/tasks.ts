@@ -147,7 +147,7 @@ export async function getTasksToday(): Promise<CountData> {
   return await (await fetchData("/metrics/tasks/today", {})).json();
 }
 
-export function useTasksToday(): UseQueryResult<Task[]> {
+export function useTasksToday() {
   return useQuery({
     queryKey: ["tasks", "today"],
     queryFn: getTasksToday,
@@ -258,7 +258,7 @@ export function useUpdateTask(): UseMutationResult<
 > {
   const queryClient = useQueryClient();
 
-  const mutationFn = async ({ id, data }: { id: string; data: Partial<Task> }) => {
+  const mutationFn = async ({ data }: { id: string; data: Partial<Task> }) => {
     // Users are managed via dedicated invite/remove endpoints; omit them to avoid clobbering membership.
     const { users: _omitUsers, ...rest } = data ?? {};
 

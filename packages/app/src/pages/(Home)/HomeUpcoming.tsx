@@ -1,6 +1,6 @@
 import { TaskItem } from "@/components/task/TaskItem"
-import { useTasksIncomplete } from "@/hooks/tasks";
-import { useNavigate } from "react-router-dom";
+import { Task, useTasksIncomplete } from "@/hooks/tasks";
+import { useNavigate } from "react-router";
 import { useApp } from "@/hooks/app";
 
 interface UpcomingParams {
@@ -12,7 +12,7 @@ export default function HomeUpcoming({ skeleton }: UpcomingParams) {
     const navigate = useNavigate();
     const [appData, setAppData] = useApp();
 
-    const openTaskInTasks = (task) => {
+    const openTaskInTasks = (task: Task) => {
         setAppData({
             ...appData,
             activeTask: task,
@@ -34,7 +34,7 @@ export default function HomeUpcoming({ skeleton }: UpcomingParams) {
                 </div>
                 <ul className="w-full flex flex-col gap-3">
                     <li className="w-full h-full">
-                        <TaskItem skeleton="true" />
+                        <TaskItem skeleton={true} />
                     </li>
                 </ul>
             </div>

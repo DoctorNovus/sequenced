@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import ArrowBack from "../(Login)/ArrowBack";
 import { reloadAuth, useRegister } from "@/hooks/auth";
 import { useState } from "react";
@@ -13,13 +13,14 @@ export default function RegisterUser() {
 
     const [status, setStatus] = useState("");
 
-    const registerUser = async (e) => {
+    const registerUser = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const first = e.target[0].value;
-        const last = e.target[1].value;
-        const email = e.target[2].value;
-        const password = e.target[3].value;
+        const form = e.currentTarget;
+        const first = (form.elements[0] as HTMLInputElement).value;
+        const last = (form.elements[1] as HTMLInputElement).value;
+        const email = (form.elements[2] as HTMLInputElement).value;
+        const password = (form.elements[3] as HTMLInputElement).value;
 
         const response = await register({ first, last, email, password });
 

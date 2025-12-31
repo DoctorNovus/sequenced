@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import ArrowBack from "../(Login)/ArrowBack";
 import { reloadAuth, useLogin } from "@/hooks/auth";
 import { useState } from "react";
@@ -13,11 +13,12 @@ export default function LoginUser() {
 
     const [status, setStatus] = useState("");
 
-    const loginUser = async (e) => {
+    const loginUser = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const email = e.target[0].value;
-        const password = e.target[1].value;
+        const form = e.currentTarget;
+        const email = (form.elements[0] as HTMLInputElement).value;
+        const password = (form.elements[1] as HTMLInputElement).value;
 
         const resp = await login({ email, password });
 
@@ -66,7 +67,13 @@ export default function LoginUser() {
                     {status.length > 0 && <span className="text-red-500 text-sm">{status}</span>}
                     <button type="submit" className="w-full rounded-xl bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 py-3 text-lg font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:translate-y-[-1px]">Sign In</button>
                     <div className="flex w-full justify-center">
-                        <em className="text-center text-sm text-muted">Forgot Password?</em>
+                        <button
+                            type="button"
+                            onClick={() => navigate("/auth/forgotPassword")}
+                            className="text-center text-sm font-semibold text-accent-blue hover:underline"
+                        >
+                            Forgot Password?
+                        </button>
                     </div>
                 </form>
             </div>

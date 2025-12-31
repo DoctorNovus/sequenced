@@ -5,9 +5,7 @@
 /* @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"); */
 
 :root {
-  --app-background: radial-gradient(circle at 20% 20%, #e8f1fb 0, transparent 25%),
-    radial-gradient(circle at 80% 0%, #d8e8ff 0, transparent 22%),
-    linear-gradient(180deg, #f7f9fb 0%, #fdfefe 40%, #f5f7fb 100%);
+  --app-background: #fcfdfd;
   --app-text: #0f172a;
   --muted-text: #475569;
   --surface-card: rgba(255, 255, 255, 0.92);
@@ -17,9 +15,7 @@
 }
 
 .dark {
-  --app-background: radial-gradient(circle at 18% 20%, rgba(68, 87, 110, 0.18) 0, transparent 32%),
-    radial-gradient(circle at 80% 12%, rgba(52, 104, 168, 0.12) 0, transparent 30%),
-    linear-gradient(180deg, #0b0f14 0%, #0e141d 46%, #0b0f14 100%);
+  --app-background:#0f131e;
   --app-text: #e7ebf3;
   --muted-text: #c7d0dc;
   --surface-card: rgba(18, 23, 32, 0.92);
@@ -52,25 +48,18 @@ body {
   scrollbar-width: none; /* Firefox */
 }
 
-:root {
-  --safe-area-inset-top: env(safe-area-inset-top);
-  --safe-area-inset-left: env(safe-area-inset-left);
-  --safe-area-inset-right: env(safe-area-inset-right);
-  --safe-area-inset-bottom: env(safe-area-inset-bottom);
-}
 
 #root {
-  --safe-area-inset-top: env(safe-area-inset-top);
-  --safe-area-inset-left: env(safe-area-inset-left);
-  --safe-area-inset-right: env(safe-area-inset-right);
-  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  @apply w-full h-full fixed inset-0 overflow-hidden;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
 
-  padding: env(safe-area-inset-top) env(safe-area-inset-right)
-    env(safe-area-inset-bottom) env(safe-area-inset-left);
+.inset-safearea {
+  inset: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
 
-  width: 100%;
-  height: 100%;
-  position: absolute;
+.\-m-safearea {
+  margin: -env(safe-area-inset-top) -env(safe-area-inset-right) -env(safe-area-inset-bottom) -env(safe-area-inset-left);
 }
 
 .surface-card {
@@ -149,11 +138,6 @@ body {
 
   padding-top: calc(env(safe-area-inset-bottom) / 4);
   padding-bottom: calc(env(safe-area-inset-bottom) / 2);
-}
-
-.safe-space {
-  padding: env(safe-area-inset-top) env(safe-area-inset-right)
-    env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .hidden {

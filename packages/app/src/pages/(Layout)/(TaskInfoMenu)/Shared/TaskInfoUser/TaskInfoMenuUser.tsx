@@ -1,12 +1,12 @@
 import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import TaskInfoMenuUserInvite from "./TaskInfoMenuUserInvite";
-import { useRemoveUser, useTaskUsers } from "@/hooks/tasks";
+import { Task, useRemoveUser, useTaskUsers } from "@/hooks/tasks";
 import { queryClient } from "@/index";
-import { useUser } from "@/hooks/user";
+import { User, useUser } from "@/hooks/user";
 import { Logger } from "@/utils/logger";
 
-export default function TaskInfoMenuUser({ data }) {
+export default function TaskInfoMenuUser({ data }: { data: Task }) {
     const host = useUser();
 
     const [addingUser, setAddingUser] = useState(false);
@@ -14,7 +14,7 @@ export default function TaskInfoMenuUser({ data }) {
 
     const { mutate: removeUser } = useRemoveUser();
 
-    const users = useTaskUsers(data.id);
+    const users = useTaskUsers(data.id!);
 
     if (users.isLoading)
         return "Loading...";
@@ -24,7 +24,7 @@ export default function TaskInfoMenuUser({ data }) {
 
     if (users.isSuccess) {
         const raw = users.data;
-        const userList = Array.isArray(raw) ? raw : (raw?.users ?? []);
+        const userList: User[] = Array.isArray(raw) ? raw : (raw?.users ?? []);
 
         return (
             <div className="flex flex-col gap-3">
@@ -59,7 +59,7 @@ export default function TaskInfoMenuUser({ data }) {
                                                 return;
                                             }
 
-                                            removeUser({ taskId: data.id, userEmail: user.email });
+                                            removeUser({ taskId: data.id!, userEmail: user.email });
                                             setStatus({ status: "Success", message: "User removed" });
                                             setTimeout(() => {
                                                 queryClient.invalidateQueries({ queryKey: ["tasks", data.id, "users"] });

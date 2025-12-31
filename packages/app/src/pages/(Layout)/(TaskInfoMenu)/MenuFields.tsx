@@ -9,9 +9,7 @@ interface MenuFieldsProps {
     isDeleting: boolean;
     tempData: any;
     setTempData: any;
-    setIsOpen: any;
     changeAppDate: any;
-    changeTempAppDate: any;
     appData: any;
     setAppData: any;
     quickTasksInput: string;
@@ -26,9 +24,7 @@ export default function MenuFields({
     isDeleting,
     tempData,
     setTempData,
-    setIsOpen,
     changeAppDate,
-    changeTempAppDate,
     appData,
     setAppData,
     quickTasksInput,

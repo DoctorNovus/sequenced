@@ -1,19 +1,20 @@
-import { useDeleteTask } from "@/hooks/tasks";
+import { Task, useDeleteTask } from "@/hooks/tasks";
 
-export function TaskInfoMenuDelete({
-  task,
-  closeMenu,
-  isDeleting,
-  setIsDeleting,
-  parent
-}) {
+interface TaskInfoMenuDeleteProps {
+  task: Task;
+  closeMenu?: () => void;
+  isDeleting: boolean;
+  setIsDeleting: (state: boolean) => void;
+}
+
+export function TaskInfoMenuDelete({ task, closeMenu, isDeleting, setIsDeleting }: TaskInfoMenuDeleteProps) {
   const { mutate: deleteTask } = useDeleteTask();
 
   const setDeleteTask = async () => {
     // Close the menu immediately to avoid lingering after deletion.
     closeMenu?.();
     setIsDeleting(false);
-    await deleteTask(task);
+    deleteTask(task);
   };
 
   return (

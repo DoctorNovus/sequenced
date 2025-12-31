@@ -1,6 +1,6 @@
 import { useUser } from "@/hooks/user";
 import { signout } from "@/hooks/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { fetchData } from "@/utils/data";
 
 export default function UserLogin() {

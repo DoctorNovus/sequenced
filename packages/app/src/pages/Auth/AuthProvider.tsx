@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/auth";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "react-router";
 
-export default function AuthProvider({ children }) {
+export default function AuthProvider({ children }: React.PropsWithChildren) {
     const auth = useAuth();
 
     if (auth.isError)

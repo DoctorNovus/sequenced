@@ -12,7 +12,7 @@ export default function CalendarItem({ skeleton, date }: {skeleton?: boolean, da
     )
   }
 
-  const changeDate = (date, e) => {
+  const changeDate = (date: Date) => {
     let tempData = {
       ...appData,
       activeDate: date
@@ -21,25 +21,6 @@ export default function CalendarItem({ skeleton, date }: {skeleton?: boolean, da
     tempData.activeDate = date;
 
     setAppData(tempData);
-  }
-
-  function convertDay(num) {
-    switch (num) {
-      case 0:
-        return "Sunday";
-      case 1:
-        return "Monday";
-      case 2:
-        return "Tuesday";
-      case 3:
-        return "Wednesday";
-      case 4:
-        return "Thursday";
-      case 5:
-        return "Friday";
-      case 6:
-        return "Saturday";
-    }
   }
 
   const today = new Date();
@@ -56,7 +37,7 @@ export default function CalendarItem({ skeleton, date }: {skeleton?: boolean, da
   return (
     <button
       type="button"
-      onClick={(e) => changeDate(date, e)}
+      onClick={() => changeDate(date)}
       aria-pressed={isActive}
       className={`${baseClasses} ${isActive ? activeClasses : ""} ${!isActive && isToday ? todayClasses : ""}`}
     >

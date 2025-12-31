@@ -11,9 +11,6 @@ install! 'cocoapods', :disable_input_output_paths => true
 def capacitor_pods
   pod 'Capacitor', :path => '../../../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../../../node_modules/@capacitor/ios'
-  pod 'CapacitorCommunityAdmob', :path => '../../../../node_modules/@capacitor-community/admob'
-  pod 'CapacitorCommunitySqlite', :path => '../../../../node_modules/@capacitor-community/sqlite'
-  pod 'CapacitorFilesystem', :path => '../../../../node_modules/@capacitor/filesystem'
   pod 'CapacitorLocalNotifications', :path => '../../../../node_modules/@capacitor/local-notifications'
   pod 'CapacitorPreferences', :path => '../../../../node_modules/@capacitor/preferences'
 end

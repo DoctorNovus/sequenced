@@ -1,17 +1,17 @@
 export class Logger {
-    static _log(...args: string[]) {
+    static _log(...args: any[]) {
         console.log(...args);
     }
 
-    static log(...args: string[]) {
+    static log(...args: any[]) {
         console.log("[SYSTEM]  | ", ...args);
     }
 
-    static logError(...args: string[]) {
+    static logError(...args: any[]) {
         Logger._log("[ERROR] | ", ...args);
     }
 
-    static logWarning(...args: string[]) {
+    static logWarning(...args: any[]) {
         Logger._log("[WARNING] | ", ...args);
     }
 }

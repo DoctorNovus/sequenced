@@ -132,7 +132,7 @@ export default function SettingsPage() {
     const minute = parseInt(timeParts[1]);
 
     await cancelNotification(await FindDailyTask());
-    const newReminder = await setDailyReminders(hour, minute);
+    await setDailyReminders(hour, minute);
 
     Logger.log(`Set Daily Reminders!`);
   };
@@ -158,7 +158,7 @@ export default function SettingsPage() {
       const hour = parseInt(timeParts[0]);
       const minute = parseInt(timeParts[1]);
 
-      const newReminder = await setDailyReminders(hour, minute);
+      await setDailyReminders(hour, minute);
 
       Logger.log(`Set Daily Reminders!`);
     }
@@ -514,15 +514,62 @@ export default function SettingsPage() {
         <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
           <div className="flex flex-col gap-3">
             <h2 className="text-lg font-semibold text-slate-900">Feedback</h2>
-            <p className="text-sm text-slate-600">Spot an issue or have an idea? Drop us a note.</p>
-            <button
-              type="button"
-              className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
-              onClick={() => window.open("mailto:sequenced@ottegi.com?subject=Sequenced%20Feedback", "_self")}
-            >
-              <span className="text-lg">✉️</span>
-              Email sequenced@ottegi.com
-            </button>
+            <p className="text-sm text-slate-600">Share a quick rating or leave us a note.</p>
+            <form className="flex flex-col gap-3" onSubmit={submitReview}>
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="text-sm font-semibold text-primary">Rating</label>
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((value) => {
+                    const isActive = reviewRating >= value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        aria-label={`${value} star${value > 1 ? "s" : ""}`}
+                        onClick={() => setReviewRating(value)}
+                        className="rounded-full p-1 transition hover:scale-105"
+                      >
+                        <StarIcon
+                          className={`h-6 w-6 ${isActive ? "text-amber-400" : "text-slate-300"}`}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+                <span className="text-xs text-muted">Tap to set 1-5 stars.</span>
+              </div>
+              <label className="flex flex-col gap-1 text-sm text-primary">
+                Optional message
+                <textarea
+                  value={reviewMessage}
+                  onChange={(e) => setReviewMessage(e.target.value)}
+                  rows={3}
+                  placeholder="What’s working well? What should we improve?"
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                />
+              </label>
+              <div className="flex items-center gap-2">
+                <button
+                  type="submit"
+                  className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                  disabled={reviewRating < 1 || reviewRating > 5}
+                >
+                  Send review
+                </button>
+                {reviewStatus && <span className="text-sm text-muted">{reviewStatus}</span>}
+              </div>
+            </form>
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-semibold text-primary">Prefer email?</span>
+              <button
+                type="button"
+                className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                onClick={() => window.open("mailto:sequenced@ottegi.com?subject=Sequenced%20Feedback", "_self")}
+              >
+                <span className="text-lg">✉️</span>
+                Email sequenced@ottegi.com
+              </button>
+            </div>
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 import { useUser } from "@/hooks/user";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "react-router";
 import { useAuth } from "@/hooks/auth";
 
 import AuthProvider from "./Auth/AuthProvider";
@@ -20,18 +20,18 @@ const Home = () => {
 
     if (auth.isLoading)
         return (
-            <div className="w-full h-full flex flex-col px-2 md:px-4 lg:px-6 py-4 pb-28">
+            <div className="w-full h-full flex flex-col px-2 md:px-4 lg:px-6 pb-20">
                 <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
-                    <HomeIntroduction skeleton="true" />
-                    <HomeAgenda skeleton="true" />
-                    <HomeUpcoming skeleton="true" />
+                    <HomeIntroduction skeleton={true} />
+                    <HomeAgenda skeleton={true} />
+                    <HomeUpcoming skeleton={true} />
                 </div>
             </div>
         )
 
     return (
         <AuthProvider>
-            <div className="w-full h-full flex flex-col px-2 md:px-4 lg:px-6 py-4 pb-28">
+            <div className="w-full h-full flex flex-col px-2 md:px-4 lg:px-6 pb-20">
                 <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
                     <HomeIntroduction user={user} today={today} />
                     <HomeAgenda />

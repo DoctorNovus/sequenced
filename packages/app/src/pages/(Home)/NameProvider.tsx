@@ -1,14 +1,15 @@
 import { updateName } from "@/hooks/user";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export default function NameProvider() {
     const navigate = useNavigate();
 
-    const updateInformation = async (e) => {
+    const updateInformation = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const first = e.target[0].value;
-        const last = e.target[1].value;
+        const form = e.currentTarget;
+        const first = (form.elements[0] as HTMLInputElement).value;
+        const last = (form.elements[1] as HTMLInputElement).value;
 
         await updateName(first, last);
         navigate(0);

@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router";
 
 export default function DataContainer() {
     const location = useLocation();
@@ -16,6 +16,7 @@ export default function DataContainer() {
                         <div
                             id="unit-container"
                             className={`flex h-full ${isAuthRoute ? "min-h-screen justify-center" : "min-h-screen justify-start"} flex-col rounded-3xl py-2 md:px-8 overflow-y-auto`}
+                            style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)" }}
                         >
                             <Outlet />
                         </div>

@@ -1,6 +1,6 @@
 import { Description, DialogTitle } from "@headlessui/react";
 
-export default function MenuHeader({ isDeleting, type }) {
+export default function MenuHeader({ isDeleting, type }: { isDeleting: boolean, type: string }) {
     return (
         <div className={`flex flex-col gap-2 text-left ${isDeleting && "blur-sm"}`}>
             <DialogTitle className="text-xl font-semibold text-primary">
