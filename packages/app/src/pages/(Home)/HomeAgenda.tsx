@@ -1,6 +1,6 @@
 import { useTasks } from "@/hooks/tasks";
 import DueCapsule from "./DueCapsule";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { occursOnDate, isTaskDone, normalizeDay } from "@/utils/data";
 import { useMemo } from "react";
 

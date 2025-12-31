@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import TaskItemMenuPiece from "./TaskItemMenuPiece";
 import { useUpdateTask } from "@/hooks/tasks";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export default function TaskItemMenuSelection({
   item,

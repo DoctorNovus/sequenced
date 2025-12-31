@@ -5,7 +5,6 @@ import { useState } from "react";
 import TaskInfoMenu from "../TaskInfoMenu";
 import TasksIcon from "../Icons/TasksIcon";
 import NavItem from "./NavItem";
-import ListsIcon from "../Icons/ListsIcon";
 import { useAuth } from "@/hooks/auth";
 import CalendarViewIcon from "../Icons/CalendarViewIcon";
 
@@ -15,7 +14,7 @@ export function NavBar() {
   const [isAdding, setIsAdding] = useState(false);
 
   const renderMobileBar = (isInteractive: boolean) => (
-    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 md:hidden">
+    <div className="pointer-events-none fixed inset-x-0 bottom-[env(safe-area-inset-bottom)] z-40 flex justify-center px-4 md:hidden">
       <div
         className="pointer-events-auto nav-pad w-full max-w-2xl h-[4.75rem] rounded-3xl border ring-1 backdrop-blur-xl shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
         style={{ background: "var(--surface-card)", borderColor: "var(--nav-border)" }}

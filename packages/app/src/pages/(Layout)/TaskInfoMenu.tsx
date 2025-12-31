@@ -352,16 +352,11 @@ export default function TaskInfoMenu({
           onClose={() => resetForm()}
           initialFocus={ref}
           ref={ref}
-          className="relative z-50"
+          className="relative z-50 w-screen h-screen bg-black/25 dark:bg-black/60 backdrop-blur-sm"
         >
-          <div
-            className="fixed inset-0 flex w-full h-full items-center justify-center bg-black/25 dark:bg-black/60 backdrop-blur-sm px-3 pb-6 pt-10"
-          >
-            <DialogPanel
-              className="flex w-full max-w-xl max-h-screen flex-col overflow-y-auto rounded-3xl surface-card border text-primary shadow-2xl ring-1 ring-accent-blue/15 p-4 md:p-6"
-              style={{ background: "var(--surface-card)" }}
-            >
-              <div className="flex flex-col gap-5">
+          <div className="fixed inset-safearea flex w-full max-h-screen items-center justify-center">
+            <DialogPanel className="flex w-full max-w-xl max-h-full flex-col overflow-y-auto rounded-3xl surface-card border text-primary shadow-2xl bg-[var(--surface-card)] ring-1 ring-accent-blue/15 p-4 md:p-6">
+              <div className="flex flex-col gap-5 ">
                 <MenuHeader
                   type={type}
                   isDeleting={isDeleting}

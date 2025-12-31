@@ -1,5 +1,5 @@
 import { fetchData } from "@/utils/data"
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export default function ControllerUser() {
     const navigate = useNavigate();
