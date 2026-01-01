@@ -16,7 +16,7 @@ export function NavBar() {
   const renderMobileBar = (isInteractive: boolean) => (
     <div className="pointer-events-none fixed inset-x-0 bottom-[env(safe-area-inset-bottom)] z-40 flex justify-center px-4 md:hidden">
       <div
-        className="pointer-events-auto nav-pad w-full max-w-2xl h-[4.75rem] rounded-3xl border ring-1 backdrop-blur-xl shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
+        className="pointer-events-auto nav-pad w-full max-w-2xl h-19 rounded-3xl border ring-1 backdrop-blur-xl shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
         style={{ background: "var(--surface-card)", borderColor: "var(--nav-border)" }}
       >
         <div className="relative flex h-full items-center justify-between px-3 py-3">
@@ -33,7 +33,7 @@ export function NavBar() {
             <button
               disabled={!isInteractive}
               onClick={isInteractive ? () => setIsAdding(true) : undefined}
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 text-white shadow-lg shadow-accent-blue/25 ring-1 ring-white transition hover:-translate-y-1 hover:scale-[1.05] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-r from-accent-blue-700 to-accent-blue-500 text-white shadow-lg shadow-accent-blue/25 ring-1 ring-white transition hover:-translate-y-1 hover:scale-[1.05] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <div className="flex justify-center items-center w-full h-full p-2 fill-current">
                 <AddIcon />
@@ -61,7 +61,7 @@ export function NavBar() {
         style={{ borderColor: "var(--nav-border)" }}
       >
         <div className="flex items-center gap-3 pr-4">
-          <span className="h-10 w-10 rounded-2xl bg-gradient-to-br from-accent-blue-700 to-accent-blue-500 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-accent-blue/25">
+          <span className="h-10 w-10 rounded-2xl bg-linear-to-br from-accent-blue-700 to-accent-blue-500 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-accent-blue/25">
             S
           </span>
           <div className="flex flex-col leading-tight">
@@ -89,7 +89,7 @@ export function NavBar() {
           <button
             disabled={!isInteractive}
             onClick={isInteractive ? () => setIsAdding(true) : undefined}
-            className="flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 px-4 text-sm font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-white transition hover:-translate-y-0.5 hover:scale-[1.02] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex h-11 items-center justify-center rounded-full bg-linear-to-r from-accent-blue-700 to-accent-blue-500 px-4 text-sm font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-white transition hover:-translate-y-0.5 hover:scale-[1.02] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/15">
               <AddIcon />

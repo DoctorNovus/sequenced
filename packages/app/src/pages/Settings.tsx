@@ -296,7 +296,7 @@ export default function SettingsPage() {
                 type="text"
                 value={profileForm.first}
                 onChange={(e) => setProfileForm({ ...profileForm, first: e.target.value })}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm text-primary">
@@ -305,7 +305,7 @@ export default function SettingsPage() {
                 type="text"
                 value={profileForm.last}
                 onChange={(e) => setProfileForm({ ...profileForm, last: e.target.value })}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm text-primary md:col-span-2">
@@ -314,13 +314,13 @@ export default function SettingsPage() {
                 type="email"
                 value={profileForm.email}
                 onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
               />
             </label>
             <div className="flex items-center gap-2 md:col-span-2">
               <button
                 type="submit"
-                className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
                 disabled={updateProfile.isPending || user.isLoading}
               >
                 {updateProfile.isPending ? "Saving..." : "Save changes"}
@@ -348,7 +348,7 @@ export default function SettingsPage() {
                     type="password"
                     value={passwordForm.current}
                     onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-primary">
@@ -357,7 +357,7 @@ export default function SettingsPage() {
                     type="password"
                     value={passwordForm.next}
                     onChange={(e) => setPasswordForm({ ...passwordForm, next: e.target.value })}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-primary">
@@ -366,13 +366,13 @@ export default function SettingsPage() {
                     type="password"
                     value={passwordForm.confirm}
                     onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
                   />
                 </label>
                 <div className="flex items-center gap-2 md:col-span-3">
                   <button
                     type="submit"
-                    className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                    className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
                     disabled={changePassword.isPending}
                   >
                     {changePassword.isPending ? "Updating..." : "Update password"}
@@ -388,7 +388,7 @@ export default function SettingsPage() {
               <button
                 type="button"
                 onClick={handleDownloadData}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:-translate-y-px transition dark:border-slate-600 dark:bg-slate-900 dark:text-white"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-primary shadow-xs hover:-translate-y-px transition dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                 disabled={exportUserData.isPending}
               >
                 {exportUserData.isPending ? "Preparing..." : "Download my data"}
@@ -399,12 +399,12 @@ export default function SettingsPage() {
                   setShowDeleteConfirm((prev) => !prev);
                   setDataMessage("");
                 }}
-                className="rounded-lg border border-red-400 bg-white px-3 py-2 text-sm font-semibold text-red-700 shadow-sm hover:-translate-y-px transition dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-100"
+                className="rounded-lg border border-red-400 bg-white px-3 py-2 text-sm font-semibold text-red-700 shadow-xs hover:-translate-y-px transition dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-100"
               >
                 {showDeleteConfirm ? "Cancel" : "Confirm deletion"}
               </button>
               {showDeleteConfirm && (
-                <div className="w-full rounded-xl border border-red-200/70 bg-red-50/70 p-3 text-left shadow-sm dark:border-red-500/50 dark:bg-red-500/10">
+                <div className="w-full rounded-xl border border-red-200/70 bg-red-50/70 p-3 text-left shadow-xs dark:border-red-500/50 dark:bg-red-500/10">
                   <p className="text-sm font-semibold text-red-800 dark:text-red-100">
                     This will permanently delete all of your Sequenced data (tasks, tags, account). There is no way to recover it.
                   </p>
@@ -415,12 +415,12 @@ export default function SettingsPage() {
                       value={deleteInput}
                       onChange={(e) => setDeleteInput(e.target.value)}
                       placeholder="DELETE"
-                      className="w-full rounded-lg border border-red-300 bg-white px-2 py-2 text-sm shadow-inner focus:border-red-500 focus:outline-none dark:border-red-500/60 dark:bg-slate-900 dark:text-white"
+                      className="w-full rounded-lg border border-red-300 bg-white px-2 py-2 text-sm shadow-inner focus:border-red-500 focus:outline-hidden dark:border-red-500/60 dark:bg-slate-900 dark:text-white"
                     />
                     <button
                       type="button"
                       onClick={handleDeleteData}
-                      className="self-start rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-red-400/40 hover:-translate-y-px transition disabled:opacity-70"
+                      className="self-start rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-red-400/40 hover:-translate-y-px transition disabled:opacity-70"
                       disabled={requestUserDeletion.isPending}
                     >
                       {requestUserDeletion.isPending ? "Deleting..." : "Delete everything"}
@@ -455,19 +455,19 @@ export default function SettingsPage() {
                   key={opt.id}
                   type="button"
                   onClick={() => setTheme(opt.id as "light" | "dark" | "auto")}
-                  className={`flex items-center gap-3 rounded-2xl border p-3 text-left transition shadow-sm ${
+                  className={`flex items-center gap-3 rounded-2xl border p-3 text-left transition shadow-xs ${
                     isActive
                       ? "border-accent-blue/50 ring-1 ring-accent-blue/30 shadow-md"
                       : "border-slate-200/70 dark:border-slate-600/50 hover:border-accent-blue/40"
                   }`}
                 >
                   <span
-                    className={`inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border ${
+                    className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border ${
                       opt.id === "light"
-                        ? "bg-gradient-to-br from-white to-slate-100 text-slate-700"
+                        ? "bg-linear-to-br from-white to-slate-100 text-slate-700"
                         : opt.id === "dark"
-                          ? "bg-gradient-to-br from-slate-800 to-slate-900 text-white"
-                          : "bg-gradient-to-br from-slate-200 to-slate-800 text-white"
+                          ? "bg-linear-to-br from-slate-800 to-slate-900 text-white"
+                          : "bg-linear-to-br from-slate-200 to-slate-800 text-white"
                     } ${isActive ? "border-accent-blue/40" : "border-transparent"}`}
                   >
                     {opt.id === "auto" ? "A" : opt.label[0]}
@@ -495,14 +495,14 @@ export default function SettingsPage() {
                     UpdateSettings({ sendDailyRemindersTime: newTime });
                     UpdateTime(newTime);
                   }}
-                  className="w-fit rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm text-slate-800 shadow-inner focus:border-accent-blue focus:outline-none dark:[color-scheme:dark]"
+                  className="w-fit rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm text-slate-800 shadow-inner focus:border-accent-blue focus:outline-hidden dark:scheme-dark"
                 />
               </div>
             )}
             <div className="flex justify-start">
               <button
                 type="button"
-                className="rounded-lg bg-accent-blue text-white px-3 py-2 text-sm font-semibold shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition"
+                className="rounded-lg bg-accent-blue text-white px-3 py-2 text-sm font-semibold shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition"
                 onClick={TestDaily}
               >
                 Test
@@ -545,13 +545,13 @@ export default function SettingsPage() {
                   onChange={(e) => setReviewMessage(e.target.value)}
                   rows={3}
                   placeholder="What’s working well? What should we improve?"
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
                 />
               </label>
               <div className="flex items-center gap-2">
                 <button
                   type="submit"
-                  className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                  className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
                   disabled={reviewRating < 1 || reviewRating > 5}
                 >
                   Send review
@@ -563,7 +563,7 @@ export default function SettingsPage() {
               <span className="text-xs font-semibold text-primary">Prefer email?</span>
               <button
                 type="button"
-                className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 onClick={() => window.open("mailto:sequenced@ottegi.com?subject=Sequenced%20Feedback", "_self")}
               >
                 <span className="text-lg">✉️</span>
@@ -582,7 +582,7 @@ export default function SettingsPage() {
             <div className="flex flex-wrap items-center gap-3">
               <label className="text-sm font-semibold text-slate-700">Interval</label>
               <select
-                className="rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm shadow-inner focus:border-accent-blue focus:outline-none"
+                className="rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden"
                 value={cleanupInterval}
                 onChange={(e) => setCleanupInterval(e.target.value)}
               >
@@ -598,7 +598,7 @@ export default function SettingsPage() {
             <div className="flex gap-2">
               <button
                 type="button"
-                className="rounded-lg bg-red-500 text-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-px transition disabled:opacity-60"
+                className="rounded-lg bg-red-500 text-white px-3 py-2 text-sm font-semibold shadow-xs hover:-translate-y-px transition disabled:opacity-60"
                 onClick={handleCleanup}
                 disabled={tasks.isLoading || tasks.isFetching}
               >
@@ -619,7 +619,7 @@ export default function SettingsPage() {
                 href="https://discord.gg/qeKgAKVhXa"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on Discord"
               >
                 <img src={discordIcon} alt="Discord logo" className="h-5 w-5" />
@@ -628,7 +628,7 @@ export default function SettingsPage() {
                 href="https://twitter.com/OttegiLLC"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on X"
               >
                 <img src={xIcon} alt="X logo" className="h-5 w-5" />
@@ -637,7 +637,7 @@ export default function SettingsPage() {
                 href="https://www.instagram.com/OttegiLLC"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on Instagram"
               >
                 <img src={instagramIcon} alt="Instagram logo" className="h-5 w-5" />
@@ -646,7 +646,7 @@ export default function SettingsPage() {
                 href="https://www.linkedin.com/company/ottegi"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on LinkedIn"
               >
                 <span className="text-sm font-semibold">in</span>
@@ -655,7 +655,7 @@ export default function SettingsPage() {
                 href="https://www.facebook.com/OttegiLLC"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on Facebook"
               >
                 <img src={facebookIcon} alt="Facebook logo" className="h-5 w-5" />

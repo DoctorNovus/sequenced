@@ -11,7 +11,7 @@ export default function TaskItemCheckBox({ checked, ...props }: TaskItemCheckBox
     <label
       className={`relative flex h-7 w-7 items-center justify-center rounded-lg border-2 px-0.5 py-0.5 transition ${
         checked
-          ? "border-accent-blue bg-gradient-to-br from-accent-blue-600 to-accent-blue-500 shadow-sm shadow-accent-blue/30"
+          ? "border-accent-blue bg-linear-to-br from-accent-blue-600 to-accent-blue-500 shadow-xs shadow-accent-blue/30"
           : "border-accent-blue/50 bg-white hover:border-accent-blue dark:bg-[rgba(15,23,42,0.7)]"
       }`}
       onClick={(e) => e.stopPropagation()}

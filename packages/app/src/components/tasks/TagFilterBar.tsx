@@ -48,7 +48,7 @@ export default function TagFilterBar({ tasks }: TagFilterBarProps) {
   if (availableTags.length === 0) return null;
 
   return (
-    <div className="flex w-full flex-col gap-2 rounded-2xl bg-white/90 px-4 py-3 shadow ring-1 ring-accent-blue/10 dark:bg-slate-900/70">
+    <div className="flex w-full flex-col gap-2 rounded-2xl bg-white/90 px-4 py-3 shadow-sm ring-1 ring-accent-blue/10 dark:bg-slate-900/70">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold text-primary">Filter by tags</span>
@@ -78,7 +78,7 @@ export default function TagFilterBar({ tasks }: TagFilterBarProps) {
               onClick={() => toggleTag(name)}
               className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold transition ${
                 isActive
-                  ? "bg-accent-blue text-white shadow-sm shadow-accent-blue/30"
+                  ? "bg-accent-blue text-white shadow-xs shadow-accent-blue/30"
                   : "bg-white text-primary ring-1 ring-accent-blue/20 hover:ring-accent-blue/40"
               }`}
             >

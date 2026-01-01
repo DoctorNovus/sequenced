@@ -328,7 +328,7 @@ export default function TaskContainer({
 
     return (
       <div
-        className="fixed inset-x-0 bottom-0 top-24 z-[140] flex items-start justify-center bg-slate-900/20 px-4 py-8 backdrop-blur-sm"
+        className="fixed inset-x-0 bottom-0 top-24 z-140 flex items-start justify-center bg-slate-900/20 px-4 py-8 backdrop-blur-xs"
         style={{
           paddingTop: "calc(env(safe-area-inset-top, 0px) + 2rem)",
           paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)",
@@ -364,12 +364,12 @@ export default function TaskContainer({
                   value={bulkGroup}
                   onChange={(e) => setBulkGroup(e.target.value)}
                   placeholder="Set a group or leave blank to clear"
-                  className="w-full rounded-lg border border-accent-blue/20 bg-white px-3 py-2 text-sm text-primary shadow-inner focus:outline-none focus:ring-2 focus:ring-accent-blue/40 dark:bg-[rgba(15,23,42,0.7)]"
+                  className="w-full rounded-lg border border-accent-blue/20 bg-white px-3 py-2 text-sm text-primary shadow-inner focus:outline-hidden focus:ring-2 focus:ring-accent-blue/40 dark:bg-[rgba(15,23,42,0.7)]"
                 />
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className="rounded-lg bg-accent-blue px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:shadow-md hover:ring-2 hover:ring-accent-blue/30 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-lg bg-accent-blue px-3 py-2 text-xs font-semibold text-white shadow-xs transition hover:shadow-md hover:ring-2 hover:ring-accent-blue/30 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={!hasSelection || isBulkUpdating}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -380,7 +380,7 @@ export default function TaskContainer({
                   </button>
                   <button
                     type="button"
-                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:shadow-md hover:ring-2 hover:ring-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-xs transition hover:shadow-md hover:ring-2 hover:ring-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={!hasSelection || isBulkUpdating}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -426,7 +426,7 @@ export default function TaskContainer({
                       }
                     }}
                     placeholder="Add tag…"
-                    className="min-w-[140px] flex-1 border-none bg-transparent text-sm text-primary placeholder:text-slate-400 focus:outline-none"
+                    className="min-w-[140px] flex-1 border-none bg-transparent text-sm text-primary placeholder:text-slate-400 focus:outline-hidden"
                   />
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -436,7 +436,7 @@ export default function TaskContainer({
                       type="button"
                       className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                         normalizedTags.includes(tag)
-                          ? "bg-accent-blue text-white shadow-sm shadow-accent-blue/30"
+                          ? "bg-accent-blue text-white shadow-xs shadow-accent-blue/30"
                           : "bg-white text-primary ring-1 ring-accent-blue/20 hover:ring-accent-blue/40"
                       }`}
                       onClick={() => {
@@ -454,7 +454,7 @@ export default function TaskContainer({
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className="rounded-lg bg-accent-blue px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:shadow-md hover:ring-2 hover:ring-accent-blue/30 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-lg bg-accent-blue px-3 py-2 text-xs font-semibold text-white shadow-xs transition hover:shadow-md hover:ring-2 hover:ring-accent-blue/30 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={!hasSelection || isBulkUpdating}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -465,7 +465,7 @@ export default function TaskContainer({
                   </button>
                   <button
                     type="button"
-                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:shadow-md hover:ring-2 hover:ring-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-xs transition hover:shadow-md hover:ring-2 hover:ring-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={!hasSelection || isBulkUpdating}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -552,7 +552,7 @@ export default function TaskContainer({
                       {!selectionMode && (
                         <button
                           type="button"
-                          className="rounded-lg border border-accent-blue/30 bg-white px-3 py-1.5 text-xs font-semibold text-accent-blue shadow-sm transition hover:shadow-md hover:ring-1 hover:ring-accent-blue/30"
+                          className="rounded-lg border border-accent-blue/30 bg-white px-3 py-1.5 text-xs font-semibold text-accent-blue shadow-xs transition hover:shadow-md hover:ring-1 hover:ring-accent-blue/30"
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectionMode(true);
@@ -565,7 +565,7 @@ export default function TaskContainer({
                         <>
                           <button
                             type="button"
-                            className="rounded-lg border border-emerald-300 bg-emerald-500/90 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:shadow-md hover:ring-1 hover:ring-emerald-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="rounded-lg border border-emerald-300 bg-emerald-500/90 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:shadow-md hover:ring-1 hover:ring-emerald-300 disabled:opacity-60 disabled:cursor-not-allowed"
                             disabled={!hasSelection || isBulkUpdating}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -574,16 +574,16 @@ export default function TaskContainer({
                           >
                             Complete ({selectedTaskIds.length})
                           </button>
-                          <Menu as="div" className="relative z-[110] inline-block text-left">
+                          <Menu as="div" className="relative z-110 inline-block text-left">
                             <Menu.Button
                               disabled={!hasSelection || isBulkUpdating}
                               onClick={(e) => e.stopPropagation()}
-                              className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:shadow-md hover:ring-1 hover:ring-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                              className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition hover:shadow-md hover:ring-1 hover:ring-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                               <EllipsisHorizontalIcon className="h-4 w-4" />
                               <span>Actions</span>
                             </Menu.Button>
-                            <Menu.Items className="absolute left-0 right-auto z-[130] mt-2 w-52 max-w-[90vw] origin-top-left rounded-xl bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-slate-900/90 md:left-auto md:right-0 md:origin-top-right">
+                            <Menu.Items className="absolute left-0 right-auto z-130 mt-2 w-52 max-w-[90vw] origin-top-left rounded-xl bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-hidden dark:bg-slate-900/90 md:left-auto md:right-0 md:origin-top-right">
                               {[
                                 { key: "group", label: "Edit group" },
                                 { key: "tags", label: "Edit tags" },
@@ -617,7 +617,7 @@ export default function TaskContainer({
                           </Menu>
                           <button
                             type="button"
-                            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:shadow-md hover:ring-1 hover:ring-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition hover:shadow-md hover:ring-1 hover:ring-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
                             disabled={isBulkUpdating}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -662,7 +662,7 @@ export default function TaskContainer({
         leaveTo="translate-y-2 opacity-0"
       >
         <div
-          className="pointer-events-none fixed inset-x-0 z-[150] flex justify-center px-4"
+          className="pointer-events-none fixed inset-x-0 z-150 flex justify-center px-4"
           style={{
             top: "calc(env(safe-area-inset-top, 0px) + 2.5rem)",
           }}
