@@ -21,6 +21,10 @@ interface TaskItemParams {
 }
 
 export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectionMode = false, isSelected = false, onToggleSelect, isAnimating = false, onComplete }: TaskItemParams) {
+  const { mutate: updateTask } = useUpdateTask();
+  const [appData, setAppData] = useApp();
+  const [isCompleting, setIsCompleting] = useState(false);
+
   if (skeleton) {
     return (
       <div className="w-full flex flex-col gap-2">
@@ -51,12 +55,6 @@ export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectio
   if (!setIsInspecting) setIsInspecting = () => { };
 
   if (!item) item = { title: "", date: new Date(), done: false, tags: [] };
-
-  const { mutate: updateTask } = useUpdateTask();
-
-  const [appData, setAppData] = useApp();
-
-  const [isCompleting, setIsCompleting] = useState(false);
 
   const tags = Array.isArray(item.tags) ? item.tags.map((tag) => (typeof tag === "string" ? tag : null)).filter(Boolean) as string[] : [];
 

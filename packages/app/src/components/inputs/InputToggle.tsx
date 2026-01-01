@@ -12,7 +12,7 @@ export default function InputToggle({ title, defaultValue, onChange }: InputTogg
 
   useEffect(() => {
     setEnabled(defaultValue);
-  });
+  }, []);
 
   const HandleChange = () => {
     setEnabled(!enabled);
