@@ -1,7 +1,13 @@
 import arrow_left from "@/assets/arrow_left.svg";
 import arrow_right from "@/assets/arrow_right.svg";
 
-export default function CalendarArrow({ direction, activeWeek, changeActiveWeek }) {
+interface CalendarArrowProps {
+  direction: string;
+  activeWeek: number;
+  changeActiveWeek: (week: number) => void;
+}
+
+export default function CalendarArrow({ direction, activeWeek, changeActiveWeek }: CalendarArrowProps) {
   let source = arrow_left;
   if (direction == "right") source = arrow_right;
 

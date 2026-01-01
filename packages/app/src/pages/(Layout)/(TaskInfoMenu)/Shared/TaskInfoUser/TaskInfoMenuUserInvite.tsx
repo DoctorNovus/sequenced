@@ -1,16 +1,16 @@
+import { Task } from "@/hooks/tasks";
 import { useUser } from "@/hooks/user";
 import { queryClient } from "@/index";
 import { fetchData } from "@/utils/data";
 
-export default function TaskInfoMenuUserInvite({ task, setStatus }) {
-
+export default function TaskInfoMenuUserInvite({ task, setStatus }: { task: Task, setStatus: (_: { status: string, message: string }) => void }) {
     const user = useUser();
 
     const inviteUser = async () => {
-        const invitee = document.getElementById("user-invite-email");
+        const invitee = document.getElementById("user-invite-email") as HTMLInputElement;
         if (!invitee || !invitee.value) return;
 
-        if (invitee.value == user.data.email) {
+        if (invitee.value == user.data?.email) {
             setStatus({ status: "Error", message: "You cannot invite yourself." });
             return;
         }

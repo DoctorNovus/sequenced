@@ -2,8 +2,9 @@ import more_icon from "@/assets/more.svg";
 import { useState } from "react";
 import TaskItemMenuSelection from "./TaskItemMenuSelection";
 import TaskItemMenuDeletion from "./TaskItemMenuDeletion";
+import { Task } from "@/hooks/tasks";
 
-export default function TaskItemMenu({ item }) {
+export default function TaskItemMenu({ item }: { item: Task }) {
   const [isManaging, setIsManaging] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 

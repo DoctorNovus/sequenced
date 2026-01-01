@@ -9,7 +9,7 @@ interface IntroductionParams {
 export default function HomeIntroduction({ skeleton, user, today }: IntroductionParams) {
     if (skeleton)
         return (
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 px-6 py-5 text-white shadow-2xl">
+            <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-accent-blue-700 to-accent-blue-500 px-6 py-5 text-white shadow-2xl">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.2),transparent_35%)]" />
                 <div className="relative flex flex-col gap-2">
                     <span className="text-sm uppercase tracking-[0.18em] text-white/70">Today</span>
@@ -22,7 +22,7 @@ export default function HomeIntroduction({ skeleton, user, today }: Introduction
     const hasName = user?.isSuccess && user.data.first;
     const activeDay = today || new Date();
     return (
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-accent-blue-700 via-accent-blue-600 to-accent-blue-500 px-6 py-5 text-white shadow-2xl">
+        <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-accent-blue-700 via-accent-blue-600 to-accent-blue-500 px-6 py-5 text-white shadow-2xl">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(255,255,255,0.25),transparent_35%)] opacity-80" />
             <div className="absolute -right-6 -bottom-10 h-32 w-32 rounded-full bg-white/10 blur-3xl" />
             <div className="relative flex flex-col gap-3">

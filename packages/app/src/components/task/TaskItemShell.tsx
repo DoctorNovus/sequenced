@@ -1,26 +1,30 @@
+import { Task } from "@/hooks/tasks";
 import { isTaskDone } from "@/utils/data";
 
-interface ShellParams {
-  skeleton: boolean;
+interface TaskItemShellProps {
+  skeleton?: boolean;
   className?: string;
+  task?: Task;
+  activeDate?: Date;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
-export default function TaskItemShell({ skeleton, children, task, activeDate, className = "", ...props }: ShellParams) {
+export default function TaskItemShell({ skeleton, children, task, activeDate, className = "", ...props }: React.PropsWithChildren<TaskItemShellProps>) {
   if (skeleton) {
     return (
-      <div className="group flex flex-col w-full rounded-2xl surface-card border px-4 py-3 shadow-md ring-1 ring-accent-blue/10 backdrop-blur-sm transition duration-200 ease-out hover:shadow-lg hover:ring-2 hover:ring-accent-blue/40 text-primary">
+      <div className="group flex flex-col w-full rounded-2xl surface-card border px-4 py-3 shadow-md ring-1 ring-accent-blue/10 backdrop-blur-xs transition duration-200 ease-out hover:shadow-lg hover:ring-2 hover:ring-accent-blue/40 text-primary">
         {children}
       </div>
     )
   }
 
-  const isCompleted = !isTaskDone(task, activeDate);
+  const isCompleted = !isTaskDone(task!, activeDate!);
 
   return (
     <div
       {...props}
       data-completed={isCompleted}
-      className={`group flex flex-col w-full rounded-2xl surface-card border px-3.5 py-3 shadow-md ring-1 ring-accent-blue/10 backdrop-blur-sm transition-all duration-300 ease-out hover:shadow-lg hover:ring-2 hover:ring-accent-blue/40 text-primary ${isCompleted ? "opacity-30 translate-y-1 scale-[0.99]" : "opacity-100"} ${className}`}
+      className={`group flex flex-col w-full rounded-2xl surface-card border px-3.5 py-3 shadow-md ring-1 ring-accent-blue/10 backdrop-blur-xs transition-all duration-300 ease-out hover:shadow-lg hover:ring-2 hover:ring-accent-blue/40 text-primary ${isCompleted ? "opacity-30 translate-y-1 scale-[0.99]" : "opacity-100"} ${className}`}
     >
       {children}
     </div>

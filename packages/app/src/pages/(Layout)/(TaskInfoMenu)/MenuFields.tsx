@@ -9,9 +9,7 @@ interface MenuFieldsProps {
     isDeleting: boolean;
     tempData: any;
     setTempData: any;
-    setIsOpen: any;
     changeAppDate: any;
-    changeTempAppDate: any;
     appData: any;
     setAppData: any;
     quickTasksInput: string;
@@ -26,9 +24,7 @@ export default function MenuFields({
     isDeleting,
     tempData,
     setTempData,
-    setIsOpen,
     changeAppDate,
-    changeTempAppDate,
     appData,
     setAppData,
     quickTasksInput,
@@ -38,7 +34,7 @@ export default function MenuFields({
     validationError
 }: MenuFieldsProps) {
     return (
-        <div className={`flex flex-col gap-4 ${isDeleting && "blur-sm"}`}>
+        <div className={`flex flex-col gap-4 ${isDeleting && "blur-xs"}`}>
             {type === "add" && (
                 <div className="flex flex-col gap-2 rounded-xl border border-accent-blue/15 bg-accent-blue-50/40 px-3 py-3 dark:bg-[rgba(99,102,241,0.12)]">
                     <div className="flex items-center justify-between">
@@ -189,7 +185,7 @@ export default function MenuFields({
                                     });
                                 }
                             }}
-                            className={`w-40 text-center rounded-xl px-3 py-2 text-sm font-semibold shadow-sm transition ${tempData.date.getTime() != 0
+                            className={`w-40 text-center rounded-xl px-3 py-2 text-sm font-semibold shadow-xs transition ${tempData.date.getTime() != 0
                                 ? "bg-accent-red-500 text-white hover:-translate-y-px"
                                 : "bg-accent-blue text-white hover:-translate-y-px"
                                 }`}
@@ -215,9 +211,9 @@ export default function MenuFields({
                                     <button
                                         key={opt.label}
                                         type="button"
-                                            className={`rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition ${
+                                            className={`rounded-xl px-3 py-2 text-sm font-semibold shadow-xs ring-1 transition ${
                                                 isActive
-                                                    ? `bg-gradient-to-r ${opt.color} text-white ring-transparent`
+                                                    ? `bg-linear-to-r ${opt.color} text-white ring-transparent`
                                                 : "bg-white text-primary ring-accent-blue/20 hover:ring-accent-blue/40 dark:bg-[rgba(15,23,42,0.7)]"
                                             }`}
                                             onClick={() => setTempData({ ...tempData, priority: opt.value })}

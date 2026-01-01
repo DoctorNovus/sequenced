@@ -1,6 +1,95 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@utility container {
+  margin-inline: auto;
+}
+
+@theme {
+  --color-accent-white-50: #f8f8f8;
+  --color-accent-white-100: #f0f0f0;
+  --color-accent-white-200: #dcdcdc;
+  --color-accent-white-300: #bdbdbd;
+  --color-accent-white-400: #989898;
+  --color-accent-white-500: #7c7c7c;
+  --color-accent-white-600: #656565;
+  --color-accent-white-700: #525252;
+  --color-accent-white-800: #464646;
+  --color-accent-white-900: #3d3d3d;
+  --color-accent-white-950: #292929;
+  --color-accent-white: #f0f0f0;
+
+  --color-accent-blue-50: #f0f9fe;
+  --color-accent-blue-100: #def0fb;
+  --color-accent-blue-200: #c5e6f8;
+  --color-accent-blue-300: #9dd7f3;
+  --color-accent-blue-400: #6ec0ec;
+  --color-accent-blue-500: #4ca5e5;
+  --color-accent-blue-600: #378bd9;
+  --color-accent-blue-700: #307acf;
+  --color-accent-blue-800: #2b5fa2;
+  --color-accent-blue-900: #285180;
+  --color-accent-blue-950: #1d324e;
+  --color-accent-blue: #307acf;
+
+  --color-accent-black-50: #f6f6f6;
+  --color-accent-black-100: #e7e7e7;
+  --color-accent-black-200: #d1d1d1;
+  --color-accent-black-300: #b0b0b0;
+  --color-accent-black-400: #888888;
+  --color-accent-black-500: #6d6d6d;
+  --color-accent-black-600: #5d5d5d;
+  --color-accent-black-700: #4f4f4f;
+  --color-accent-black-800: #454545;
+  --color-accent-black-900: #3d3d3d;
+  --color-accent-black-950: #000000;
+  --color-accent-black: #000000;
+
+  --color-accent-purple-50: #fdf2f7;
+  --color-accent-purple-100: #fce7f0;
+  --color-accent-purple-200: #fad0e3;
+  --color-accent-purple-300: #f7aaca;
+  --color-accent-purple-400: #f175a6;
+  --color-accent-purple-500: #e63b7a;
+  --color-accent-purple-600: #d72b61;
+  --color-accent-purple-700: #ba1c4a;
+  --color-accent-purple-800: #9a1a3e;
+  --color-accent-purple-900: #801b36;
+  --color-accent-purple-950: #4e091b;
+  --color-accent-purple: #e63b7a;
+
+  --color-accent-red-50: #fef2f2;
+  --color-accent-red-100: #fee2e2;
+  --color-accent-red-200: #fecaca;
+  --color-accent-red-300: #fca5a5;
+  --color-accent-red-400: #f87171;
+  --color-accent-red-500: #ef4444;
+  --color-accent-red-600: #dc2626;
+  --color-accent-red-700: #b91c1c;
+  --color-accent-red-800: #991b1b;
+  --color-accent-red-900: #7f1d1d;
+  --color-accent-red-950: #450a0a;
+  --color-accent-red-DEFAUlT: #f87171;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 /* @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"); */
 

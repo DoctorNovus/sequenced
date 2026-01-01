@@ -9,13 +9,11 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "skipLibCheck": true,
+    "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
       "@/*": [
         "src/*"
-      ],
-      "@backend/*": [
-        "../backend/src/*"
       ]
     },
     /* Bundler mode */

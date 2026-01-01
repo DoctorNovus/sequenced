@@ -2,6 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 import { TaskItem } from "../task/TaskItem";
 import { isTaskDone } from "@/utils/data";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import { Task } from "@/hooks/tasks";
+
+interface TaskMenuProps {
+  skeleton?: string;
+  tasks?: Task[];
+  setIsInspecting?: (state: boolean) => void;
+  taskFilter?: any;
+  selectionMode?: boolean;
+  selectedTaskIds?: string[];
+  toggleSelection?: any;
+  animatingIds?: string[];
+  activeDate?: Date;
+  onTaskComplete?: any;
+}
 
 export default function TaskMenu({
   skeleton,
@@ -14,7 +28,7 @@ export default function TaskMenu({
   animatingIds = [],
   activeDate,
   onTaskComplete
-}) {
+}: TaskMenuProps) {
   const [collapsedGroups, setCollapsedGroups] = useState<string[]>([]);
   const [orderedTasks, setOrderedTasks] = useState<any[]>([]);
 
@@ -23,7 +37,7 @@ export default function TaskMenu({
       <div className="w-full h-full flex flex-col items-center ">
         <ul className="w-full h-full pb-4 gap-2 flex flex-col items-center justify-start py-0">
           <li className="w-full h-full">
-            <TaskItem skeleton="true" />
+            <TaskItem skeleton={true} />
           </li>
         </ul>
       </div>
@@ -34,7 +48,7 @@ export default function TaskMenu({
     .filter(Boolean)
     .filter((task) =>
       taskFilter === "incomplete"
-        ? isTaskDone(task, activeDate)
+        ? isTaskDone(task, activeDate!)
         : true
     );
 

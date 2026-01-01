@@ -13,7 +13,7 @@ export default function ActiveCalendar({ skeleton }: ActiveCalendarProps) {
   const [appData, setAppData] = useApp();
 
   const shiftWeek = (direction: number) => {
-    const tempDate = new Date(appData.activeDate);
+    const tempDate = new Date(appData.activeDate!);
     tempDate.setDate(tempDate.getDate() + 7 * direction);
     setAppData({ ...appData, activeDate: tempDate });
   };
@@ -35,7 +35,7 @@ export default function ActiveCalendar({ skeleton }: ActiveCalendarProps) {
                   disabled
                   value={formatDate(new Date())}
                   type="date"
-                  className="w-full rounded-2xl border-none bg-transparent text-center text-sm font-semibold text-muted focus:outline-none"
+                  className="w-full rounded-2xl border-none bg-transparent text-center text-sm font-semibold text-muted focus:outline-hidden"
                 />
               </div>
             </div>
@@ -76,9 +76,9 @@ export default function ActiveCalendar({ skeleton }: ActiveCalendarProps) {
       ...appData,
     };
 
-    const tempYear = activeData[0];
-    const tempMonth = activeData[1] - 1;
-    const tempDay = activeData[2];
+    const tempYear = parseInt(activeData[0]);
+    const tempMonth = parseInt(activeData[1]) - 1;
+    const tempDay = parseInt(activeData[2]);
 
     tempData.activeDate = new Date();
     tempData.activeDate.setFullYear(tempYear);
@@ -95,11 +95,11 @@ export default function ActiveCalendar({ skeleton }: ActiveCalendarProps) {
     return 0;
   };
 
-  const touchstart = (e) => {
+  const touchstart = (e: React.TouchEvent) => {
     touchstartX = e.changedTouches[0].screenX;
   };
 
-  const touchend = (e) => {
+  const touchend = (e: React.TouchEvent) => {
     touchendX = e.changedTouches[0].screenX;
     const direction = checkDirection();
 
@@ -119,12 +119,12 @@ export default function ActiveCalendar({ skeleton }: ActiveCalendarProps) {
             </div>
           </div>
           <div className="flex flex-row w-48 md:w-60">
-            <div className="flex justify-center w-full rounded-2xl border border-accent-blue/30 bg-white shadow-sm ring-1 ring-accent-blue/10 focus-within:ring-2 focus-within:ring-accent-blue/30 dark:bg-[rgba(15,23,42,0.85)] dark:border-accent-blue/40">
+            <div className="flex justify-center w-full rounded-2xl border border-accent-blue/30 bg-white shadow-xs ring-1 ring-accent-blue/10 focus-within:ring-2 focus-within:ring-accent-blue/30 dark:bg-[rgba(15,23,42,0.85)] dark:border-accent-blue/40">
               <input
                 type="date"
-                value={formatDate(appData.activeDate)}
+                value={formatDate(appData.activeDate!)}
                 onChange={changeActiveMonth}
-                className="w-full h-full rounded-2xl border-none bg-transparent px-3 py-2 text-center text-sm font-semibold text-primary focus:outline-none"
+                className="w-full h-full rounded-2xl border-none bg-transparent px-3 py-2 text-center text-sm font-semibold text-primary focus:outline-hidden"
               />
             </div>
           </div>

@@ -31,7 +31,7 @@ export default function NavItem({ to, title, children, disabled }: NavItemProps)
                         : "bg-transparent border border-transparent hover:border-accent-blue/20 hover:bg-accent-blue-50/60 dark:hover:bg-[rgba(99,102,241,0.12)]"
                 }`}
             >
-                <div className="flex justify-center items-center w-full h-full p-[6px]">
+                <div className="flex justify-center items-center w-full h-full p-1.5">
                     {children}
                 </div>
             </div>

@@ -1,12 +1,19 @@
 import { Dialog } from "@headlessui/react";
-import { useDeleteTask } from "@/hooks/tasks";
+import { Task, useDeleteTask } from "@/hooks/tasks";
+
+interface TaskItemMenuDeletionProps {
+  item: Task;
+  setIsManaging?: (state: boolean) => void;
+  isDeleting: boolean;
+  setIsDeleting: (state: boolean) => void;
+}
 
 export default function TaskItemMenuDeletion({
   item,
   setIsManaging,
   isDeleting,
   setIsDeleting,
-}) {
+}: TaskItemMenuDeletionProps) {
   const { mutate: deleteTask } = useDeleteTask();
 
   const handleDelete = () => {

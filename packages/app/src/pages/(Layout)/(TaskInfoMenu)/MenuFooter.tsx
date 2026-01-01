@@ -9,11 +9,11 @@ interface MenuFooterProps {
 export default function MenuFooter({ type, isDeleting, resetForm, submitForm, isSubmitDisabled }: MenuFooterProps) {
     return (
         <div
-            className={`flex flex-row gap-3 ${isDeleting && "blur-sm"}`}
+            className={`flex flex-row gap-3 ${isDeleting && "blur-xs"}`}
         >
             <div className="flex grow justify-start">
                 <button
-                    className="w-full h-11 rounded-xl text-base font-semibold bg-white border border-accent-blue/30 text-accent-blue shadow-sm hover:bg-accent-blue hover:text-white transition dark:bg-[rgba(15,23,42,0.7)]"
+                    className="w-full h-11 rounded-xl text-base font-semibold bg-white border border-accent-blue/30 text-accent-blue shadow-xs hover:bg-accent-blue hover:text-white transition dark:bg-[rgba(15,23,42,0.7)]"
                     onClick={resetForm}
                 >
                     Cancel
@@ -22,7 +22,7 @@ export default function MenuFooter({ type, isDeleting, resetForm, submitForm, is
 
             <div className="flex grow justify-end">
                 <button
-                    className="w-full h-11 rounded-xl text-base font-semibold bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 text-white shadow-md shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:translate-y-[-1px] disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-full h-11 rounded-xl text-base font-semibold bg-linear-to-r from-accent-blue-700 to-accent-blue-500 text-white shadow-md shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={submitForm}
                     disabled={isSubmitDisabled}
                 >

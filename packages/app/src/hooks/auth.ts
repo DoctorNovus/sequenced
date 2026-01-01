@@ -41,7 +41,7 @@ export function useLogin() {
 
 export function useRegister() {
     return useMutation({
-        mutationFn: async (body: { email: string, password: string, confirm_password: string }) => {
+        mutationFn: async (body: { first: string, last: string, email: string, password: string }) => {
             const response = await fetchData("/auth/register", {
                 method: "POST",
                 body

@@ -1,21 +1,28 @@
 import { Dialog } from "@headlessui/react";
 import TaskItemMenuPiece from "./TaskItemMenuPiece";
-import { useUpdateTask } from "@/hooks/tasks";
+import { Task, useUpdateTask } from "@/hooks/tasks";
 import { useNavigate } from "react-router";
+
+interface TaskItemMenuSelectionProps {
+  item: Task;
+  isManaging: boolean;
+  setIsManaging: (state: boolean) => void;
+  setIsDeleting: (state: boolean) => void;
+}
 
 export default function TaskItemMenuSelection({
   item,
   isManaging,
   setIsManaging,
   setIsDeleting,
-}) {
+}: TaskItemMenuSelectionProps) {
   const navigate = useNavigate();
 
   const { mutate: updateTask } = useUpdateTask();
 
-  const handleMarkComplete = (e) => {
+  const handleMarkComplete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    updateTask({ id: item.id, data: { ...item, done: !item.done } });
+    updateTask({ id: item.id!, data: { ...item, done: !item.done } });
 
     setIsManaging(false);
   };

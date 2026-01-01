@@ -20,7 +20,7 @@ export default function TaskInfoMenuItem({
       id={name.toLowerCase()}
       name={name.toLowerCase()}
       type={type}
-      className="text-base px-3 py-2 rounded-xl border border-accent-blue/20 bg-white/90 text-primary shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]"
+      className="text-base px-3 py-2 rounded-xl border border-accent-blue/20 bg-white/90 text-primary shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[rgba(15,23,42,0.7)]"
       placeholder={placeholder ?? `${name}...`}
       value={value as any}
       onChange={onChange}
@@ -33,7 +33,7 @@ export default function TaskInfoMenuItem({
       <textarea
         id={name.toLowerCase()}
         name={name.toLowerCase()}
-        className="resize-none text-base px-3 py-2 rounded-xl border border-accent-blue/20 bg-white/90 text-primary shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]"
+        className="resize-none text-base px-3 py-2 rounded-xl border border-accent-blue/20 bg-white/90 text-primary shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[rgba(15,23,42,0.7)]"
         placeholder={placeholder ?? `${name}...`}
         value={value as any}
         onChange={onChange}
@@ -46,7 +46,7 @@ export default function TaskInfoMenuItem({
         id={name.toLowerCase()}
         name={name.toLowerCase()}
         type={type}
-        className="text-base px-3 py-2 rounded-xl border border-accent-blue/30 bg-white text-primary shadow-inner focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/30 focus:outline-none dark:bg-[rgba(15,23,42,0.85)] dark:border-accent-blue/40"
+        className="text-base px-3 py-2 rounded-xl border border-accent-blue/30 bg-white text-primary shadow-inner focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/30 focus:outline-hidden dark:bg-[rgba(15,23,42,0.85)] dark:border-accent-blue/40"
         placeholder={placeholder ?? `${name}...`}
         value={value as any}
         onChange={onChange}

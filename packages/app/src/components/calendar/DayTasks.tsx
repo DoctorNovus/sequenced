@@ -1,10 +1,16 @@
-import { getNameByDate, matchDate } from "@/utils/date";
+import { DaysAsNumbers, getNameByDate, matchDate } from "@/utils/date";
 import TaskContainer from "../menus/TaskContainer/TaskContainer";
 import { isDateWithinProximity, sortByDate } from "@/utils/data";
 import { useApp } from "@/hooks/app";
 
-export default function DayTasks({ skeleton, tasks, setIsInspecting }) {
-  const [appData, setAppData] = useApp();
+interface DayTasksProps {
+  skeleton?: boolean;
+  tasks?: any; /* this seems to come from react-query, we can likely move this query into this component */
+  setIsInspecting?: (state: boolean) => void;
+}
+
+export default function DayTasks({ skeleton, tasks, setIsInspecting }: DayTasksProps) {
+  const [appData] = useApp();
 
   if (skeleton) {
     return (
@@ -13,6 +19,7 @@ export default function DayTasks({ skeleton, tasks, setIsInspecting }) {
         identifier="daily"
         activeFilter="generalTasks"
         title="Today's Tasks"
+        tasks={tasks}
       />
     );
   }
@@ -27,12 +34,12 @@ export default function DayTasks({ skeleton, tasks, setIsInspecting }) {
 
     for (let task of tasks) {
       if (task.repeater) {
-        let isProxim = isDateWithinProximity(task.repeater, task, appData.activeDate);
+        let isProxim = isDateWithinProximity(task.repeater, task, appData.activeDate!);
         if (isProxim) {
           dayTasks.push(task);
         }
       } else {
-        if (matchDate(new Date(task.date), appData.activeDate)) {
+        if (matchDate(new Date(task.date), appData.activeDate!)) {
           dayTasks.push(task);
         }
       }
@@ -45,7 +52,7 @@ export default function DayTasks({ skeleton, tasks, setIsInspecting }) {
     <TaskContainer
       identifier="daily"
       activeFilter="generalTasks"
-      title={`${getNameByDate(appData.activeDate.getDay())}'s Tasks`}
+      title={`${getNameByDate(appData.activeDate?.getDay() as DaysAsNumbers)}'s Tasks`}
       tasks={getDayTasks()}
       setIsInspecting={setIsInspecting}
     />

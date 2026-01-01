@@ -1,6 +1,6 @@
 import CheckmarkIcon from "./CheckmarkIcon";
 
-export default function TaskFeature({ children }) {
+export default function TaskFeature({ children }: React.PropsWithChildren) {
     return (
         <li className="flex flex-row gap-2 items-center">
             <div className="flex w-4 aspect-square justify-center items-center">

@@ -33,13 +33,8 @@ export function sortByDate(arr: Task[]) {
   return arr.sort((a, b) => (a.date < b.date ? -1 : 1));
 }
 
-/**
- * Checks if one date is greater than the other
- * @param {Date} a
- * @param {Date} b
- * @returns
- */
-export function isDateGreater(a, b) {
+/** Checks if one date is greater than the other */
+export function isDateGreater(a: Date, b: Date): boolean {
   if (a.getMonth() == b.getMonth()) {
     if (a.getDate() <= b.getDate()) return true;
   } else if (a.getMonth() < b.getMonth()) return true;
@@ -47,14 +42,8 @@ export function isDateGreater(a, b) {
   return false;
 }
 
-/**
- * Checks if the first date is within the second based on mode
- * @param {'daily'|'weekly'|'bi-weekly'|'monthly'} mode Mode to check
- * @param {Date} a first date
- * @param {Date} b second date
- * @returns true/false if within proximity
- */
-export function isDateWithinProximity(mode, a, b) {
+/** Checks if the first date is within the second based on mode */
+export function isDateWithinProximity(mode: "daily" | "weekly" | "bi-weekly" | "monthly", a: Task, b: Date): boolean {
   return occursOnDate({ ...a, repeater: mode }, b);
 }
 
@@ -83,7 +72,7 @@ export function occursOnDate(task: Task, target: Date): boolean {
   }
 }
 
-export function isTaskDone(task, activeDate) {
+export function isTaskDone(task: Task, activeDate: Date): boolean {
   const day = normalizeDay(activeDate ?? new Date());
 
   // Non-repeating tasks: show as pending until explicitly marked done, regardless of date.
