@@ -33,7 +33,7 @@ export default function UserLogin() {
                             (
                                 <div className="flex flex-col gap-2 rounded-xl border border-accent-blue/15 bg-accent-blue-50/50 px-3 py-2 dark:bg-[rgba(99,102,241,0.12)]">
                                     <div className="text-primary text-sm">Logged in as <span className="font-semibold">{user.data.email}</span></div>
-                                    <button onClick={logoutUser} className="self-start rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition">
+                                    <button onClick={logoutUser} className="self-start rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition">
                                         Sign Out
                                     </button>
                                 </div>
@@ -41,7 +41,7 @@ export default function UserLogin() {
                             (
                                 <div className="flex flex-col gap-2 rounded-xl border border-dashed border-accent-blue/30 px-3 py-2">
                                     <span className="text-muted text-sm">Not signed in.</span>
-                                    <button className="w-fit rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition" onClick={() => navigate("/auth")}>
+                                    <button className="w-fit rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition" onClick={() => navigate("/auth")}>
                                         Sign In
                                     </button>
                                 </div>

@@ -1,9 +1,15 @@
-import { Menu } from "@headlessui/react";
+import { MenuItem } from "@headlessui/react";
 
-export default function TaskMenuItem({ skeleton, children, active, handleClick }) {
-  const handleTrueClick = (e) => {
+interface TaskMenuItemProps {
+  skeleton?: boolean;
+  active?: boolean;
+  handleClick?: (e: React.MouseEvent) => void;
+}
+
+export default function TaskMenuItem({ skeleton, children, active, handleClick }: React.PropsWithChildren<TaskMenuItemProps>) {
+  const handleTrueClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    handleClick(e);
+    if (handleClick) handleClick(e);
   };
 
   if (skeleton) {
@@ -15,12 +21,10 @@ export default function TaskMenuItem({ skeleton, children, active, handleClick }
   }
 
   return (
-    <Menu.Item
-      onClick={handleTrueClick}
-      className={`${active && "bg-accent-blue-600 text-white"
-        } hover:bg-accent-white-50 active:hover:text-accent-blue-700 active:scale-125 text-center select-none px-2 py-1 border border-accent-blue text-accent-blue rounded-md `}
-    >
-      {children}
-    </Menu.Item>
+    <MenuItem>
+      <div onClick={handleTrueClick} className={`${active && "bg-accent-blue-600 text-white"} hover:bg-accent-white-50 active:hover:text-accent-blue-700 active:scale-125 text-center select-none px-2 py-1 border border-accent-blue text-accent-blue rounded-md`}>
+        {children}
+      </div>
+    </MenuItem>
   );
 }

@@ -1,19 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { useTasks, filterBroken } from "@/hooks/tasks";
-import { sortByDate } from "@/utils/data";
+import { useTasks } from "@/hooks/tasks";
 
 import DayTasks from "../components/calendar/DayTasks";
 import ActiveCalendar from "../components/calendar/ActiveCalendar";
 import TaskContainer from "@/components/menus/TaskContainer/TaskContainer";
-import { getPending } from "@/utils/notifs";
-import { SERVER_IP, useApp } from "@/hooks/app";
+import { useApp } from "@/hooks/app";
 import TaskInfoMenu from "@/pages/(Layout)/TaskInfoMenu";
 import { Logger } from "@/utils/logger";
 import TagFilterBar from "@/components/tasks/TagFilterBar";
 
 export default function Task() {
   const [appData, setAppData] = useApp();
-  const [activeDate, setActiveDate] = useState(appData.activeDate);
   const [isInspecting, setIsInspecting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -86,9 +83,9 @@ export default function Task() {
       <div className="w-full h-full text-accent-black">
         <div className="h-full">
           <div className="flex flex-col items-center gap-4 px-3 md:px-6">
-            <ActiveCalendar skeleton="true" />
-            <DayTasks skeleton="true" />
-            <TaskContainer title="All Tasks" skeleton="true" />
+            <ActiveCalendar skeleton={true} />
+            <DayTasks skeleton={true} />
+            <TaskContainer title="All Tasks" skeleton={true} />
           </div>
           <div>
             {/* <TaskInfoMenu skeleton="true" /> */}
@@ -105,7 +102,7 @@ export default function Task() {
           <div className="flex w-full max-w-4xl flex-col items-center gap-4 px-3 md:px-6">
             <ActiveCalendar />
             <div className="w-full flex flex-col gap-2">
-              <div className="flex w-full items-center gap-2 rounded-xl bg-white/90 px-3 py-2 shadow-sm ring-1 ring-accent-blue/10 dark:bg-slate-900/70">
+              <div className="flex w-full items-center gap-2 rounded-xl bg-white/90 px-3 py-2 shadow-xs ring-1 ring-accent-blue/10 dark:bg-slate-900/70">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4 text-slate-400"
@@ -125,7 +122,7 @@ export default function Task() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search tasks by title, description, or tag..."
-                  className="w-full bg-transparent text-sm text-primary outline-none placeholder:text-slate-400"
+                  className="w-full bg-transparent text-sm text-primary outline-hidden placeholder:text-slate-400"
                 />
               </div>
               {tasks.isSuccess && (

@@ -1,6 +1,15 @@
 import { QueryClient, UseMutationResult, UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchData } from "@/utils/data";
-import { User } from "@backend/user/user.entity";
+
+export interface User {
+    id: string;
+    first: string;
+    last: string;
+    email: string;
+    developer: boolean;
+    synced: boolean;
+    lastLoggedIn?: Date;
+};
 
 async function getUser(): Promise<User> {
     const response = await fetchData("/user", {});
@@ -61,10 +70,8 @@ export async function exportUserData(): Promise<{ user: User | null; tasks: any[
     return await response.json();
 }
 
-export function useExportUserData(): UseMutationResult<{ user: User | null; tasks: any[] }> {
-    return useMutation({
-        mutationFn: exportUserData
-    });
+export function useExportUserData() {
+    return useMutation({ mutationFn: exportUserData });
 }
 
 export async function requestUserDeletion(): Promise<{ deletedUser: boolean; removedFromTasks: number; deletedTasks: number }> {
@@ -74,7 +81,7 @@ export async function requestUserDeletion(): Promise<{ deletedUser: boolean; rem
     return await response.json();
 }
 
-export function useRequestUserDeletion(): UseMutationResult<{ deletedUser: boolean; removedFromTasks: number; deletedTasks: number }> {
+export function useRequestUserDeletion() {
     return useMutation({
         mutationFn: requestUserDeletion
     });

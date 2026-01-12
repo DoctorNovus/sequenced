@@ -5,7 +5,6 @@ import {
   createInitialTaskData,
   useAddTask,
   useAddTasksBulk,
-  useTaskById,
   useUpdateTask,
 } from "@/hooks/tasks";
 
@@ -158,17 +157,10 @@ export default function TaskInfoMenu({
     });
   };
 
-  const changeTempAppDate = (date: Date) => {
-    setAppData({
-      ...appData,
-      tempActiveDate: date,
-    });
-  };
-
   const createNotification = async (task: Task) => {
     if (!task || task.reminder == "") return;
 
-    const setDate: Date = task.date || new Date();
+    const setDate: Date = new Date(task.date);
 
     const second = 1000;
     const minute = second * 60;
@@ -229,8 +221,6 @@ export default function TaskInfoMenu({
     setAppData({ ...appData, activeTask: undefined });
     setIsOpen(false);
   };
-
-  const oldTask = useTaskById(tempData.id);
 
   const showToast = (text: string, variant: "create" | "update" | "bulk") => {
     setToast({ text, variant });
@@ -324,7 +314,7 @@ export default function TaskInfoMenu({
       setAppData({
         ...appData,
         activeDate: appData.storedDate,
-        storedDate: null
+        storedDate: undefined
       });
     }
 
@@ -333,8 +323,8 @@ export default function TaskInfoMenu({
       title: tempData.title.trim(),
     };
 
-    addTask(cleanedTask);
-    createNotification(cleanedTask);
+    addTask(cleanedTask as Task);
+    createNotification(cleanedTask as Task);
 
     showToast("Task created", "create");
     resetForm();
@@ -352,13 +342,13 @@ export default function TaskInfoMenu({
           onClose={() => resetForm()}
           initialFocus={ref}
           ref={ref}
-          className="relative z-50 w-screen h-screen bg-black/25 dark:bg-black/60 backdrop-blur-sm"
+          className="relative z-50 w-screen h-screen bg-black/25 dark:bg-black/60 backdrop-blur-xs"
         >
           <div className="fixed inset-safearea flex w-full max-h-screen items-center justify-center">
-            <DialogPanel className="flex w-full max-w-xl max-h-full flex-col overflow-y-auto rounded-3xl surface-card border text-primary shadow-2xl bg-[var(--surface-card)] ring-1 ring-accent-blue/15 p-4 md:p-6">
+            <DialogPanel className="flex w-full max-w-xl max-h-full flex-col overflow-y-auto rounded-3xl surface-card border text-primary shadow-2xl bg-(--surface-card) ring-1 ring-accent-blue/15 p-4 md:p-6">
               <div className="flex flex-col gap-5 ">
                 <MenuHeader
-                  type={type}
+                  type={type!}
                   isDeleting={isDeleting}
                 />
                 <MenuFields
@@ -371,25 +361,16 @@ export default function TaskInfoMenu({
                   setQuickTasksInput={setQuickTasksInput}
                   isQuickAdd={isQuickAdd}
                   setIsQuickAdd={setIsQuickAdd}
-
-                  setIsOpen={setIsOpen}
-
                   changeAppDate={changeAppDate}
-                  changeTempAppDate={changeTempAppDate}
-
                   appData={appData}
                   setAppData={setAppData}
                   validationError={validationError}
                 />
                 <MenuEdit
-                  type={type}
-
+                  type={type!}
                   isDeleting={isDeleting}
                   setIsDeleting={setIsDeleting}
-
-                  appData={appData}
-                  tempData={tempData}
-
+                  tempData={tempData as Task}
                   setIsOpen={setIsOpen}
                 />
                 <MenuFooter
@@ -414,14 +395,14 @@ export default function TaskInfoMenu({
         leaveFrom="translate-y-0 opacity-100"
         leaveTo="translate-y-2 opacity-0"
       >
-        <div className="pointer-events-none fixed inset-x-0 top-6 z-[60] flex justify-center px-6">
+        <div className="pointer-events-none fixed inset-x-0 top-6 z-60 flex justify-center px-6">
           <div
             className={`pointer-events-auto flex items-center gap-4 w-full max-w-md rounded-2xl px-5 py-4 text-white shadow-2xl shadow-slate-900/30 ring-1 ring-slate-800/70 ${
               toast?.variant === "create"
-                ? "bg-gradient-to-r from-accent-blue-700 to-accent-blue-500"
+                ? "bg-linear-to-r from-accent-blue-700 to-accent-blue-500"
                 : toast?.variant === "update"
-                  ? "bg-gradient-to-r from-emerald-600 to-emerald-500"
-                  : "bg-gradient-to-r from-indigo-600 to-accent-blue-500"
+                  ? "bg-linear-to-r from-emerald-600 to-emerald-500"
+                  : "bg-linear-to-r from-indigo-600 to-accent-blue-500"
             }`}
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15">
