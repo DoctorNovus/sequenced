@@ -26,4 +26,7 @@ export class User extends Model {
 
     @Prop({ type: Date, default: null })
     lastLoggedIn?: Date;
+
+    @Prop({ type: Object, default: {}, select: false })
+    apiKeys?: Record<string, string>;
 }

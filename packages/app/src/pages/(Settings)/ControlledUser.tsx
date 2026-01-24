@@ -20,7 +20,7 @@ export default function ControllerUser() {
 
     return (
         <div className="flex flex-row gap-1">
-            <input id="developer_uid" className="shadow-md border border-solid px-2 py-1 rounded-sm" name="developer_uid" type="text" autoComplete="off" placeholder="USER ID" />
+            <input id="developer_uid" className="shadow-md border border-solid px-2 py-1 rounded-xs" name="developer_uid" type="text" autoComplete="off" placeholder="USER ID" />
             <button className="px-3 py-1 bg-accent-blue text-accent-white rounded-md" onClick={loginAsUser}>Login As User</button>
         </div>
     )

@@ -89,7 +89,7 @@ export default function TaskInfoMenuTags({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="min-w-[120px] flex-1 border-none bg-transparent text-sm text-primary placeholder:text-slate-400 focus:outline-none"
+          className="min-w-[120px] flex-1 border-none bg-transparent text-sm text-primary placeholder:text-slate-400 focus:outline-hidden"
           placeholder={tags.length === 0 ? "Add a tag…" : "Add another tag…"}
         />
       </div>

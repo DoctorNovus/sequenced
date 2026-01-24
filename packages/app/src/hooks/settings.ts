@@ -9,6 +9,7 @@ export interface Settings {
   sendDailyRemindersOverride?: boolean;
   sendDailyRemindersTime?: string;
   groupsActive?: string[];
+  apiKeys?: Record<string, string>;
 }
 
 /* Gets the settings from the database */

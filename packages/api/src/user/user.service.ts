@@ -3,6 +3,7 @@ import { BadRequest } from "@outwalk/firefly/errors";
 import { User } from "./user.entity";
 import bcrypt from "bcrypt";
 import { Task } from "@/task/task.entity";
+import crypto from "crypto";
 
 @Injectable()
 export class UserService {
@@ -50,6 +51,25 @@ export class UserService {
         }
 
         return this.updateUser(id, { password: next });
+    }
+
+    async getApiKeys(id: string): Promise<Record<string, string>> {
+        const user = await User.findById(id).select("apiKeys").lean<User>().exec();
+        return user?.apiKeys ?? {};
+    }
+
+    async setApiKeys(id: string, apiKeys: Record<string, string>): Promise<Record<string, string>> {
+        await User.findByIdAndUpdate(id, { apiKeys }).exec();
+        return apiKeys;
+    }
+
+    async generateApiKey(id: string, name: string): Promise<{ name: string; value: string; apiKeys: Record<string, string> }> {
+        const user = await User.findById(id).select("apiKeys").lean<User>().exec();
+        const apiKeys = user?.apiKeys ?? {};
+        const value = crypto.randomBytes(32).toString("hex");
+        const nextKeys = { ...apiKeys, [name]: value };
+        await User.findByIdAndUpdate(id, { apiKeys: nextKeys }).exec();
+        return { name, value, apiKeys: nextKeys };
     }
 
     private sanitizeUser(user: any) {

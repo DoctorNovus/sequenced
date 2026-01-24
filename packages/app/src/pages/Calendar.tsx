@@ -228,7 +228,7 @@ export default function CalendarPage() {
       key={task.id ?? task.title}
       type="button"
       onClick={() => openTask(task, day)}
-      className="flex flex-col rounded-xl border border-slate-200/60 bg-white px-3 py-2 text-left shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700/60 dark:bg-slate-900/70"
+      className="flex flex-col rounded-xl border border-slate-200/60 bg-white px-3 py-2 text-left shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700/60 dark:bg-slate-900/70"
     >
       <div className="flex items-center justify-between">
         <span className="text-sm font-semibold text-primary">{task.title}</span>
@@ -258,14 +258,14 @@ export default function CalendarPage() {
         return (
           <div
             key={key}
-            className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm ring-1 ring-slate-100/90 dark:border-slate-800/70 dark:bg-slate-900/80 dark:ring-slate-800"
+            className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs ring-1 ring-slate-100/90 dark:border-slate-800/70 dark:bg-slate-900/80 dark:ring-slate-800"
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold ring-1 ${
                     isToday
-                      ? "bg-accent-blue/90 text-white ring-white/60 shadow-sm shadow-accent-blue/25"
+                      ? "bg-accent-blue/90 text-white ring-white/60 shadow-xs shadow-accent-blue/25"
                       : "bg-slate-100 text-primary ring-slate-200 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
                   }`}
                 >
@@ -299,7 +299,7 @@ export default function CalendarPage() {
         <button
           type="button"
           onClick={() => changeMonth(-1)}
-          className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+          className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
           aria-label="Previous month"
         >
           ←
@@ -310,7 +310,7 @@ export default function CalendarPage() {
         <button
           type="button"
           onClick={() => changeMonth(1)}
-          className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+          className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
           aria-label="Next month"
         >
           →
@@ -329,7 +329,7 @@ export default function CalendarPage() {
                 goToWeek(week[0]);
               }
             }}
-            className="grid grid-cols-7 gap-2 sm:gap-3 rounded-2xl border border-slate-200/70 bg-white/70 p-1 shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700/60 dark:bg-slate-900/70"
+            className="grid grid-cols-7 gap-2 sm:gap-3 rounded-2xl border border-slate-200/70 bg-white/70 p-1 shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700/60 dark:bg-slate-900/70"
           >
             {week.map((day) => {
               if (!day) {
@@ -366,7 +366,7 @@ export default function CalendarPage() {
                             e.stopPropagation();
                             openTask(task, day);
                           }}
-                          className="truncate rounded-lg bg-white/80 px-1.5 py-0.5 text-[10px] font-semibold text-primary shadow-sm ring-1 ring-slate-100 transition hover:border-accent-blue/40 hover:ring-accent-blue/20 dark:bg-slate-800"
+                          className="truncate rounded-lg bg-white/80 px-1.5 py-0.5 text-[10px] font-semibold text-primary shadow-xs ring-1 ring-slate-100 transition hover:border-accent-blue/40 hover:ring-accent-blue/20 dark:bg-slate-800"
                         >
                           {task.title}
                         </button>
@@ -400,7 +400,7 @@ export default function CalendarPage() {
                 key={mode}
                 type="button"
                 onClick={() => handleViewChange(mode)}
-                className={`rounded-full px-3 py-2 text-sm font-semibold shadow-sm transition ${view === mode ? "bg-accent-blue text-white shadow-accent-blue/30" : "border border-slate-200 bg-white text-primary hover:-translate-y-px dark:border-slate-700 dark:bg-slate-900"}`}
+                className={`rounded-full px-3 py-2 text-sm font-semibold shadow-xs transition ${view === mode ? "bg-accent-blue text-white shadow-accent-blue/30" : "border border-slate-200 bg-white text-primary hover:-translate-y-px dark:border-slate-700 dark:bg-slate-900"}`}
               >
                 {mode === "week" ? "Week view" : "Month view"}
               </button>
@@ -413,7 +413,7 @@ export default function CalendarPage() {
             <button
               type="button"
               onClick={() => changeWeek(-1)}
-              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
               aria-label="Previous week"
             >
               ←
@@ -424,7 +424,7 @@ export default function CalendarPage() {
             <button
               type="button"
               onClick={() => changeWeek(1)}
-              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-sm transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
               aria-label="Next week"
             >
               →
@@ -433,7 +433,7 @@ export default function CalendarPage() {
         )}
 
         {scope === "overdue" && (
-          <div className="rounded-2xl border border-red-200/70 bg-red-50/70 p-4 shadow-sm dark:border-red-400/50 dark:bg-[rgba(248,113,113,0.12)]">
+          <div className="rounded-2xl border border-red-200/70 bg-red-50/70 p-4 shadow-xs dark:border-red-400/50 dark:bg-[rgba(248,113,113,0.12)]">
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <span className="text-lg font-semibold text-red-700 dark:text-red-200">Overdue</span>
@@ -454,7 +454,7 @@ export default function CalendarPage() {
 
         <div className="w-full">
           {tasks.isLoading && (
-            <div className="rounded-2xl border border-slate-200/70 bg-white p-4 text-sm text-muted shadow-sm dark:border-slate-700/60 dark:bg-slate-900/70">
+            <div className="rounded-2xl border border-slate-200/70 bg-white p-4 text-sm text-muted shadow-xs dark:border-slate-700/60 dark:bg-slate-900/70">
               Loading calendar...
             </div>
           )}

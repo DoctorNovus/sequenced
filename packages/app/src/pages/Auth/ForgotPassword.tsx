@@ -63,7 +63,7 @@ export default function ForgotPassword() {
       style={{ background: "var(--app-background)" }}
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_5%_10%,rgba(48,122,207,0.12),transparent_35%),radial-gradient(circle_at_90%_0%,rgba(48,122,207,0.1),transparent_30%)] dark:bg-[radial-gradient(circle_at_10%_20%,rgba(99,102,241,0.18),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(14,165,233,0.18),transparent_35%)]" />
-      <div className="relative z-10 w-full max-w-md rounded-3xl surface-card border p-6 shadow-2xl ring-1 ring-accent-blue/10 backdrop-blur">
+      <div className="relative z-10 w-full max-w-md rounded-3xl surface-card border p-6 shadow-2xl ring-1 ring-accent-blue/10 backdrop-blur-sm">
         <div className="flex flex-row items-center justify-between mb-4 text-primary">
           <button
             type="button"
@@ -91,7 +91,7 @@ export default function ForgotPassword() {
                 name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]"
+                className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[rgba(15,23,42,0.7)]"
                 placeholder="you@example.com"
               />
             </label>
@@ -99,7 +99,7 @@ export default function ForgotPassword() {
             {status && <span className="text-green-600 text-sm">{status}</span>}
             <button
               type="submit"
-              className="w-full rounded-xl bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 py-3 text-lg font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:translate-y-[-1px] disabled:opacity-70"
+              className="w-full rounded-xl bg-linear-to-r from-accent-blue-700 to-accent-blue-500 py-3 text-lg font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:-translate-y-px disabled:opacity-70"
               disabled={requestReset.isPending}
             >
               {requestReset.isPending ? "Sending..." : "Send reset link"}
@@ -120,7 +120,7 @@ export default function ForgotPassword() {
                 name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]"
+                className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[rgba(15,23,42,0.7)]"
                 placeholder="••••••••"
               />
             </label>
@@ -132,7 +132,7 @@ export default function ForgotPassword() {
                 name="confirmPassword"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]"
+                className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[rgba(15,23,42,0.7)]"
                 placeholder="••••••••"
               />
             </label>
@@ -140,7 +140,7 @@ export default function ForgotPassword() {
             {status && <span className="text-green-600 text-sm">{status}</span>}
             <button
               type="submit"
-              className="w-full rounded-xl bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 py-3 text-lg font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:translate-y-[-1px] disabled:opacity-70"
+              className="w-full rounded-xl bg-linear-to-r from-accent-blue-700 to-accent-blue-500 py-3 text-lg font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:-translate-y-px disabled:opacity-70"
               disabled={completeReset.isPending}
             >
               {completeReset.isPending ? "Saving..." : "Update password"}

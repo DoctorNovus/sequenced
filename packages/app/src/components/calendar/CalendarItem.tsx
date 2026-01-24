@@ -28,7 +28,7 @@ export default function CalendarItem({ skeleton, date }: {skeleton?: boolean, da
   const isActive = appData.activeDate?.toDateString?.() === date.toDateString();
 
   const baseClasses =
-    "p-3 rounded-full w-10 h-10 flex justify-center text-center items-center transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-blue-600 text-primary";
+    "p-3 rounded-full w-10 h-10 flex justify-center text-center items-center transition focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-accent-blue-600 text-primary";
   const activeClasses =
     "bg-accent-blue-700 text-white ring-2 ring-accent-blue-300 shadow-md";
   const todayClasses =

@@ -44,7 +44,7 @@ export default function RegisterUser() {
             style={{ background: "var(--app-background)" }}
         >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_5%_10%,rgba(48,122,207,0.12),transparent_35%),radial-gradient(circle_at_90%_0%,rgba(48,122,207,0.1),transparent_30%)] dark:bg-[radial-gradient(circle_at_10%_20%,rgba(99,102,241,0.18),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(14,165,233,0.18),transparent_35%)]" />
-            <div className="relative z-10 w-full max-w-md rounded-3xl surface-card border p-6 shadow-2xl ring-1 ring-accent-blue/10 backdrop-blur">
+            <div className="relative z-10 w-full max-w-md rounded-3xl surface-card border p-6 shadow-2xl ring-1 ring-accent-blue/10 backdrop-blur-sm">
                 <div className="flex flex-row items-center justify-between mb-4 text-primary">
                     <button
                         type="button"
@@ -60,19 +60,19 @@ export default function RegisterUser() {
                     <div className="w-full flex flex-col gap-4">
                         <label className="flex flex-col text-left text-sm font-semibold text-muted">
                             First Name
-                            <input required className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]" placeholder="First Name" />
+                            <input required className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[rgba(15,23,42,0.7)]" placeholder="First Name" />
                         </label>
                         <label className="flex flex-col text-left text-sm font-semibold text-muted">
                             Last Name
-                            <input required className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]" placeholder="Last Name" />
+                            <input required className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[rgba(15,23,42,0.7)]" placeholder="Last Name" />
                         </label>
                         <label className="flex flex-col text-left text-sm font-semibold text-muted">
                             Email
-                            <input required className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]" placeholder="Email Address" />
+                            <input required className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[rgba(15,23,42,0.7)]" placeholder="Email Address" />
                         </label>
                         <label className="flex flex-col text-left text-sm font-semibold text-muted">
                             Password
-                            <input required type="password" className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-none dark:bg-[rgba(15,23,42,0.7)]" placeholder="Password" />
+                            <input required type="password" className="mt-1 w-full rounded-xl border border-accent-blue/20 bg-white px-3 py-2 text-base shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[rgba(15,23,42,0.7)]" placeholder="Password" />
                         </label>
                     </div>
                     <label htmlFor="terms-policy" className="w-full flex items-center text-left gap-2 rounded-md text-sm text-muted">
@@ -80,7 +80,7 @@ export default function RegisterUser() {
                         <span>By continuing, you agree to our <a href="https://www.ottegi.com/privacy" target="_blank" className="text-accent-blue underline">Privacy Policy</a>.</span>
                     </label>
                     {status.length > 0 && <span className="text-red-500 text-sm">{status}</span>}
-                    <button type="submit" className="w-full rounded-xl bg-gradient-to-r from-accent-blue-700 to-accent-blue-500 py-3 text-lg font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:translate-y-[-1px]">Get Started</button>
+                    <button type="submit" className="w-full rounded-xl bg-linear-to-r from-accent-blue-700 to-accent-blue-500 py-3 text-lg font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-accent-blue/20 transition hover:-translate-y-px">Get Started</button>
                 </form>
             </div>
         </div>

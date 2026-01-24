@@ -18,7 +18,7 @@ import instagramIcon from "@/assets/social_icons/instagram.svg";
 import facebookIcon from "@/assets/social_icons/facebook.svg";
 import discordIcon from "@/assets/social_icons/discord.svg";
 import { useApp } from "@/hooks/app";
-import { useChangePassword, useExportUserData, useRequestUserDeletion, useUpdateProfile, useUser } from "@/hooks/user";
+import { useApiKeys, useChangePassword, useExportUserData, useGenerateApiKey, useRequestUserDeletion, useUpdateApiKeys, useUpdateProfile, useUser } from "@/hooks/user";
 import { getTodayNotificationBody } from "@/utils/notifs";
 import { fetchData } from "@/utils/data";
 import { StarIcon } from "@heroicons/react/24/solid";
@@ -35,6 +35,9 @@ export default function SettingsPage() {
   const changePassword = useChangePassword();
   const exportUserData = useExportUserData();
   const requestUserDeletion = useRequestUserDeletion();
+  const apiKeysQuery = useApiKeys();
+  const updateApiKeys = useUpdateApiKeys();
+  const generateApiKey = useGenerateApiKey();
   const [profileForm, setProfileForm] = useState({ first: "", last: "", email: "" });
   const [profileMessage, setProfileMessage] = useState<string>("");
   const [passwordForm, setPasswordForm] = useState({ current: "", next: "", confirm: "" });
@@ -46,6 +49,12 @@ export default function SettingsPage() {
   const [reviewRating, setReviewRating] = useState<number>(5);
   const [reviewMessage, setReviewMessage] = useState<string>("");
   const [reviewStatus, setReviewStatus] = useState<string>("");
+  const [apiKeyName, setApiKeyName] = useState<string>("");
+  const [apiKeyMessage, setApiKeyMessage] = useState<string>("");
+  const [apiKeyValue, setApiKeyValue] = useState<string>("");
+  const [apiKeyCopied, setApiKeyCopied] = useState<boolean>(false);
+  const [showApiKeyDialog, setShowApiKeyDialog] = useState<boolean>(false);
+  const [apiKeysSynced, setApiKeysSynced] = useState<boolean>(false);
 
   useEffect(() => {
     getSettings().then(async (tempSettings) => {
@@ -62,6 +71,35 @@ export default function SettingsPage() {
       });
     }
   }, [user.isSuccess, user.data]);
+
+  useEffect(() => {
+    if (apiKeysSynced || !apiKeysQuery.isSuccess) return;
+
+    const serverKeys = apiKeysQuery.data || {};
+    const localKeys = tempSettings.apiKeys || {};
+    const serverHasKeys = Object.keys(serverKeys).length > 0;
+    const localHasKeys = Object.keys(localKeys).length > 0;
+
+    if (!serverHasKeys && localHasKeys) {
+      updateApiKeys.mutateAsync(localKeys)
+        .then(() => setApiKeyMessage("Synced existing keys to the server."))
+        .catch((err) => setApiKeyMessage(err?.message || "Unable to sync API keys."))
+        .finally(() => setApiKeysSynced(true));
+      return;
+    }
+
+    if (serverHasKeys) {
+      const mergedKeys = { ...localKeys, ...serverKeys };
+      const nextSettings: Settings = {
+        ...tempSettings,
+        apiKeys: Object.keys(mergedKeys).length ? mergedKeys : undefined
+      };
+      setTempSettings(nextSettings);
+      setSettings(nextSettings);
+    }
+
+    setApiKeysSynced(true);
+  }, [apiKeysQuery.isSuccess, apiKeysQuery.data, apiKeysSynced, tempSettings, updateApiKeys]);
 
   const UpdateSettings = async (newValue: object) => {
     const settings: Settings = { ...tempSettings, ...newValue };
@@ -267,6 +305,69 @@ export default function SettingsPage() {
     }
   };
 
+  const maskApiKey = (value: string) => {
+    if (!value) return "";
+    const tail = value.slice(-4);
+    const maskedCount = Math.max(4, value.length - 4);
+    return `${"*".repeat(maskedCount)}${tail}`;
+  };
+
+  const handleGenerateApiKey = async () => {
+    setApiKeyMessage("");
+    setApiKeyCopied(false);
+    const name = apiKeyName.trim();
+    if (!name) {
+      setApiKeyMessage("Provide a name before generating.");
+      return;
+    }
+
+    try {
+      const result = await generateApiKey.mutateAsync(name);
+      const nextKeys = { ...(tempSettings.apiKeys || {}), [result.name]: result.value };
+      UpdateSettings({ apiKeys: nextKeys });
+      setApiKeyValue(result.value);
+      setShowApiKeyDialog(true);
+      setApiKeyMessage("");
+    } catch (err: any) {
+      setApiKeyMessage(err?.message || "Unable to generate API key.");
+    }
+  };
+
+  const handleCopyApiKey = async () => {
+    if (!apiKeyValue) {
+      setApiKeyMessage("Generate a key first.");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(apiKeyValue);
+      setApiKeyCopied(true);
+      setApiKeyMessage("Copied to clipboard.");
+    } catch (err: any) {
+      setApiKeyMessage(err?.message || "Unable to copy key.");
+    }
+  };
+
+  const closeApiKeyDialog = () => {
+    setShowApiKeyDialog(false);
+    setApiKeyValue("");
+    setApiKeyCopied(false);
+    setApiKeyName("");
+  };
+
+  const handleRemoveApiKey = async (name: string) => {
+    setApiKeyMessage("");
+    const nextKeys = { ...(tempSettings.apiKeys || {}) };
+    delete nextKeys[name];
+    try {
+      await updateApiKeys.mutateAsync(nextKeys);
+      UpdateSettings({ apiKeys: Object.keys(nextKeys).length ? nextKeys : undefined });
+      setApiKeyMessage("Removed.");
+    } catch (err: any) {
+      setApiKeyMessage(err?.message || "Unable to remove API key.");
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full px-3 md:px-6 lg:px-10 py-4 pb-28 gap-4 items-center overflow-y-auto">
       <div className="w-full max-w-3xl">
@@ -296,7 +397,7 @@ export default function SettingsPage() {
                 type="text"
                 value={profileForm.first}
                 onChange={(e) => setProfileForm({ ...profileForm, first: e.target.value })}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm text-primary">
@@ -305,7 +406,7 @@ export default function SettingsPage() {
                 type="text"
                 value={profileForm.last}
                 onChange={(e) => setProfileForm({ ...profileForm, last: e.target.value })}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm text-primary md:col-span-2">
@@ -314,13 +415,13 @@ export default function SettingsPage() {
                 type="email"
                 value={profileForm.email}
                 onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
               />
             </label>
             <div className="flex items-center gap-2 md:col-span-2">
               <button
                 type="submit"
-                className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
                 disabled={updateProfile.isPending || user.isLoading}
               >
                 {updateProfile.isPending ? "Saving..." : "Save changes"}
@@ -348,7 +449,7 @@ export default function SettingsPage() {
                     type="password"
                     value={passwordForm.current}
                     onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-primary">
@@ -357,7 +458,7 @@ export default function SettingsPage() {
                     type="password"
                     value={passwordForm.next}
                     onChange={(e) => setPasswordForm({ ...passwordForm, next: e.target.value })}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-primary">
@@ -366,13 +467,13 @@ export default function SettingsPage() {
                     type="password"
                     value={passwordForm.confirm}
                     onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
                   />
                 </label>
                 <div className="flex items-center gap-2 md:col-span-3">
                   <button
                     type="submit"
-                    className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                    className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
                     disabled={changePassword.isPending}
                   >
                     {changePassword.isPending ? "Updating..." : "Update password"}
@@ -388,7 +489,7 @@ export default function SettingsPage() {
               <button
                 type="button"
                 onClick={handleDownloadData}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:-translate-y-px transition dark:border-slate-600 dark:bg-slate-900 dark:text-white"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-primary shadow-xs hover:-translate-y-px transition dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                 disabled={exportUserData.isPending}
               >
                 {exportUserData.isPending ? "Preparing..." : "Download my data"}
@@ -399,12 +500,12 @@ export default function SettingsPage() {
                   setShowDeleteConfirm((prev) => !prev);
                   setDataMessage("");
                 }}
-                className="rounded-lg border border-red-400 bg-white px-3 py-2 text-sm font-semibold text-red-700 shadow-sm hover:-translate-y-px transition dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-100"
+                className="rounded-lg border border-red-400 bg-white px-3 py-2 text-sm font-semibold text-red-700 shadow-xs hover:-translate-y-px transition dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-100"
               >
                 {showDeleteConfirm ? "Cancel" : "Confirm deletion"}
               </button>
               {showDeleteConfirm && (
-                <div className="w-full rounded-xl border border-red-200/70 bg-red-50/70 p-3 text-left shadow-sm dark:border-red-500/50 dark:bg-red-500/10">
+                <div className="w-full rounded-xl border border-red-200/70 bg-red-50/70 p-3 text-left shadow-xs dark:border-red-500/50 dark:bg-red-500/10">
                   <p className="text-sm font-semibold text-red-800 dark:text-red-100">
                     This will permanently delete all of your Sequenced data (tasks, tags, account). There is no way to recover it.
                   </p>
@@ -415,12 +516,12 @@ export default function SettingsPage() {
                       value={deleteInput}
                       onChange={(e) => setDeleteInput(e.target.value)}
                       placeholder="DELETE"
-                      className="w-full rounded-lg border border-red-300 bg-white px-2 py-2 text-sm shadow-inner focus:border-red-500 focus:outline-none dark:border-red-500/60 dark:bg-slate-900 dark:text-white"
+                      className="w-full rounded-lg border border-red-300 bg-white px-2 py-2 text-sm shadow-inner focus:border-red-500 focus:outline-hidden dark:border-red-500/60 dark:bg-slate-900 dark:text-white"
                     />
                     <button
                       type="button"
                       onClick={handleDeleteData}
-                      className="self-start rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-red-400/40 hover:-translate-y-px transition disabled:opacity-70"
+                      className="self-start rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-red-400/40 hover:-translate-y-px transition disabled:opacity-70"
                       disabled={requestUserDeletion.isPending}
                     >
                       {requestUserDeletion.isPending ? "Deleting..." : "Delete everything"}
@@ -455,19 +556,19 @@ export default function SettingsPage() {
                   key={opt.id}
                   type="button"
                   onClick={() => setTheme(opt.id as "light" | "dark" | "auto")}
-                  className={`flex items-center gap-3 rounded-2xl border p-3 text-left transition shadow-sm ${
+                  className={`flex items-center gap-3 rounded-2xl border p-3 text-left transition shadow-xs ${
                     isActive
                       ? "border-accent-blue/50 ring-1 ring-accent-blue/30 shadow-md"
                       : "border-slate-200/70 dark:border-slate-600/50 hover:border-accent-blue/40"
                   }`}
                 >
                   <span
-                    className={`inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border ${
+                    className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border ${
                       opt.id === "light"
-                        ? "bg-gradient-to-br from-white to-slate-100 text-slate-700"
+                        ? "bg-linear-to-br from-white to-slate-100 text-slate-700"
                         : opt.id === "dark"
-                          ? "bg-gradient-to-br from-slate-800 to-slate-900 text-white"
-                          : "bg-gradient-to-br from-slate-200 to-slate-800 text-white"
+                          ? "bg-linear-to-br from-slate-800 to-slate-900 text-white"
+                          : "bg-linear-to-br from-slate-200 to-slate-800 text-white"
                     } ${isActive ? "border-accent-blue/40" : "border-transparent"}`}
                   >
                     {opt.id === "auto" ? "A" : opt.label[0]}
@@ -495,14 +596,14 @@ export default function SettingsPage() {
                     UpdateSettings({ sendDailyRemindersTime: newTime });
                     UpdateTime(newTime);
                   }}
-                  className="w-fit rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm text-slate-800 shadow-inner focus:border-accent-blue focus:outline-none dark:[color-scheme:dark]"
+                  className="w-fit rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm text-slate-800 shadow-inner focus:border-accent-blue focus:outline-hidden dark:scheme-dark"
                 />
               </div>
             )}
             <div className="flex justify-start">
               <button
                 type="button"
-                className="rounded-lg bg-accent-blue text-white px-3 py-2 text-sm font-semibold shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition"
+                className="rounded-lg bg-accent-blue text-white px-3 py-2 text-sm font-semibold shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition"
                 onClick={TestDaily}
               >
                 Test
@@ -545,13 +646,13 @@ export default function SettingsPage() {
                   onChange={(e) => setReviewMessage(e.target.value)}
                   rows={3}
                   placeholder="What’s working well? What should we improve?"
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
                 />
               </label>
               <div className="flex items-center gap-2">
                 <button
                   type="submit"
-                  className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                  className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
                   disabled={reviewRating < 1 || reviewRating > 5}
                 >
                   Send review
@@ -563,13 +664,101 @@ export default function SettingsPage() {
               <span className="text-xs font-semibold text-primary">Prefer email?</span>
               <button
                 type="button"
-                className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 onClick={() => window.open("mailto:sequenced@ottegi.com?subject=Sequenced%20Feedback", "_self")}
               >
                 <span className="text-lg">✉️</span>
                 Email sequenced@ottegi.com
               </button>
             </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
+          <div className="flex flex-col gap-3">
+            <h2 className="text-lg font-semibold text-slate-900">API Keys</h2>
+            <p className="text-sm text-slate-600">
+              Store integration keys locally on this device. Use the same name to overwrite an existing key.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <label className="flex flex-col gap-1 text-sm text-primary">
+                Name
+                <input
+                  type="text"
+                  value={apiKeyName}
+                  onChange={(e) => setApiKeyName(e.target.value)}
+                  placeholder="OpenAI, Slack, etc."
+                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
+                />
+              </label>
+              <div className="flex items-center gap-2 md:col-span-3">
+                <button
+                  type="button"
+                  onClick={handleGenerateApiKey}
+                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:-translate-y-px transition dark:border-slate-700 dark:bg-slate-900/70 dark:text-white"
+                  disabled={generateApiKey.isPending || updateApiKeys.isPending}
+                >
+                  {generateApiKey.isPending ? "Generating..." : "Generate key"}
+                </button>
+                {apiKeyMessage && <span className="text-sm text-muted">{apiKeyMessage}</span>}
+              </div>
+            </div>
+            {showApiKeyDialog && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
+                <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800">
+                  <div className="flex flex-col gap-3">
+                    <div>
+                      <h3 className="text-lg font-semibold text-primary">Copy your API key</h3>
+                      <p className="text-sm text-muted">
+                        This key is shown once. Copy it now and store it somewhere safe.
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono text-slate-800 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
+                      {apiKeyValue}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleCopyApiKey}
+                        className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-blue/30 hover:-translate-y-px transition"
+                      >
+                        {apiKeyCopied ? "Copied" : "Copy key"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={closeApiKeyDialog}
+                        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:-translate-y-px transition dark:border-slate-700 dark:bg-slate-900/70 dark:text-white"
+                      >
+                        Done
+                      </button>
+                      {apiKeyMessage && <span className="text-sm text-muted">{apiKeyMessage}</span>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {tempSettings.apiKeys && Object.keys(tempSettings.apiKeys).length > 0 && (
+              <div className="flex flex-col gap-2">
+                {Object.entries(tempSettings.apiKeys).map(([name, value]) => (
+                  <div
+                    key={name}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-2 text-sm dark:border-slate-700/60 dark:bg-slate-900/50"
+                  >
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-primary">{name}</span>
+                      <span className="text-xs text-muted">{maskApiKey(value)}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveApiKey(name)}
+                      className="rounded-lg border border-red-400 bg-white px-3 py-1 text-xs font-semibold text-red-700 shadow-sm hover:-translate-y-px transition dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-100"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -582,7 +771,7 @@ export default function SettingsPage() {
             <div className="flex flex-wrap items-center gap-3">
               <label className="text-sm font-semibold text-slate-700">Interval</label>
               <select
-                className="rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm shadow-inner focus:border-accent-blue focus:outline-none"
+                className="rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden"
                 value={cleanupInterval}
                 onChange={(e) => setCleanupInterval(e.target.value)}
               >
@@ -598,7 +787,7 @@ export default function SettingsPage() {
             <div className="flex gap-2">
               <button
                 type="button"
-                className="rounded-lg bg-red-500 text-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-px transition disabled:opacity-60"
+                className="rounded-lg bg-red-500 text-white px-3 py-2 text-sm font-semibold shadow-xs hover:-translate-y-px transition disabled:opacity-60"
                 onClick={handleCleanup}
                 disabled={tasks.isLoading || tasks.isFetching}
               >
@@ -619,7 +808,7 @@ export default function SettingsPage() {
                 href="https://discord.gg/qeKgAKVhXa"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on Discord"
               >
                 <img src={discordIcon} alt="Discord logo" className="h-5 w-5" />
@@ -628,7 +817,7 @@ export default function SettingsPage() {
                 href="https://twitter.com/OttegiLLC"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on X"
               >
                 <img src={xIcon} alt="X logo" className="h-5 w-5" />
@@ -637,7 +826,7 @@ export default function SettingsPage() {
                 href="https://www.instagram.com/OttegiLLC"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on Instagram"
               >
                 <img src={instagramIcon} alt="Instagram logo" className="h-5 w-5" />
@@ -646,7 +835,7 @@ export default function SettingsPage() {
                 href="https://www.linkedin.com/company/ottegi"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on LinkedIn"
               >
                 <span className="text-sm font-semibold">in</span>
@@ -655,7 +844,7 @@ export default function SettingsPage() {
                 href="https://www.facebook.com/OttegiLLC"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-sm hover:-translate-y-px transition"
+                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on Facebook"
               >
                 <img src={facebookIcon} alt="Facebook logo" className="h-5 w-5" />

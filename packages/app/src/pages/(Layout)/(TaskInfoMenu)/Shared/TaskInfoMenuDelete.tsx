@@ -21,7 +21,7 @@ export function TaskInfoMenuDelete({ task, closeMenu, isDeleting, setIsDeleting 
     <div className="relative">
       <button
         type="button"
-        className="w-full h-11 rounded-xl border text-base font-semibold shadow-sm transition hover:-translate-y-px disabled:opacity-60
+        className="w-full h-11 rounded-xl border text-base font-semibold shadow-xs transition hover:-translate-y-px disabled:opacity-60
           border-red-300/70 bg-red-50/80 text-red-700 hover:bg-red-100
           dark:border-red-400/50 dark:bg-[rgba(248,113,113,0.12)] dark:text-red-200"
         onClick={() => setIsDeleting(true)}
@@ -33,7 +33,7 @@ export function TaskInfoMenuDelete({ task, closeMenu, isDeleting, setIsDeleting 
       {isDeleting && (
         <div className="fixed inset-0 z-50 flex items-end justify-center px-3 pb-12 md:items-center md:pb-0">
           <div
-            className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-xs"
             onClick={() => setIsDeleting(false)}
           />
 
@@ -50,14 +50,14 @@ export function TaskInfoMenuDelete({ task, closeMenu, isDeleting, setIsDeleting 
             <div className="flex flex-row gap-3">
               <button
                 type="button"
-                className="h-11 w-full rounded-xl border border-accent-blue/20 bg-white text-sm font-semibold text-primary shadow-sm transition hover:bg-slate-50 dark:bg-[rgba(15,23,42,0.7)]"
+                className="h-11 w-full rounded-xl border border-accent-blue/20 bg-white text-sm font-semibold text-primary shadow-xs transition hover:bg-slate-50 dark:bg-[rgba(15,23,42,0.7)]"
                 onClick={() => setIsDeleting(false)}
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className="h-11 w-full rounded-xl bg-gradient-to-r from-accent-red-600 to-accent-red-500 text-sm font-semibold text-white shadow-md shadow-red-200/80 ring-1 ring-red-200 transition hover:-translate-y-px"
+                className="h-11 w-full rounded-xl bg-linear-to-r from-accent-red-600 to-accent-red-500 text-sm font-semibold text-white shadow-md shadow-red-200/80 ring-1 ring-red-200 transition hover:-translate-y-px"
                 onClick={() => setDeleteTask()}
               >
                 Delete
