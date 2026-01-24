@@ -30,7 +30,7 @@ export async function session(req: Request, _res: Response, next: NextFunction) 
         }
     }).lean<User>().exec();
 
-    if (!user) throw new Unauthorized("Not Logged In");
+    if (!user) throw new Unauthorized("Invalid API key.");
 
     req.session.user = { id: user.id, first: user.first };
     next();
