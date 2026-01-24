@@ -16,9 +16,11 @@ jobs:
           username: root
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           port: 22
+          command_timeout: 45m
           script: |
             cd /root/sequenced
             git fetch origin main
             git checkout main
             git pull --rebase origin main
-            docker compose up -d --build
+            docker compose build --parallel 1
+            docker compose up -d
