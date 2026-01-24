@@ -1,4 +1,13 @@
 services:
+  mongo:
+    image: mongo:7
+    platform: linux/amd64
+    command: ["mongod", "--auth"]
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:27017:27017"
   api:
     build:
       context: .
@@ -27,16 +36,6 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:4173:80"
-
-  mongo:
-    image: mongo:7
-    platform: linux/amd64
-    command: ["mongod", "--auth"]
-    volumes:
-      - mongo-data:/data/db
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:27017:27017"
 
 volumes:
   mongo-data:
