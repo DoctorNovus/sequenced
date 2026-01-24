@@ -19,6 +19,8 @@ import facebookIcon from "@/assets/social_icons/facebook.svg";
 import discordIcon from "@/assets/social_icons/discord.svg";
 import { useApp } from "@/hooks/app";
 import { useApiKeys, useChangePassword, useExportUserData, useGenerateApiKey, useRequestUserDeletion, useUpdateApiKeys, useUpdateProfile, useUser } from "@/hooks/user";
+import { SecureToken } from "@/plugins/secureToken";
+import { Capacitor } from "@capacitor/core";
 import { getTodayNotificationBody } from "@/utils/notifs";
 import { fetchData } from "@/utils/data";
 import { StarIcon } from "@heroicons/react/24/solid";
@@ -54,6 +56,7 @@ export default function SettingsPage() {
   const [apiKeyValue, setApiKeyValue] = useState<string>("");
   const [apiKeyCopied, setApiKeyCopied] = useState<boolean>(false);
   const [showApiKeyDialog, setShowApiKeyDialog] = useState<boolean>(false);
+  const [siriMessage, setSiriMessage] = useState<string>("");
   const [apiKeysSynced, setApiKeysSynced] = useState<boolean>(false);
 
   useEffect(() => {
@@ -353,6 +356,34 @@ export default function SettingsPage() {
     setApiKeyValue("");
     setApiKeyCopied(false);
     setApiKeyName("");
+  };
+
+  const handleEnableSiri = async () => {
+    setSiriMessage("");
+    if (Capacitor.getPlatform() === "web") {
+      setSiriMessage("Siri is only available on iOS.");
+      return;
+    }
+
+    try {
+      const response = await fetchData("/auth/device-token", {
+        method: "POST",
+        body: { label: "Siri" }
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.message || "Unable to enable Siri.");
+      }
+      const data = await response.json().catch(() => ({}));
+      if (typeof data?.token === "string" && data.token.trim()) {
+        await SecureToken.setToken({ token: data.token });
+        setSiriMessage("Siri enabled for this device.");
+      } else {
+        setSiriMessage("Unable to store device token.");
+      }
+    } catch (err: any) {
+      setSiriMessage(err?.message || "Unable to enable Siri.");
+    }
   };
 
   const handleRemoveApiKey = async (name: string) => {
@@ -759,6 +790,22 @@ export default function SettingsPage() {
                 ))}
               </div>
             )}
+            <div className="flex flex-col gap-2 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-3 text-sm dark:border-slate-700/60 dark:bg-slate-900/50">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-col">
+                  <span className="font-semibold text-primary">Siri integration</span>
+                  <span className="text-xs text-muted">Store a device token for hands-free Siri shortcuts.</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleEnableSiri}
+                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-primary shadow-sm hover:-translate-y-px transition dark:border-slate-700 dark:bg-slate-900/70 dark:text-white"
+                >
+                  Enable Siri
+                </button>
+              </div>
+              {siriMessage && <span className="text-xs text-muted">{siriMessage}</span>}
+            </div>
           </div>
         </div>
 

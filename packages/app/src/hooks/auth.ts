@@ -1,23 +1,66 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { reloadUser } from "./user";
 import { queryClient } from "..";
 import { fetchData } from "@/utils/data";
 import { Logger } from "@/utils/logger";
+import { Capacitor } from "@capacitor/core";
+import { SecureToken } from "@/plugins/secureToken";
+
+async function storeDeviceToken() {
+    if (Capacitor.getPlatform() === "web") return;
+
+    const response = await fetchData("/auth/device-token", {
+        method: "POST",
+        body: { label: "Siri" }
+    });
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.message || "Unable to issue device token.");
+    }
+    const data = await response.json().catch(() => ({}));
+    const token = data?.token;
+    if (typeof token === "string" && token.trim()) {
+        await SecureToken.setToken({ token });
+    }
+}
+
+async function ensureDeviceToken() {
+    if (Capacitor.getPlatform() === "web") return;
+    const existing = await SecureToken.getToken().catch(() => ({ token: null }));
+    if (existing?.token) return;
+    await storeDeviceToken();
+}
 
 export async function reloadAuth() {
     await queryClient.invalidateQueries({ queryKey: ['auth'] });
 }
 
-export async function getAuth() {
+export interface AuthStatus {
+    message?: string;
+    statusCode?: number;
+}
+
+export async function getAuth(): Promise<AuthStatus> {
     return await (await fetchData("/auth", {})).json();
 }
 
 export function useAuth() {
-    return useQuery({
+    const query = useQuery<AuthStatus>({
         queryKey: ['auth'],
         queryFn: getAuth,
         staleTime: 1000 * 60 * 60 * 30
     });
+
+    useEffect(() => {
+        if (!query.isSuccess) return;
+        const isAuthed = query.data?.message === "Logged In" || !query.data?.statusCode;
+        if (isAuthed) {
+            ensureDeviceToken().catch((err) => Logger.logWarning(String(err)));
+        }
+    }, [query.isSuccess, query.data]);
+
+    return query;
 }
 
 export function useLogin() {
@@ -34,6 +77,7 @@ export function useLogin() {
             if (response.ok){
                 reloadUser(queryClient);
                 reloadAuth();
+                await storeDeviceToken().catch((err) => Logger.logWarning(String(err)));
             }
         }
     })
@@ -54,6 +98,7 @@ export function useRegister() {
             }
 
             reloadUser(queryClient);
+            await storeDeviceToken().catch((err) => Logger.logWarning(String(err)));
 
             return data;
         }
