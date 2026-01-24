@@ -52,7 +52,7 @@ export function NavBar() {
   );
 
   const renderDesktopBar = (isInteractive: boolean) => (
-    <div className="hidden md:flex fixed inset-x-0 top-4 z-40 justify-center px-6">
+    <div className="hidden md:!flex fixed inset-x-0 top-4 z-40 justify-center px-6">
       <div
         className="flex w-full max-w-5xl items-center gap-4 rounded-3xl border ring-1 backdrop-blur-xl bg-white/90 px-5 py-3 shadow-[0_14px_40px_rgba(15,23,42,0.12)] dark:bg-slate-900/85"
         style={{ borderColor: "var(--nav-border)" }}
@@ -100,7 +100,7 @@ export function NavBar() {
 
   const isAuthed =
     auth.isSuccess && (auth.data?.message === "Logged In" || !auth.data?.statusCode);
-  const showBar = auth.isLoading || auth.isFetching || isAuthed;
+  const showBar = true;
 
   return (
     <>
