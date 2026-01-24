@@ -50,6 +50,13 @@ Protected routes require either:
     ```json
     { "success": true }
     ```
+- `POST /auth/device-token`
+  - Issues a long-lived device token for Siri/App Intents.
+  - Body: `{ "label": "Siri" }`
+  - Example response:
+    ```json
+    { "token": "0f3a...", "expiresAt": "2026-04-23T00:00:00.000Z" }
+    ```
 
 ## User
 

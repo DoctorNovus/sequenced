@@ -5,6 +5,7 @@ import { User } from "@/user/user.entity";
 import { Request } from "express";
 import sendToWebhook from "@/logging/webhook";
 import { PasswordReset } from "./passwordReset.entity";
+import { DeviceToken } from "./deviceToken.entity";
 import crypto from "crypto";
 import { Resend } from "resend";
 
@@ -34,6 +35,19 @@ export class AuthController {
         req.session.user = { id: user.id, first: user.first };
         await this.userService.updateUser(user.id, { lastLoggedIn: new Date() });
         return user;
+    }
+
+    @Post("/device-token")
+    async issueDeviceToken({ session, body }: Request): Promise<{ token: string; expiresAt: Date }> {
+        if (!session?.user?.id) throw new Unauthorized("Not Logged In");
+
+        const label = typeof body?.label === "string" ? body.label.trim() : "Siri";
+        const token = crypto.randomBytes(32).toString("hex");
+        const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+        const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
+
+        await DeviceToken.create({ tokenHash, user: session.user.id, expiresAt, label });
+        return { token, expiresAt };
     }
 
     @Post("/register")

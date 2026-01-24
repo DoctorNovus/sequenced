@@ -14,6 +14,7 @@ import Login from "@/pages/Auth/Login";
 import LoginUser from "@/pages/Auth/LoginUser";
 import RegisterUser from "@/pages/Auth/RegisterUser";
 import ForgotPassword from "@/pages/Auth/ForgotPassword";
+import AuthBootstrap from "@/components/AuthBootstrap";
 import "./index.css";
 
 /* define the query client for react-query */
@@ -81,6 +82,7 @@ export default function App() {
     return (
         <div className="h-full overflow-y-auto">
             <QueryClientProvider client={queryClient}>
+                <AuthBootstrap />
                 <AppContext.Provider value={reducer}>
                     <BrowserRouter>
                         <Routes>
