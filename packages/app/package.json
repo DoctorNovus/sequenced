@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "build:full": "npm run build && npm run sync",
-    "sync": "npx cap sync",
+    "sync": "npx cap sync && node scripts/patch-capacitor-config.cjs",
     "host": "vite --host",
     "open:ios": "npx cap open ios",
     "open:ios:full": "npm run build:full && npm run open:ios",

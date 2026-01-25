@@ -30,6 +30,7 @@ public class SecureTokenPlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("Unable to store token.")
             return
         }
+        UserDefaults.standard.set(token, forKey: "siriDeviceToken")
         call.resolve()
     }
 
@@ -40,12 +41,14 @@ public class SecureTokenPlugin: CAPPlugin, CAPBridgedPlugin {
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         if status != errSecSuccess || item == nil {
-            call.resolve(["token": NSNull()])
+            let fallback = UserDefaults.standard.string(forKey: "siriDeviceToken")
+            call.resolve(["token": fallback as Any])
             return
         }
 
         guard let data = item as? Data, let token = String(data: data, encoding: .utf8) else {
-            call.resolve(["token": NSNull()])
+            let fallback = UserDefaults.standard.string(forKey: "siriDeviceToken")
+            call.resolve(["token": fallback as Any])
             return
         }
         call.resolve(["token": token])
@@ -53,6 +56,7 @@ public class SecureTokenPlugin: CAPPlugin, CAPBridgedPlugin {
 
     @objc func clearToken(_ call: CAPPluginCall) {
         SecItemDelete(queryDictionary() as CFDictionary)
+        UserDefaults.standard.removeObject(forKey: "siriDeviceToken")
         call.resolve()
     }
 
