@@ -15,6 +15,7 @@ import LoginUser from "@/pages/Auth/LoginUser";
 import RegisterUser from "@/pages/Auth/RegisterUser";
 import ForgotPassword from "@/pages/Auth/ForgotPassword";
 import AuthBootstrap from "@/components/AuthBootstrap";
+import AnnouncementCenter from "@/components/announcements/AnnouncementCenter";
 import "./index.css";
 
 /* define the query client for react-query */
@@ -85,6 +86,7 @@ export default function App() {
                 <AuthBootstrap />
                 <AppContext.Provider value={reducer}>
                     <BrowserRouter>
+                        <AnnouncementCenter />
                         <Routes>
                             <Route path="/" element={<Layout />}>
                                 <Route index element={<Home />} />

@@ -12,6 +12,7 @@ import UserLogin from "./(Settings)/UserLogin";
 import { Logger } from "@/utils/logger";
 import DeveloperSettings from "./(Settings)/DeveloperSettings";
 import ControllerUser from "./(Settings)/ControlledUser";
+import AnnouncementManager from "./(Settings)/AnnouncementManager";
 import { useTasks, useDeleteTask } from "@/hooks/tasks";
 import xIcon from "@/assets/social_icons/x.svg";
 import instagramIcon from "@/assets/social_icons/instagram.svg";
@@ -907,6 +908,9 @@ export default function SettingsPage() {
         <DeveloperSettings>
           <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
             <ControllerUser />
+          </div>
+          <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
+            <AnnouncementManager />
           </div>
         </DeveloperSettings>
       </div>

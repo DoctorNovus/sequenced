@@ -28,6 +28,27 @@ export class UserService {
         await User.findByIdAndUpdate(id, { lastLoggedIn: new Date() }).exec();
     }
 
+    async getReadAnnouncementIds(id: string): Promise<string[]> {
+        const user = await User.findById(id).select("readAnnouncementIds").lean<User>().exec();
+        return (user?.readAnnouncementIds ?? []).map((value) => String(value));
+    }
+
+    async markAnnouncementsRead(id: string, announcementIds: string[]): Promise<string[]> {
+        const ids = announcementIds
+            .map((value) => value?.trim())
+            .filter((value) => Boolean(value)) as string[];
+
+        if (!ids.length) {
+            return this.getReadAnnouncementIds(id);
+        }
+
+        await User.findByIdAndUpdate(id, {
+            $addToSet: { readAnnouncementIds: { $each: ids } }
+        }).exec();
+
+        return this.getReadAnnouncementIds(id);
+    }
+
     async updateUser(id: string, data: Partial<User>): Promise<User | null> {
         return User.findByIdAndUpdate(id, data).lean<User>().exec();
     }
