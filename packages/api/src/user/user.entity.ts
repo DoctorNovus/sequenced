@@ -27,6 +27,9 @@ export class User extends Model {
     @Prop({ type: Date, default: null })
     lastLoggedIn?: Date;
 
+    @Prop({ type: [String], default: [], select: false })
+    readAnnouncementIds?: string[];
+
     @Prop({ type: Object, default: {}, select: false })
     apiKeys?: Record<string, string>;
 }

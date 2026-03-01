@@ -6,6 +6,7 @@ import { fetchData } from "@/utils/data";
 import { Logger } from "@/utils/logger";
 import { Capacitor } from "@capacitor/core";
 import { SecureToken } from "@/plugins/secureToken";
+import { syncServerNotifications } from "@/utils/notifs";
 
 async function storeDeviceToken() {
     if (Capacitor.getPlatform() === "web") return;
@@ -57,6 +58,12 @@ export function useAuth() {
         const isAuthed = query.data?.message === "Logged In" || !query.data?.statusCode;
         if (isAuthed) {
             ensureDeviceToken().catch((err) => Logger.logWarning(String(err)));
+            syncServerNotifications().catch((err) => Logger.logWarning(String(err)));
+            const interval = window.setInterval(() => {
+                syncServerNotifications().catch((err) => Logger.logWarning(String(err)));
+            }, 60 * 1000);
+
+            return () => window.clearInterval(interval);
         }
     }, [query.isSuccess, query.data]);
 

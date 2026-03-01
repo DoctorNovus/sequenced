@@ -10,6 +10,7 @@ import { Capacitor } from "@capacitor/core";
 import { getSettings, setSettings } from "@/hooks/settings";
 import { Logger } from "./logger";
 import { fetchData } from "./data";
+import { acknowledgeDeliveredNotifications, pullPendingServerNotifications } from "@/hooks/notifications";
 
 const FALLBACK_BODY = "Stay on track—open Sequenced to see what's due today.";
 
@@ -64,6 +65,8 @@ export async function initializeNotifications() {
 
   const sendingDaily: boolean = await checkSendingDaily();
   if (!sendingDaily) setDailyReminders();
+
+  await syncServerNotifications();
 }
 
 /* Sets daily reminders */
@@ -137,7 +140,7 @@ export async function setNotificationConfig() {
 /* Checks if system can send notifications */
 export async function checkPermissions(): Promise<PermissionStatus> {
   if (isWeb() && supportsWebNotifications()) {
-    const state = await Notification.requestPermission();
+    const state = Notification.permission;
     return { display: state } as PermissionStatus;
   }
   return await LocalNotifications.checkPermissions();
@@ -200,4 +203,62 @@ export async function cancelNotification(
 ) {
   if (notification)
     LocalNotifications.cancel({ notifications: [notification] });
+}
+
+function hashNotificationId(value: string): number {
+  let hash = 0;
+  for (let i = 0; i < value.length; i++) {
+    hash = ((hash << 5) - hash + value.charCodeAt(i)) | 0;
+  }
+
+  const normalized = Math.abs(hash);
+  return (normalized % 2147483646) + 1;
+}
+
+export async function syncServerNotifications(): Promise<number> {
+  const result = await syncServerNotificationsDetailed();
+  return result.delivered;
+}
+
+export async function syncServerNotificationsDetailed(): Promise<{
+  pending: number;
+  delivered: number;
+  permission: PermissionStatus["display"];
+}> {
+  try {
+    const pending = await pullPendingServerNotifications();
+    if (!pending.length) {
+      const permission = await checkPermissions();
+      return { pending: 0, delivered: 0, permission: permission.display };
+    }
+
+    const permission = await checkPermissions();
+    if (permission.display !== "granted") {
+      Logger.logWarning("Notification permission is not granted; pending notifications were not acknowledged.");
+      return { pending: pending.length, delivered: 0, permission: permission.display };
+    }
+
+    const deliveredIds: string[] = [];
+    for (const item of pending) {
+      const scheduled = await scheduleNotification({
+        id: hashNotificationId(item.id),
+        title: item.title || "Sequenced",
+        body: item.body || FALLBACK_BODY,
+        schedule: { at: new Date() }
+      });
+
+      if (scheduled !== undefined || isWeb()) {
+        deliveredIds.push(item.id);
+      }
+    }
+
+    if (deliveredIds.length > 0) {
+      await acknowledgeDeliveredNotifications(deliveredIds);
+    }
+
+    return { pending: pending.length, delivered: deliveredIds.length, permission: permission.display };
+  } catch (err) {
+    Logger.logWarning(`Unable to sync server notifications: ${String(err)}`);
+    return { pending: 0, delivered: 0, permission: "denied" };
+  }
 }

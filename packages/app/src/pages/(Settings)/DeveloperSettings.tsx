@@ -4,7 +4,7 @@ export default function DeveloperSettings({ children }: React.PropsWithChildren)
     const user = useUser();
 
     if (user.isLoading)
-        return <></>
+        return null;
 
     if (user.isSuccess) {
         if (user.data.developer) {
@@ -19,5 +19,5 @@ export default function DeveloperSettings({ children }: React.PropsWithChildren)
         }
     }
 
-
+    return null;
 }
