@@ -8,8 +8,6 @@ import {
   useUpdateAnnouncement
 } from "@/hooks/announcements";
 
-const LINK_PATTERN = /\[([^\]]+)\]\(([^)]+)\)/g;
-
 const toLocalInputDate = (value?: string | Date) => {
   const date = value ? new Date(value) : new Date();
   if (Number.isNaN(date.getTime())) return "";
@@ -160,8 +158,8 @@ export default function AnnouncementManager() {
     const parts: BodyPart[] = [];
     let lastIndex = 0;
     let linkIndex = 0;
-    LINK_PATTERN.lastIndex = 0;
-    let match: RegExpExecArray | null = LINK_PATTERN.exec(text);
+    const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+    let match: RegExpExecArray | null = linkPattern.exec(text);
 
     while (match) {
       const [fullMatch, label, href] = match;
@@ -183,7 +181,7 @@ export default function AnnouncementManager() {
       });
 
       lastIndex = start + fullMatch.length;
-      match = LINK_PATTERN.exec(text);
+      match = linkPattern.exec(text);
     }
 
     if (lastIndex < text.length) {

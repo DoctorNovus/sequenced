@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useAuth } from "@/hooks/auth";
 import {
@@ -11,8 +11,6 @@ import {
 import { Logger } from "@/utils/logger";
 
 const SEQUENCED_PREFIX = "sequenced:";
-const LINK_PATTERN = /\[([^\]]+)\]\(([^)]+)\)/g;
-
 type TextPart = { type: "text"; value: string; key: string };
 type LinkPart = { type: "link"; label: string; href: string; key: string };
 type BodyPart = TextPart | LinkPart;
@@ -30,7 +28,7 @@ export default function AnnouncementCenter() {
 
     const unreadQuery = useUnreadAnnouncements(Boolean(isLoggedIn && !isAuthRoute));
     const [dismissedIds, setDismissedIds] = useState<string[]>([]);
-    const [viewTrackedIds, setViewTrackedIds] = useState<string[]>([]);
+    const viewedIdsRef = useRef<Set<string>>(new Set());
 
     const current = useMemo(
         () => {
@@ -41,12 +39,12 @@ export default function AnnouncementCenter() {
     );
 
     useEffect(() => {
-        if (!current?.id || viewTrackedIds.includes(current.id)) return;
-        setViewTrackedIds((ids) => ids.includes(current.id) ? ids : [...ids, current.id]);
+        if (!current?.id || viewedIdsRef.current.has(current.id)) return;
+        viewedIdsRef.current.add(current.id);
         trackView.mutate(current.id, {
             onError: (error) => Logger.logWarning(String(error))
         });
-    }, [current?.id, viewTrackedIds, trackView]);
+    }, [current?.id, trackView]);
 
     if (!isLoggedIn || isAuthRoute || !current) {
         return null;
@@ -105,8 +103,8 @@ export default function AnnouncementCenter() {
         const parts: BodyPart[] = [];
         let lastIndex = 0;
         let linkIndex = 0;
-        LINK_PATTERN.lastIndex = 0;
-        let match: RegExpExecArray | null = LINK_PATTERN.exec(text);
+        const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+        let match: RegExpExecArray | null = linkPattern.exec(text);
 
         while (match) {
             const [fullMatch, label, href] = match;
@@ -128,7 +126,7 @@ export default function AnnouncementCenter() {
             });
 
             lastIndex = start + fullMatch.length;
-            match = LINK_PATTERN.exec(text);
+            match = linkPattern.exec(text);
         }
 
         if (lastIndex < text.length) {
