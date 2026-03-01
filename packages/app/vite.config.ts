@@ -6,6 +6,9 @@ import path from "path";
 
 export default defineConfig({
     server: { port: 5173, allowedHosts: true },
+    build: {
+        reportCompressedSize: false
+    },
     resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
     plugins: [
         react({ babel: { plugins: [["babel-plugin-react-compiler"]] } }),
