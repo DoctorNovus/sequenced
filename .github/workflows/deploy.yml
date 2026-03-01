@@ -20,11 +20,20 @@ jobs:
           script_stop: true
           script: |
             set -euo pipefail
+            set -x
             cd /root/sequenced
+            echo "[1/8] Fetching main" && date
             git fetch origin main
+            echo "[2/8] Checking out main" && date
             git checkout main
+            echo "[3/8] Pulling latest" && date
             git pull --rebase origin main
-            docker compose build --pull frontend
-            docker compose build --pull api
-            docker compose up -d --remove-orphans
-            docker image prune -f
+            echo "[4/8] Building frontend image" && date
+            timeout 35m docker compose build --pull --progress=plain frontend
+            echo "[5/8] Building api image" && date
+            timeout 35m docker compose build --pull --progress=plain api
+            echo "[6/8] Recreating containers" && date
+            timeout 10m docker compose up -d --remove-orphans
+            echo "[7/8] Pruning dangling images" && date
+            timeout 10m docker image prune -f
+            echo "[8/8] Deploy complete" && date
