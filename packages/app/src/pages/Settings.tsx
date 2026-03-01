@@ -2,17 +2,16 @@ import {
   cancelNotification,
   getPending,
   setDailyReminders,
-  scheduleNotification,
 } from "@/utils/notifs";
 import { Settings, getSettings, setSettings } from "@/hooks/settings";
-import { PendingLocalNotificationSchema } from "@capacitor/local-notifications";
 import { useEffect, useState, FormEvent } from "react";
-import DailyNotifications from "./(Settings)/DailyNotifications";
 import UserLogin from "./(Settings)/UserLogin";
 import { Logger } from "@/utils/logger";
 import DeveloperSettings from "./(Settings)/DeveloperSettings";
 import ControllerUser from "./(Settings)/ControlledUser";
 import AnnouncementManager from "./(Settings)/AnnouncementManager";
+import ServerNotificationSettings from "./(Settings)/ServerNotificationSettings";
+import DeveloperNotificationSender from "./(Settings)/DeveloperNotificationSender";
 import { useTasks, useDeleteTask } from "@/hooks/tasks";
 import xIcon from "@/assets/social_icons/x.svg";
 import instagramIcon from "@/assets/social_icons/instagram.svg";
@@ -22,7 +21,6 @@ import { useApp } from "@/hooks/app";
 import { useApiKeys, useChangePassword, useExportUserData, useGenerateApiKey, useRequestUserDeletion, useUpdateApiKeys, useUpdateProfile, useUser } from "@/hooks/user";
 import { SecureToken } from "@/plugins/secureToken";
 import { Capacitor } from "@capacitor/core";
-import { getTodayNotificationBody } from "@/utils/notifs";
 import { fetchData } from "@/utils/data";
 import { StarIcon } from "@heroicons/react/24/solid";
 
@@ -118,19 +116,6 @@ export default function SettingsPage() {
       HandleDailyChange(true);
   };
 
-  const FindDailyTask = async (): Promise<
-    PendingLocalNotificationSchema | undefined
-  > => {
-    const pendingNotifications = (await getPending()).notifications;
-    for (let i = 0; i < pendingNotifications.length; i++) {
-      const pendingItem = pendingNotifications[i];
-      if (pendingItem.schedule && pendingItem.schedule.every == "day")
-        return pendingItem;
-    }
-
-    return undefined;
-  };
-
   const getCompletedTasks = () => {
     if (!tasks.isSuccess) return [];
     const now = new Date();
@@ -166,17 +151,6 @@ export default function SettingsPage() {
       await deleteTask(task);
     }
     setCleanupStatus(`Deleted ${toDelete.length} tasks.`);
-  };
-
-  const UpdateTime = async (newTime: string) => {
-    const timeParts = newTime.split(":");
-    const hour = parseInt(timeParts[0]);
-    const minute = parseInt(timeParts[1]);
-
-    await cancelNotification(await FindDailyTask());
-    await setDailyReminders(hour, minute);
-
-    Logger.log(`Set Daily Reminders!`);
   };
 
   const HandleDailyChange = async (newValue: boolean) => {
@@ -275,18 +249,6 @@ export default function SettingsPage() {
     } catch (err: any) {
       setDataMessage(err?.message || "Unable to process deletion.");
     }
-  };
-
-  const TestDaily = async () => {
-    const fireAt = new Date(Date.now());
-    const body = await getTodayNotificationBody();
-    await scheduleNotification({
-      id: Math.floor(Math.random() * 2147483647),
-      title: "Sequenced: Test Reminder",
-      body,
-      schedule: { at: fireAt },
-    });
-    Logger.log("Scheduled test notification for", fireAt.toISOString());
   };
 
   const submitReview = async (e: FormEvent) => {
@@ -615,33 +577,7 @@ export default function SettingsPage() {
           </div>
         </div>
         <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-          <div className="flex flex-col gap-2">
-            <DailyNotifications tempSettings={tempSettings} UpdateSettings={UpdateSettings} />
-            {tempSettings.sendDailyReminders && (
-              <div className="flex flex-col gap-2 rounded-xl border border-accent-blue/15 bg-accent-blue-50/40 px-3 py-3">
-                <label className="text-sm font-semibold text-slate-700">Send Daily Time</label>
-                <input
-                  type="time"
-                  value={tempSettings.sendDailyRemindersTime || "08:00"}
-                  onChange={(e) => {
-                    const newTime: string = e.target.value;
-                    UpdateSettings({ sendDailyRemindersTime: newTime });
-                    UpdateTime(newTime);
-                  }}
-                  className="w-fit rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm text-slate-800 shadow-inner focus:border-accent-blue focus:outline-hidden dark:scheme-dark"
-                />
-              </div>
-            )}
-            <div className="flex justify-start">
-              <button
-                type="button"
-                className="rounded-lg bg-accent-blue text-white px-3 py-2 text-sm font-semibold shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition"
-                onClick={TestDaily}
-              >
-                Test
-              </button>
-            </div>
-          </div>
+          <ServerNotificationSettings />
         </div>
 
         <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
@@ -911,6 +847,9 @@ export default function SettingsPage() {
           </div>
           <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
             <AnnouncementManager />
+          </div>
+          <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
+            <DeveloperNotificationSender />
           </div>
         </DeveloperSettings>
       </div>
