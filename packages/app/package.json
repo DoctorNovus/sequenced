@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:docker": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "build:full": "npm run build && npm run sync",

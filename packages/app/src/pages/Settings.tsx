@@ -806,7 +806,7 @@ export default function SettingsPage() {
                 className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on X"
               >
-                <img src={xIcon} alt="X logo" className="h-5 w-5" />
+                <img src={xIcon} alt="X logo" className="h-5 w-5 dark:invert" />
               </a>
               <a
                 href="https://www.instagram.com/OttegiLLC"
@@ -815,7 +815,7 @@ export default function SettingsPage() {
                 className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
                 aria-label="Ottegi on Instagram"
               >
-                <img src={instagramIcon} alt="Instagram logo" className="h-5 w-5" />
+                <img src={instagramIcon} alt="Instagram logo" className="h-5 w-5 dark:invert" />
               </a>
               <a
                 href="https://www.linkedin.com/company/ottegi"
