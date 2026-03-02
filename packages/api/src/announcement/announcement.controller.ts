@@ -92,6 +92,10 @@ export class AnnouncementController {
     }
 
     private isValidAction(action: string): boolean {
+        if (action.startsWith("tidaltask:")) {
+            return action.length > "tidaltask:".length;
+        }
+
         if (action.startsWith("sequenced:")) {
             return action.length > "sequenced:".length;
         }
@@ -137,7 +141,7 @@ export class AnnouncementController {
         }
 
         if (hasCtaAction && !this.isValidAction(ctaAction as string)) {
-            throw new BadRequest("CTA action must be an https/http URL, a relative path, or a sequenced:* action.");
+            throw new BadRequest("CTA action must be an https/http URL, a relative path, or a tidaltask:* action (sequenced:* also supported).");
         }
 
         if (hasDate && (!parsedDate || Number.isNaN(parsedDate.getTime()))) {

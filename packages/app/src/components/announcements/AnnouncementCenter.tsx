@@ -10,7 +10,8 @@ import {
 } from "@/hooks/announcements";
 import { Logger } from "@/utils/logger";
 
-const SEQUENCED_PREFIX = "sequenced:";
+const TIDALTASK_PREFIX = "tidaltask:";
+const LEGACY_SEQUENCED_PREFIX = "sequenced:";
 type TextPart = { type: "text"; value: string; key: string };
 type LinkPart = { type: "link"; label: string; href: string; key: string };
 type BodyPart = TextPart | LinkPart;
@@ -51,9 +52,11 @@ export default function AnnouncementCenter() {
     }
 
     const performAction = (action: string) => {
-        const localAction = action.startsWith(SEQUENCED_PREFIX)
-            ? action.slice(SEQUENCED_PREFIX.length).trim().toLowerCase()
-            : "";
+        const localAction = action.startsWith(TIDALTASK_PREFIX)
+            ? action.slice(TIDALTASK_PREFIX.length).trim().toLowerCase()
+            : action.startsWith(LEGACY_SEQUENCED_PREFIX)
+                ? action.slice(LEGACY_SEQUENCED_PREFIX.length).trim().toLowerCase()
+                : "";
 
         if (localAction) {
             switch (localAction) {

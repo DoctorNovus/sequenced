@@ -63,7 +63,7 @@ export default function App() {
         document.documentElement.setAttribute("data-theme", appliedTheme);
         updateThemeMeta(appliedTheme);
         try {
-            window.localStorage.setItem("sequenced-theme", appState?.theme ?? "light");
+            window.localStorage.setItem("tidaltask-theme", appState?.theme ?? "light");
         } catch (err) {
             console.warn("Failed to persist theme preference", err);
         }

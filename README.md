@@ -1,10 +1,10 @@
-# Sequenced
+# TidalTask
 
-Welcome to **Sequenced**, an ADHD Tracker built with the intention of helping manage the unique challenges of ADHD. Created by Daniel Wedding ([@DoctorNovus](https://github.com/DoctorNovus)), this app aims to transform day-to-day organization into a structured, supportive experience. If you find it helpful, please give it a star and feel free to use it in your own routine!
+Welcome to **TidalTask**, an ADHD Tracker built with the intention of helping manage the unique challenges of ADHD. Created by Daniel Wedding ([@DoctorNovus](https://github.com/DoctorNovus)), this app aims to transform day-to-day organization into a structured, supportive experience. If you find it helpful, please give it a star and feel free to use it in your own routine!
 
-## About Sequenced
+## About TidalTask
 
-Sequenced is designed to address common struggles related to ADHD, providing users with practical tools to build structure and improve focus. With an intuitive interface and helpful features, Sequenced simplifies task management, offering users a way to stay organized and on track.
+TidalTask is designed to address common struggles related to ADHD, providing users with practical tools to build structure and improve focus. With an intuitive interface and helpful features, TidalTask simplifies task management, offering users a way to stay organized and on track.
 
 ## Features
 
@@ -23,4 +23,4 @@ Sequenced is designed to address common struggles related to ADHD, providing use
 
 ## Contact
 
-For any questions, comments, or feedback, please reach out to us at [sequenced@ottegi.com](mailto:sequenced@ottegi.com).
+For any questions, comments, or feedback, please reach out to us at [support@tidaltask.app](mailto:support@tidaltask.app).

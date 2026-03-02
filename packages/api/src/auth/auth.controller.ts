@@ -118,19 +118,19 @@ export class AuthController {
         if (!resendApiKey) throw new BadRequest("Password reset is unavailable right now. Please try again later.");
 
         const resend = new Resend(resendApiKey);
-        const frontendUrl = process.env.FRONTEND_URL || "https://sequenced.ottegi.com";
+        const frontendUrl = process.env.FRONTEND_URL || "https://dashboard.tidaltask.app";
         const resetUrl = `${frontendUrl.replace(/\/$/, "")}/auth/forgotPassword?token=${token}`;
-        const fromEmail = process.env.RESET_FROM_EMAIL || "Sequenced <sequenced@ottegi.com>";
+        const fromEmail = process.env.RESET_FROM_EMAIL || "TidalTask <support@tidaltask.app>";
 
         await resend.emails.send({
             from: fromEmail,
             to: user.email,
-            subject: "Reset your Sequenced password",
+            subject: "Reset your TidalTask password",
             html: `
                 <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #0f172a;">
                     <h2 style="color:#2563eb;margin-bottom:12px;">Reset your password</h2>
                     <p>Hello ${user.first ?? "there"},</p>
-                    <p>We received a request to reset your Sequenced password. Click the button below to set a new password. This link will expire in 1 hour.</p>
+                    <p>We received a request to reset your TidalTask password. Click the button below to set a new password. This link will expire in 1 hour.</p>
                     <p style="margin:16px 0;">
                         <a href="${resetUrl}" style="display:inline-block;padding:12px 18px;background:#2563eb;color:white;text-decoration:none;border-radius:10px;font-weight:600;">Reset password</a>
                     </p>
