@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Sequenced</string>
-    <string name="title_activity_main">Sequenced</string>
+    <string name="app_name">TidalTask</string>
+    <string name="title_activity_main">TidalTask</string>
     <string name="package_name">com.ottegi.sequenced</string>
     <string name="custom_url_scheme">com.ottegi.sequenced</string>
 </resources>

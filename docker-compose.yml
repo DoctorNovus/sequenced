@@ -12,7 +12,7 @@ services:
     build:
       context: .
       dockerfile: packages/api/Dockerfile
-    image: sequenced-api:local
+    image: tidaltask-api:local
     platform: linux/amd64
     environment:
       APP_URL: ${APP_URL}
@@ -29,13 +29,28 @@ services:
     build:
       context: .
       dockerfile: packages/app/Dockerfile
-    image: sequenced-frontend:local
+    image: tidaltask-frontend:local
     platform: linux/amd64
     depends_on:
       - api
     restart: unless-stopped
     ports:
       - "127.0.0.1:4173:80"
+
+  nginx:
+    image: nginx:1.27-alpine
+    platform: linux/amd64
+    depends_on:
+      - frontend
+      - api
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/letsencrypt:/var/www/letsencrypt:ro
 
 volumes:
   mongo-data:

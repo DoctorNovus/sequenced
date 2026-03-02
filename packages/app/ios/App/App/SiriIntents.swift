@@ -2,7 +2,7 @@ import AppIntents
 import Foundation
 import Security
 
-private let defaultApiBaseUrl = "https://api.sequenced.ottegi.com"
+private let defaultApiBaseUrl = "https://api.tidaltask.app"
 
 private let tokenService = "com.ottegi.sequenced.deviceToken"
 private let tokenAccount = "siri"
@@ -30,7 +30,7 @@ private func buildRequest(path: String, method: String, body: [String: Any]? = n
         throw URLError(.badURL)
     }
     guard let apiKey = loadDeviceToken() else {
-        throw NSError(domain: "Sequenced", code: 401, userInfo: [NSLocalizedDescriptionKey: "Missing Siri device token."])
+        throw NSError(domain: "TidalTask", code: 401, userInfo: [NSLocalizedDescriptionKey: "Missing Siri device token."])
     }
     var request = URLRequest(url: url)
     request.httpMethod = method
@@ -46,7 +46,7 @@ private func fetchDueTasks() async throws -> [String] {
     let request = try buildRequest(path: "/task/overdue", method: "GET")
     let (data, response) = try await URLSession.shared.data(for: request)
     guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-        throw NSError(domain: "Sequenced", code: 500, userInfo: [NSLocalizedDescriptionKey: "Unable to fetch due tasks."])
+        throw NSError(domain: "TidalTask", code: 500, userInfo: [NSLocalizedDescriptionKey: "Unable to fetch due tasks."])
     }
     guard let json = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
         return []
@@ -63,14 +63,14 @@ private func addTask(title: String) async throws {
     let request = try buildRequest(path: "/task", method: "POST", body: body)
     let (_, response) = try await URLSession.shared.data(for: request)
     guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-        throw NSError(domain: "Sequenced", code: 500, userInfo: [NSLocalizedDescriptionKey: "Unable to add the task."])
+        throw NSError(domain: "TidalTask", code: 500, userInfo: [NSLocalizedDescriptionKey: "Unable to add the task."])
     }
 }
 
 @available(iOS 16.0, *)
 struct DueTasksIntent: AppIntent {
     static var title: LocalizedStringResource = "What tasks are due"
-    static var description = IntentDescription("Get the list of overdue tasks from Sequenced.")
+    static var description = IntentDescription("Get the list of overdue tasks from TidalTask.")
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let tasks = try await fetchDueTasks()
@@ -88,7 +88,7 @@ struct DueTasksIntent: AppIntent {
 @available(iOS 16.0, *)
 struct AddTaskIntent: AppIntent {
     static var title: LocalizedStringResource = "Add task"
-    static var description = IntentDescription("Add a new task in Sequenced.")
+    static var description = IntentDescription("Add a new task in TidalTask.")
 
     @Parameter(title: "Title")
     var title: String
@@ -104,7 +104,7 @@ struct AddTaskIntent: AppIntent {
 }
 
 @available(iOS 16.0, *)
-struct SequencedShortcuts: AppShortcutsProvider {
+struct TidalTaskShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
             intent: DueTasksIntent(),

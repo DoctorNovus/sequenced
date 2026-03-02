@@ -8,6 +8,8 @@ import NavItem from "./NavItem";
 import { useAuth } from "@/hooks/auth";
 import CalendarViewIcon from "../Icons/CalendarViewIcon";
 
+import icon from "@/assets/icon.png";
+
 export function NavBar() {
   const auth = useAuth();
 
@@ -58,11 +60,14 @@ export function NavBar() {
         style={{ borderColor: "var(--nav-border)" }}
       >
         <div className="flex items-center gap-3 pr-4">
-          <span className="h-10 w-10 rounded-2xl bg-linear-to-br from-accent-blue-700 to-accent-blue-500 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-accent-blue/25">
+          <div className="h-10 w-10 rounded-lg bg-linear-to-br text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-accent-blue/25">
+            <img src={icon} className="w-full h-full rounded-lg" />
+          </div>
+          {/* <span className="h-10 w-10 rounded-2xl bg-linear-to-br from-accent-blue-700 to-accent-blue-500 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-accent-blue/25">
             S
-          </span>
+          </span> */}
           <div className="flex flex-col leading-tight">
-            <span className="text-sm font-semibold text-primary">Sequenced</span>
+            <span className="text-sm font-semibold text-primary">TidalTask</span>
             <span className="text-xs text-muted">Plan • Track • Repeat</span>
           </div>
         </div>

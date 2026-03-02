@@ -12,7 +12,7 @@ import { Logger } from "./logger";
 import { fetchData } from "./data";
 import { acknowledgeDeliveredNotifications, pullPendingServerNotifications } from "@/hooks/notifications";
 
-const FALLBACK_BODY = "Stay on track—open Sequenced to see what's due today.";
+const FALLBACK_BODY = "Stay on track—open TidalTask to see what's due today.";
 
 const isWeb = () => Capacitor.getPlatform() === "web";
 const supportsWebNotifications = () => typeof Notification !== "undefined";
@@ -86,7 +86,7 @@ export async function setDailyReminders(hour?: number, minute?: number) {
   const body = await getTodayNotificationBody();
 
   await scheduleNotification({
-    title: "Sequenced: ADHD Manager",
+    title: "TidalTask: ADHD Manager",
     id,
     body,
     schedule: {
@@ -176,7 +176,7 @@ export async function scheduleNotification(
           : 0;
       window.setTimeout(() => {
         try {
-          new Notification(opt.title || "Sequenced", { body: opt.body });
+          new Notification(opt.title || "TidalTask", { body: opt.body });
         } catch (err) {
           Logger.logWarning(`Web notification failed: ${String(err)}`);
         }
@@ -242,7 +242,7 @@ export async function syncServerNotificationsDetailed(): Promise<{
     for (const item of pending) {
       const scheduled = await scheduleNotification({
         id: hashNotificationId(item.id),
-        title: item.title || "Sequenced",
+        title: item.title || "TidalTask",
         body: item.body || FALLBACK_BODY,
         schedule: { at: new Date() }
       });

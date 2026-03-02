@@ -261,7 +261,7 @@ export class NotificationService {
             await this.upsertMessageByDedupe({
                 dedupeKey: key,
                 user: userId,
-                title: "Today in Sequenced",
+                title: "Today in TidalTask",
                 body: todayCount === 0
                     ? "Nothing is due today."
                     : `${todayCount} task${todayCount === 1 ? " is" : "s are"} due today.`,

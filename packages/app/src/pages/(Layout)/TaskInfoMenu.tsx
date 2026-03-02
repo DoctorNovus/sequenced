@@ -199,7 +199,7 @@ export default function TaskInfoMenu({
 
     const notif = await scheduleNotification({
       id: Math.floor(Math.random() * 2147483647),
-      title: "Sequenced: Do Your Task",
+      title: "TidalTask: Do Your Task",
       body: `Task: ${task.title}`,
       schedule: {
         at: setDate,

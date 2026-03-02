@@ -5,7 +5,7 @@ import { Task } from "./tasks";
 
 
 // Allow docker / hosted environments to inject an API base URL at build time.
-export const SERVER_IP = import.meta.env.DEV ? `http://localhost:8080` : `https://api.sequenced.ottegi.com`;
+export const SERVER_IP = import.meta.env.DEV ? `http://localhost:8080` : `https://api.tidaltask.app`;
 
 Logger.log(`Running in ${import.meta.env.DEV ? "Development" : "Production"} mode.`);
 
@@ -42,7 +42,8 @@ export function useAppReducer(): [AppOptions, React.Dispatch<Partial<AppOptions>
     let theme = initialData.theme;
 
     if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem("sequenced-theme");
+      const stored = window.localStorage.getItem("tidaltask-theme")
+        ?? window.localStorage.getItem("sequenced-theme");
       if (stored === "light" || stored === "dark" || stored === "auto") {
         theme = stored;
       } else {

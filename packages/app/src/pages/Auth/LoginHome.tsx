@@ -18,7 +18,7 @@ export default function LoginHome() {
                         <img src={icon} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex flex-col gap-1">
-                        <h1 className="text-2xl font-semibold text-primary">Sequenced</h1>
+                        <h1 className="text-2xl font-semibold text-primary">TidalTask</h1>
                         <h2 className="text-sm text-muted">Lightweight ADHD-friendly task flow</h2>
                     </div>
                 </div>

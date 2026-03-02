@@ -1,4 +1,4 @@
-# Sequenced API (REST)
+# TidalTask API (REST)
 
 Base URL (local): `http://localhost:8080`
 

@@ -339,7 +339,7 @@ export default function AnnouncementManager() {
           <input
             value={ctaAction}
             onChange={(event) => setCtaAction(event.target.value)}
-            placeholder='CTA action (https://... or sequenced:open-settings)'
+            placeholder='CTA action (https://... or tidaltask:open-settings)'
             className="rounded-lg border border-accent-blue/20 bg-white px-3 py-2 text-sm"
           />
         </div>

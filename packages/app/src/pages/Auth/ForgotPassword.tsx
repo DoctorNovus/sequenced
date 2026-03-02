@@ -110,7 +110,7 @@ export default function ForgotPassword() {
         {isResetMode && (
           <form className="flex flex-col gap-5 text-primary" onSubmit={handleReset}>
             <p className="text-sm text-muted">
-              Create a new password for your Sequenced account.
+              Create a new password for your TidalTask account.
             </p>
             <label className="flex flex-col text-left text-sm font-semibold text-muted">
               New password

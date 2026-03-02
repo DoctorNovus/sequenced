@@ -24,6 +24,8 @@ import { Capacitor } from "@capacitor/core";
 import { fetchData } from "@/utils/data";
 import { StarIcon } from "@heroicons/react/24/solid";
 
+const SUPPORT_EMAIL = import.meta.env.VITE_SUPPORT_EMAIL || "support@tidaltask.app";
+
 export default function SettingsPage() {
   const [tempSettings, setTempSettings] = useState<Settings>({});
   const tasks = useTasks();
@@ -222,7 +224,7 @@ export default function SettingsPage() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = "sequenced-account-data.json";
+      link.download = "tidaltask-account-data.json";
       link.click();
       URL.revokeObjectURL(url);
       setDataMessage("Download started.");
@@ -501,7 +503,7 @@ export default function SettingsPage() {
               {showDeleteConfirm && (
                 <div className="w-full rounded-xl border border-red-200/70 bg-red-50/70 p-3 text-left shadow-xs dark:border-red-500/50 dark:bg-red-500/10">
                   <p className="text-sm font-semibold text-red-800 dark:text-red-100">
-                    This will permanently delete all of your Sequenced data (tasks, tags, account). There is no way to recover it.
+                    This will permanently delete all of your TidalTask data (tasks, tags, account). There is no way to recover it.
                   </p>
                   <div className="mt-2 flex flex-col gap-2">
                     <label className="text-xs font-semibold text-primary dark:text-white">Type DELETE to confirm</label>
@@ -633,10 +635,10 @@ export default function SettingsPage() {
               <button
                 type="button"
                 className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
-                onClick={() => window.open("mailto:sequenced@ottegi.com?subject=Sequenced%20Feedback", "_self")}
+                onClick={() => window.open(`mailto:${SUPPORT_EMAIL}?subject=TidalTask%20Feedback`, "_self")}
               >
                 <span className="text-lg">✉️</span>
-                Email sequenced@ottegi.com
+                Email support ({SUPPORT_EMAIL})
               </button>
             </div>
           </div>

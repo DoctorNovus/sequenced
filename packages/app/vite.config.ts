@@ -17,9 +17,9 @@ export default defineConfig({
             registerType: "prompt",
             includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
             manifest: {
-                name: "Sequenced: ADHD Management",
-                short_name: "Sequenced",
-                description: "Sequenced ADHD Todo App",
+                name: "TidalTask: ADHD Management",
+                short_name: "TidalTask",
+                description: "TidalTask ADHD Todo App",
                 icons: [
                     {
                         src: "/assets/icons/icon-256.webp",

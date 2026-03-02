@@ -1,6 +1,6 @@
 const config = {
   appId: "com.ottegi.sequenced-app",
-  appName: "Sequenced",
+  appName: "TidalTask",
   webDir: "dist",
   server: {
     androidScheme: "https",
