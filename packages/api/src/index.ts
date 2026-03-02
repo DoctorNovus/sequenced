@@ -33,6 +33,7 @@ const platform = new ExpressPlatform();
 const defaultAllowedOrigins = [
     "https://dashboard.tidaltask.app",
     "https://tidaltask.app",
+    "https://sequenced.ottegi.com",
     "http://localhost:4173",
     "http://localhost:5173",
 ];
@@ -41,6 +42,11 @@ const allowedOrigins = new Set([
     ...defaultAllowedOrigins,
     ...appUrl.split(",").map((origin) => origin.trim()).filter(Boolean),
 ]);
+
+const allowedOriginSuffixes = [
+    ".tidaltask.app",
+    ".sequenced.ottegi.com",
+];
 
 platform.use(cors({
     credentials: true,
@@ -53,6 +59,19 @@ platform.use(cors({
         if (allowedOrigins.has(origin)) {
             callback(null, true);
             return;
+        }
+
+        try {
+            const url = new URL(origin);
+            const isHttps = url.protocol === "https:";
+            const hasAllowedSuffix = allowedOriginSuffixes.some((suffix) => url.hostname.endsWith(suffix));
+
+            if (isHttps && hasAllowedSuffix) {
+                callback(null, true);
+                return;
+            }
+        } catch {
+            // Ignore invalid origin values and fail closed below.
         }
 
         callback(new Error(`CORS blocked origin: ${origin}`));
