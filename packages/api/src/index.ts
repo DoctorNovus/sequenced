@@ -30,7 +30,34 @@ database.plugin(leanIdPlugin);
 
 /* setup the platform and global middleware */
 const platform = new ExpressPlatform();
-platform.use(cors({ origin: [appUrl, ], credentials: true }));
+const defaultAllowedOrigins = [
+    "https://dashboard.tidaltask.app",
+    "https://tidaltask.app",
+    "http://localhost:4173",
+    "http://localhost:5173",
+];
+
+const allowedOrigins = new Set([
+    ...defaultAllowedOrigins,
+    ...appUrl.split(",").map((origin) => origin.trim()).filter(Boolean),
+]);
+
+platform.use(cors({
+    credentials: true,
+    origin(origin, callback) {
+        if (!origin) {
+            callback(null, true);
+            return;
+        }
+
+        if (allowedOrigins.has(origin)) {
+            callback(null, true);
+            return;
+        }
+
+        callback(new Error(`CORS blocked origin: ${origin}`));
+    },
+}));
 platform.set("trust proxy", 4);
 
 platform.use(session({
