@@ -19,6 +19,9 @@ services:
       SESSION_SECRET: ${SESSION_SECRET}
       DATABASE_URL: ${DATABASE_URL}
       PORT: ${PORT}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      FRONTEND_URL: ${FRONTEND_URL}
+      RESET_FROM_EMAIL: ${RESET_FROM_EMAIL}
     depends_on:
       - mongo
     restart: unless-stopped

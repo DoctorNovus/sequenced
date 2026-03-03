@@ -79,17 +79,31 @@ platform.use(cors({
 }));
 platform.set("trust proxy", 4);
 
+const sessionStore = MongoStore.create({
+    /* @ts-ignore - connect-mongo has a type conflict here that is safe to ignore */
+    client: MongooseDatabase.connection.getClient(),
+    collectionName: "session"
+});
+
+const baseTouch = sessionStore.touch.bind(sessionStore);
+sessionStore.touch = ((sid: string, sess: session.SessionData, callback?: any) => {
+    baseTouch(sid, sess, (err?: Error | null) => {
+        if (err?.message === "Unable to find the session to touch") {
+            callback?.();
+            return;
+        }
+
+        callback?.(err ?? undefined);
+    });
+}) as typeof sessionStore.touch;
+
 platform.use(session({
     name: "authorization",
     resave: false,
     saveUninitialized: false,
     secret: sessionSecret,
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
-    store: MongoStore.create({
-        /* @ts-ignore - connect-mongo has a type conflict here that is safe to ignore */
-        client: MongooseDatabase.connection.getClient(),
-        collectionName: "session"
-    })
+    store: sessionStore
 }));
 
 platform.use(rateLimit({

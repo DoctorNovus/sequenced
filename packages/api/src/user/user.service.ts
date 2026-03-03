@@ -8,12 +8,30 @@ import crypto from "crypto";
 @Injectable()
 export class UserService {
 
+    private normalizeEmail(email: string): string {
+        return String(email ?? "").trim().toLowerCase();
+    }
+
+    private escapeRegex(value: string): string {
+        return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    private emailQuery(email: string): { $regex: string; $options: string } {
+        const normalized = this.normalizeEmail(email);
+        return { $regex: `^${this.escapeRegex(normalized)}$`, $options: "i" };
+    }
+
     async createUser(data: Partial<User>): Promise<User> {
-        if (await User.exists({ email: data.email }).exec()) {
+        const email = this.normalizeEmail(data.email as string);
+        if (!email) {
+            throw new BadRequest("Email is required.");
+        }
+
+        if (await User.exists({ email: this.emailQuery(email) }).exec()) {
             throw new BadRequest("Email Already Exists.");
         }
 
-        return User.create(data);
+        return User.create({ ...data, email });
     }
 
     async getUserById(id: string): Promise<User | null> {
@@ -21,7 +39,9 @@ export class UserService {
     }
 
     async getUserByEmail(email: string): Promise<User | null> {
-        return User.findOne({ email }).lean<User>().exec();
+        const normalized = this.normalizeEmail(email);
+        if (!normalized) return null;
+        return User.findOne({ email: this.emailQuery(normalized) }).lean<User>().exec();
     }
 
     async touchLastLoggedIn(id: string): Promise<void> {
@@ -50,11 +70,19 @@ export class UserService {
     }
 
     async updateUser(id: string, data: Partial<User>): Promise<User | null> {
-        return User.findByIdAndUpdate(id, data).lean<User>().exec();
+        const nextData = { ...data } as Partial<User>;
+        if (typeof nextData.email === "string") {
+            nextData.email = this.normalizeEmail(nextData.email) as any;
+        }
+
+        return User.findByIdAndUpdate(id, nextData).lean<User>().exec();
     }
 
     async emailInUse(email: string, excludeId?: string): Promise<boolean> {
-        const query: any = { email };
+        const normalized = this.normalizeEmail(email);
+        if (!normalized) return false;
+
+        const query: any = { email: this.emailQuery(normalized) };
         if (excludeId) query._id = { $ne: excludeId };
         return Boolean(await User.exists(query).exec());
     }

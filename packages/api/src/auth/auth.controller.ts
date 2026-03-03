@@ -118,11 +118,11 @@ export class AuthController {
         if (!resendApiKey) throw new BadRequest("Password reset is unavailable right now. Please try again later.");
 
         const resend = new Resend(resendApiKey);
-        const frontendUrl = process.env.FRONTEND_URL || "https://dashboard.tidaltask.app";
+        const frontendUrl = process.env.FRONTEND_URL || process.env.APP_URL || "https://dashboard.tidaltask.app";
         const resetUrl = `${frontendUrl.replace(/\/$/, "")}/auth/forgotPassword?token=${token}`;
         const fromEmail = process.env.RESET_FROM_EMAIL || "TidalTask <support@tidaltask.app>";
 
-        await resend.emails.send({
+        const sendResult = await resend.emails.send({
             from: fromEmail,
             to: user.email,
             subject: "Reset your TidalTask password",
@@ -140,6 +140,10 @@ export class AuthController {
                 </div>
             `
         });
+
+        if (sendResult?.error) {
+            throw new BadRequest(sendResult.error.message || "Unable to send reset email right now.");
+        }
 
         return { success: true };
     }

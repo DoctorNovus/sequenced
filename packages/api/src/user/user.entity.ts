@@ -12,7 +12,7 @@ export class User extends Model {
     @Prop({ type: String, required: true })
     last: string;
 
-    @Prop({ type: String, required: true })
+    @Prop({ type: String, required: true, set: (value: string) => String(value ?? "").trim().toLowerCase() })
     email: string;
 
     @Prop({ type: String, select: false, set: (value) => bcrypt.hashSync(value, 10) })

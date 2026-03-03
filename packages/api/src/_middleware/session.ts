@@ -49,7 +49,4 @@ export async function session(req: Request, _res: Response, next: NextFunction) 
     const deviceUser = deviceToken.user as any;
     req.session.user = { id: deviceUser.id, first: deviceUser.first };
     next();
-
-    req.session.user = { id: user.id, first: user.first };
-    next();
 }
