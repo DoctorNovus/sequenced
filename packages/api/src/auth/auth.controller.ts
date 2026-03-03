@@ -61,6 +61,8 @@ export class AuthController {
         const user = await this.userService.createUser({ first, last, email, password, lastLoggedIn: new Date() });
         req.session.user = { id: user.id, first: user.first };
 
+        await this.sendWelcomeOnSignup(user);
+
         sendToWebhook({
             embeds: [
                 { title: "New User Has Registered", description: `**${first} ${last}** has registered with the email, **${email}**.`, timestamp: new Date() }
@@ -172,6 +174,81 @@ export class AuthController {
         await PasswordReset.updateOne({ _id: resetRequest._id }, { used: true }).exec();
 
         return { success: true };
+    }
+
+    private async sendWelcomeOnSignup(user: User): Promise<void> {
+        const resendApiKey = process.env.RESEND_API_KEY;
+        if (!resendApiKey || !user?.email) return;
+
+        const resend = new Resend(resendApiKey);
+        const audienceId = (process.env.RESEND_AUDIENCE_ID || "").trim();
+
+        try {
+            if (audienceId) {
+                const contact = await resend.contacts.create({
+                    audienceId,
+                    email: user.email,
+                    firstName: user.first || "",
+                    lastName: user.last || ""
+                });
+
+                if (contact?.error) {
+                    const updated = await resend.contacts.update({
+                        audienceId,
+                        email: user.email,
+                        firstName: user.first || "",
+                        lastName: user.last || "",
+                        unsubscribed: false
+                    });
+
+                    if (updated?.error) {
+                        throw new Error(updated.error.message || "Unable to add user to audience.");
+                    }
+                }
+            }
+
+            const fromEmail = process.env.WELCOME_FROM_EMAIL || process.env.RESET_FROM_EMAIL || "TidalTask <support@tidaltask.app>";
+            const subject = process.env.WELCOME_EMAIL_SUBJECT || "Welcome to TidalTask";
+            const welcome = await resend.emails.send({
+                from: fromEmail,
+                to: user.email,
+                subject,
+                html: `
+                    <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #0f172a;">
+                        <p>Hey!</p>
+                        <p>Thank you so much for signing up for TidalTask, formerly Sequenced: ADHD Management.</p>
+                        <p>When I first built TidalTask, it was just something I made to survive school. I needed a system that worked with my brain, not against it. Watching it grow into something other people actually use is unreal. It keeps me building and improving it every week.</p>
+                        <p>The app has come a long way, and I rely heavily on real feedback from real ADHD brains to decide what gets better next. If you have a few minutes, I would love for you to fill out this short feedback form:</p>
+                        <p><a href="https://form.jotform.com/260608522625051">https://form.jotform.com/260608522625051</a></p>
+                        <p>Everything you submit is stored privately and only accessible to me. Your data is yours. Privacy matters here.</p>
+                        <p>If TidalTask has helped you even a little, leaving a review on the App Store would mean a lot. Reviews genuinely help the app grow and reach more people who need support. And if you would rather just email me directly with feedback, that works too.</p>
+                        <p>We also moved TidalTask off the parent company site and gave it its own home. You can explore features, join the newsletter, and follow along here:</p>
+                        <p><a href="https://www.tidaltask.app">https://www.tidaltask.app</a></p>
+                        <p>If you would like me to manually add you to the newsletter, just send me an email and I will handle it.</p>
+                        <p>If you ever want to share ideas, ask questions, or just talk through how you are using the app, my inbox is always open.</p>
+                        <p>Thank you for helping shape TidalTask into the ADHD task companion it is becoming.</p>
+                        <p>
+                            Daniel Wedding | Founder<br />
+                            <a href="mailto:daniel@tidaltask.app">daniel@tidaltask.app</a>
+                        </p>
+                    </div>
+                `
+            });
+
+            if (welcome?.error) {
+                throw new Error(welcome.error.message || "Unable to send welcome email.");
+            }
+        } catch (error) {
+            await sendToWebhook({
+                embeds: [
+                    {
+                        title: "Welcome Email Failed",
+                        description: `User **${user.id}** (${user.email}) failed welcome flow: ${String((error as Error)?.message || error)}`,
+                        timestamp: new Date()
+                    }
+                ]
+            });
+        }
     }
 
 }
