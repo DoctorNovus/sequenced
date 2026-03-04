@@ -4,10 +4,12 @@ import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResul
 
 export interface Settings {
   lastNotification?: number;
+  lastNoTasksDueNotificationAt?: number;
   hasRemindedToday?: boolean;
   sendDailyReminders?: boolean;
   sendDailyRemindersOverride?: boolean;
   sendDailyRemindersTime?: string;
+  deliveredServerNotificationIds?: string[];
   groupsActive?: string[];
   apiKeys?: Record<string, string>;
 }
