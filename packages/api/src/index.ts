@@ -1,6 +1,7 @@
 import { Application } from "@outwalk/firefly";
 import { ExpressPlatform } from "@outwalk/firefly/express";
 import { MongooseDatabase } from "@/_lib/mongoose";
+import { createTokenDocsModel, getDocsBaseUrl, renderTokenDocsHtml } from "@/docs/tokenDocs";
 import { rateLimit } from "express-rate-limit";
 import cors from "cors";
 import session from "express-session";
@@ -113,6 +114,30 @@ platform.use(rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
 }));
+
+platform.use((req, res, next) => {
+    if (req.method !== "GET") {
+        next();
+        return;
+    }
+
+    if (req.path === "/docs" || req.path === "/docs/") {
+        const baseUrl = getDocsBaseUrl(req);
+        res
+            .status(200)
+            .type("html")
+            .send(renderTokenDocsHtml(baseUrl));
+        return;
+    }
+
+    if (req.path === "/docs.json") {
+        const baseUrl = getDocsBaseUrl(req);
+        res.status(200).json(createTokenDocsModel(baseUrl));
+        return;
+    }
+
+    next();
+});
 
 /* start the application */
 new Application({ platform }).listen();
