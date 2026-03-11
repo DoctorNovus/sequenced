@@ -105,14 +105,14 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
           rm -f certificate.p12
 
-      # Install the App Store distribution provisioning profile
-      - name: Install provisioning profile
+      # Write the ASC key to disk so xcodebuild can authenticate for provisioning
+      - name: Write ASC auth key
         env:
-          PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
         run: |
-          echo "$PROFILE_BASE64" | tr -d ' \n\r' | base64 --decode > profile.mobileprovision
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          mv profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+          mkdir -p /tmp/asc-keys
+          printf '%s' "$ASC_KEY_CONTENT" | tr -d ' \n\r' | base64 --decode > /tmp/asc-keys/AuthKey_${ASC_KEY_ID}.p8
 
       - name: Set up Ruby + Bundler
         uses: ruby/setup-ruby@v1

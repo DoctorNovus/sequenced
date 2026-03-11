@@ -122,6 +122,14 @@ platform :ios do
       build_number: next_build.to_s
     )
 
+    key_id = ENV["ASC_KEY_ID"]&.strip
+    issuer_id = ENV["ASC_ISSUER_ID"]&.strip
+    auth_key_path = "/tmp/asc-keys/AuthKey_#{key_id}.p8"
+    xcargs_val = "-allowProvisioningUpdates"
+    if File.exist?(auth_key_path.to_s)
+      xcargs_val += " -authenticationKeyPath #{auth_key_path} -authenticationKeyID #{key_id} -authenticationKeyIssuerID #{issuer_id}"
+    end
+
     build_ios_app(
       workspace: "App.xcworkspace",
       scheme: "App",
@@ -134,7 +142,7 @@ platform :ios do
         signingStyle: "automatic",
         method: "app-store-connect"
       },
-      xcargs: "-allowProvisioningUpdates"
+      xcargs: xcargs_val
     )
 
     upload_to_testflight(
