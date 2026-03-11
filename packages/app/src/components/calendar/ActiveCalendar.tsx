@@ -21,7 +21,7 @@ export default function ActiveCalendar({ skeleton }: ActiveCalendarProps) {
   if (skeleton) {
     return (
       <div className="w-full h-full">
-        <div className="rounded-3xl surface-card border p-4 shadow-xl ring-1 ring-accent-blue/10">
+        <div className="rounded-3xl surface-card border p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img src={CalendarIcon} className="h-6 w-6" />
@@ -110,7 +110,7 @@ export default function ActiveCalendar({ skeleton }: ActiveCalendarProps) {
 
   return (
     <div className="w-full h-full">
-      <div className="rounded-3xl surface-card border p-4 shadow-xl ring-1 ring-accent-blue/10">
+      <div className="rounded-3xl surface-card border p-4 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* <img src={CalendarIcon} className="h-6 w-6" /> */}

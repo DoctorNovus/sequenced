@@ -45,7 +45,7 @@ export default function TaskContainer({
   if (skeleton) {
     return (
       <div className="group flex flex-col items-center w-full h-full my-2">
-        <div className="w-full flex flex-row items-center rounded-2xl bg-white/90 px-3 py-3 text-slate-900 shadow-md ring-1 ring-accent-blue/10 [&:has(.task-container-accordian:hover)]:ring-accent-blue/30">
+        <div className="w-full flex flex-row items-center rounded-2xl surface-card border px-3 py-3 text-primary shadow-sm">
           <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-row items-center py-1">
               <ChevronRightIcon
@@ -501,7 +501,7 @@ export default function TaskContainer({
               <Disclosure.Button
                 onClick={async () => await handleClick(open)}
                 as="div"
-                className="w-full flex flex-row items-center rounded-2xl bg-white/90 px-3 py-3 text-slate-900 shadow-md ring-1 ring-accent-blue/10"
+                className="w-full flex flex-row items-center rounded-2xl surface-card border px-3 py-3 text-primary shadow-sm"
               >
                 <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-row items-center py-1">

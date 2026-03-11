@@ -134,7 +134,7 @@ export default function TaskMenu({
           return (
             <div
               key={groupName}
-              className="w-full rounded-2xl px-3 py-2 dark:bg-transparent"
+              className="w-full"
             >
               <button
                 type="button"

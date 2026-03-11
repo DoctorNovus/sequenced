@@ -48,7 +48,7 @@ export default function TagFilterBar({ tasks }: TagFilterBarProps) {
   if (availableTags.length === 0) return null;
 
   return (
-    <div className="flex w-full flex-col gap-2 rounded-2xl bg-white/90 px-4 py-3 shadow-sm ring-1 ring-accent-blue/10 dark:bg-slate-900/70">
+    <div className="flex w-full flex-col gap-2 rounded-2xl surface-card border px-4 py-3 shadow-xs">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold text-primary">Filter by tags</span>
