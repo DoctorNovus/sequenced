@@ -51,21 +51,19 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
 
     if (skeleton)
         return (
-            <div className="rounded-3xl surface-card border p-5 shadow-xl ring-1 ring-accent-blue/10">
-                <div className="flex items-center justify-between">
-                    <div className="flex flex-col gap-1">
-                        <span className="text-xl font-semibold text-primary">Your Agenda</span>
-                    </div>
-                    <div className="rounded-full bg-accent-blue-50 px-3 py-1 text-xs font-semibold text-accent-blue-700">
+            <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between px-1">
+                    <span className="text-xs font-semibold uppercase tracking-widest text-muted">Your Agenda</span>
+                    <span className="rounded-full bg-accent-blue-50 px-2.5 py-0.5 text-xs font-semibold text-accent-blue-700 dark:bg-[rgba(99,102,241,0.12)] dark:text-primary">
                         Updating...
-                    </div>
+                    </span>
                 </div>
-                <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-                    <DueCapsule skeleton category="Due Today" />
-                    <DueCapsule skeleton category="Due Tomorrow" />
-                    <DueCapsule skeleton category="Due This Week" />
+                <div className="grid grid-cols-3 gap-2">
+                    <DueCapsule skeleton category="today" />
+                    <DueCapsule skeleton category="tomorrow" />
+                    <DueCapsule skeleton category="this week" />
                 </div>
-                <div className="mt-4 flex items-center justify-between rounded-2xl border border-dashed border-red-200 bg-red-50/60 px-4 py-3 text-red-600 dark:border-red-400/40 dark:bg-[rgba(248,113,113,0.12)] dark:text-red-200">
+                <div className="flex items-center justify-between rounded-2xl border border-dashed border-red-200 bg-red-50/60 px-4 py-3 text-red-600 dark:border-red-400/40 dark:bg-[rgba(248,113,113,0.12)] dark:text-red-200">
                     <span className="text-base font-semibold">Overdue Tasks</span>
                     <span className="text-3xl font-semibold">0</span>
                 </div>
@@ -73,43 +71,35 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
         )
 
     return (
-        <div className="rounded-3xl surface-card border p-5 shadow-xl ring-1 ring-accent-blue/10">
-            <div className="flex items-center justify-between">
-                <div className="flex flex-col gap-1">
-                    <span className="text-xl font-semibold text-primary">Your Agenda</span>
-                </div>
-                <div className="rounded-full bg-accent-blue-50 px-3 py-1 text-xs font-semibold text-accent-blue-700 dark:bg-[rgba(99,102,241,0.12)] dark:text-primary">
+        <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between px-1">
+                <span className="text-xs font-semibold uppercase tracking-widest text-muted">Your Agenda</span>
+                <span className="rounded-full bg-accent-blue-50 px-2.5 py-0.5 text-xs font-semibold text-accent-blue-700 dark:bg-[rgba(99,102,241,0.12)] dark:text-primary">
                     Live sync
-                </div>
+                </span>
             </div>
-            <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-                {
-                    tasks.isSuccess && (
-                        <DueCapsule
-                            count={counts.today}
-                            category="today"
-                            onClick={() => navigate("/calendar?scope=today&view=week")}
-                        />
-                    )
-                }
-                {
-                    tasks.isSuccess && (
-                        <DueCapsule
-                            count={counts.tomorrow}
-                            category="tomorrow"
-                            onClick={() => navigate("/calendar?scope=tomorrow&view=week")}
-                        />
-                    )
-                }
-                {
-                    tasks.isSuccess && (
-                        <DueCapsule
-                            count={counts.week}
-                            category="this week"
-                            onClick={() => navigate("/calendar?scope=week&view=week")}
-                        />
-                    )
-                }
+            <div className="grid grid-cols-3 gap-2">
+                {tasks.isSuccess && (
+                    <DueCapsule
+                        count={counts.today}
+                        category="today"
+                        onClick={() => navigate("/calendar?scope=today&view=week")}
+                    />
+                )}
+                {tasks.isSuccess && (
+                    <DueCapsule
+                        count={counts.tomorrow}
+                        category="tomorrow"
+                        onClick={() => navigate("/calendar?scope=tomorrow&view=week")}
+                    />
+                )}
+                {tasks.isSuccess && (
+                    <DueCapsule
+                        count={counts.week}
+                        category="this week"
+                        onClick={() => navigate("/calendar?scope=week&view=week")}
+                    />
+                )}
             </div>
             <div
                 role="button"
@@ -121,16 +111,14 @@ export default function HomeAgenda({ skeleton }: AgendaProps) {
                         navigate("/calendar?scope=overdue&view=week");
                     }
                 }}
-                className={`group mt-4 flex items-center justify-between rounded-2xl border px-4 py-3 cursor-pointer transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/25 ${
+                className={`group flex items-center justify-between rounded-2xl border px-4 py-3 cursor-pointer transition hover:brightness-[0.97] dark:hover:brightness-110 ${
                     tasks.isSuccess && counts.overdue > 0
-                        ? "border-red-300/70 bg-red-50/70 text-red-700 dark:border-red-400/50 dark:bg-[rgba(248,113,113,0.12)] dark:text-red-200"
+                        ? "border-red-200 bg-red-50/80 text-red-700 dark:border-red-400/40 dark:bg-[rgba(248,113,113,0.12)] dark:text-red-200"
                         : "border-emerald-200/70 bg-emerald-50/80 text-emerald-700 dark:border-emerald-300/40 dark:bg-[rgba(52,211,153,0.12)] dark:text-emerald-200"
                 }`}
             >
-                <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-base font-semibold text-primary">Overdue Tasks</span>
-                </div>
-                <span className="text-3xl font-semibold text-left">
+                <span className="text-base font-semibold">Overdue Tasks</span>
+                <span className="text-3xl font-bold">
                     {tasks.isSuccess ? counts.overdue : "—"}
                 </span>
             </div>
