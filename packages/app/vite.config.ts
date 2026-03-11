@@ -7,7 +7,17 @@ import path from "path";
 export default defineConfig({
     server: { port: 5173, allowedHosts: true },
     build: {
-        reportCompressedSize: false
+        reportCompressedSize: false,
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (!id.includes("node_modules")) return;
+                    if (id.includes("react") || id.includes("react-dom") || id.includes("react-router")) return "vendor-react";
+                    if (id.includes("@tanstack")) return "vendor-query";
+                    if (id.includes("@headlessui") || id.includes("@heroicons")) return "vendor-ui";
+                }
+            }
+        }
     },
     resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
     plugins: [
