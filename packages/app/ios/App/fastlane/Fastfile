@@ -58,6 +58,14 @@ platform :ios do
     api_key = options[:api_key]
     app_identifier = options[:app_identifier]
 
+    # Read version from package.json so it's always the source of truth,
+    # then stamp it into the Xcode project (in case cap sync reset it).
+    pkg_version = JSON.parse(File.read("../../package.json"))["version"]
+    increment_version_number(
+      version_number: pkg_version,
+      xcodeproj: "App.xcodeproj"
+    )
+
     version = get_version_number(
       xcodeproj: "App.xcodeproj",
       target: "App"
