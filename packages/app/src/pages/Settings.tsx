@@ -10,6 +10,7 @@ import { Logger } from "@/utils/logger";
 import DeveloperSettings from "./(Settings)/DeveloperSettings";
 import ControllerUser from "./(Settings)/ControlledUser";
 import AnnouncementManager from "./(Settings)/AnnouncementManager";
+import WhatsNew from "./(Settings)/WhatsNew";
 import ServerNotificationSettings from "./(Settings)/ServerNotificationSettings";
 import DeveloperNotificationSender from "./(Settings)/DeveloperNotificationSender";
 import { useTasks, useDeleteTask } from "@/hooks/tasks";
@@ -837,6 +838,10 @@ export default function SettingsPage() {
               </a>
             </div>
           </div>
+        </div>
+
+        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
+          <WhatsNew />
         </div>
 
         <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
