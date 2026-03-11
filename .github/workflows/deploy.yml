@@ -105,15 +105,6 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
           rm -f certificate.p12
 
-      # Write the ASC key to disk so xcodebuild can authenticate for provisioning
-      - name: Write ASC auth key
-        env:
-          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-        run: |
-          mkdir -p /tmp/asc-keys
-          printf '%s' "$ASC_KEY_CONTENT" | tr -d ' \n\r' | base64 --decode > /tmp/asc-keys/AuthKey_${ASC_KEY_ID}.p8
-
       - name: Set up Ruby + Bundler
         uses: ruby/setup-ruby@v1
         with:

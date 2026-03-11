@@ -124,10 +124,16 @@ platform :ios do
 
     key_id = ENV["ASC_KEY_ID"]&.strip
     issuer_id = ENV["ASC_ISSUER_ID"]&.strip
-    auth_key_path = "/tmp/asc-keys/AuthKey_#{key_id}.p8"
+    key_content = ENV["ASC_KEY_CONTENT"]&.strip
     xcargs_val = "-allowProvisioningUpdates"
-    if File.exist?(auth_key_path.to_s)
-      xcargs_val += " -authenticationKeyPath #{auth_key_path} -authenticationKeyID #{key_id} -authenticationKeyIssuerID #{issuer_id}"
+    asc_key_tmp = nil
+    unless key_content.to_s.empty?
+      require 'base64'
+      require 'tempfile'
+      asc_key_tmp = Tempfile.new(["AuthKey_#{key_id}", ".p8"])
+      asc_key_tmp.write(Base64.decode64(key_content))
+      asc_key_tmp.flush
+      xcargs_val += " -authenticationKeyPath #{asc_key_tmp.path} -authenticationKeyID #{key_id} -authenticationKeyIssuerID #{issuer_id}"
     end
 
     build_ios_app(
