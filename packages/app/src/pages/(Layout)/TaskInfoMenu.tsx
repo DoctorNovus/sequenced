@@ -19,6 +19,7 @@ import {
 
 import { Dispatch, SetStateAction, useEffect, useReducer, useRef, useState } from "react";
 
+
 import MenuHeader from "./(TaskInfoMenu)/MenuHeader";
 import MenuFields from "./(TaskInfoMenu)/MenuFields";
 import MenuEdit from "./(TaskInfoMenu)/MenuEdit";
@@ -119,7 +120,17 @@ export default function TaskInfoMenu({
   }, [hasTitle, isQuickAdd, quickLines.length, validationError]);
 
   useEffect(() => {
-    if (type !== "add" || !isOpen) return;
+    if (type !== "add") return;
+
+    if (!isOpen) {
+      wasOpenRef.current = false;
+      return;
+    }
+
+    // Only reset the form when the dialog first opens, not on every activeDate
+    // change (which was erasing the task name whenever the due date was edited).
+    if (wasOpenRef.current) return;
+    wasOpenRef.current = true;
 
     setTempData({
       ...createInitialTaskData(),
@@ -278,9 +289,13 @@ export default function TaskInfoMenu({
     if (type === "add" && isQuickAdd) {
       if (!validateBeforeSubmit(true)) return;
 
+      const taskDate = tempData.date instanceof Date && tempData.date.getTime() > 0
+        ? tempData.date
+        : getDefaultDate();
+
       const payload = quickLines.map((title) => ({
         title,
-        date: getDefaultDate(),
+        date: taskDate,
         done: false,
         repeater: "",
         reminder: "",
@@ -331,6 +346,7 @@ export default function TaskInfoMenu({
   };
 
   const ref = useRef(null);
+  const wasOpenRef = useRef(false);
 
   return (
     <>

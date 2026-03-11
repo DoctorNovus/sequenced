@@ -251,3 +251,6 @@ packages/app/.env.asc.local
 packages/app/*.p8
 packages/app/ios/App/vendor/
 packages/app/ios/App/.bundle/
+
+
+*claude*
