@@ -228,7 +228,7 @@ export default function CalendarPage() {
       key={task.id ?? task.title}
       type="button"
       onClick={() => openTask(task, day)}
-      className="flex flex-col rounded-xl border border-slate-200/60 bg-white px-3 py-2 text-left shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700/60 dark:bg-slate-900/70"
+      className="flex flex-col rounded-xl surface-card border px-3 py-2 text-left shadow-xs transition hover:border-accent-blue/40"
     >
       <div className="flex items-center justify-between">
         <span className="text-sm font-semibold text-primary">{task.title}</span>
@@ -258,7 +258,7 @@ export default function CalendarPage() {
         return (
           <div
             key={key}
-            className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs ring-1 ring-slate-100/90 dark:border-slate-800/70 dark:bg-slate-900/80 dark:ring-slate-800"
+            className="rounded-2xl surface-card border p-4 shadow-xs"
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
@@ -299,7 +299,7 @@ export default function CalendarPage() {
         <button
           type="button"
           onClick={() => changeMonth(-1)}
-          className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+          className="rounded-full surface-card border px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40"
           aria-label="Previous month"
         >
           ←
@@ -310,7 +310,7 @@ export default function CalendarPage() {
         <button
           type="button"
           onClick={() => changeMonth(1)}
-          className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+          className="rounded-full surface-card border px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40"
           aria-label="Next month"
         >
           →
@@ -329,7 +329,7 @@ export default function CalendarPage() {
                 goToWeek(week[0]);
               }
             }}
-            className="grid grid-cols-7 gap-2 sm:gap-3 rounded-2xl border border-slate-200/70 bg-white/70 p-1 shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700/60 dark:bg-slate-900/70"
+            className="grid grid-cols-7 gap-2 sm:gap-3 rounded-2xl surface-card border p-1 shadow-xs transition hover:border-accent-blue/40"
           >
             {week.map((day) => {
               if (!day) {
@@ -366,7 +366,7 @@ export default function CalendarPage() {
                             e.stopPropagation();
                             openTask(task, day);
                           }}
-                          className="truncate rounded-lg bg-white/80 px-1.5 py-0.5 text-[10px] font-semibold text-primary shadow-xs ring-1 ring-slate-100 transition hover:border-accent-blue/40 hover:ring-accent-blue/20 dark:bg-slate-800"
+                          className="truncate rounded-lg bg-white/80 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] font-semibold text-primary shadow-xs transition"
                         >
                           {task.title}
                         </button>
@@ -387,11 +387,11 @@ export default function CalendarPage() {
   );
 
   return (
-    <div className="w-full h-full flex flex-col px-3 md:px-6 lg:px-10 py-4 pb-28 gap-4">
+    <div className="w-full h-full flex flex-col px-3 md:px-6 lg:px-10 py-4 pb-28 gap-6">
       <div className="flex w-full max-w-5xl flex-col gap-3 mx-auto">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-col">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Calendar</h1>
+            <h1 className="text-2xl font-semibold text-primary">Calendar</h1>
             <p className="text-sm text-muted">See what is coming up this week or month.</p>
           </div>
           <div className="flex items-center gap-2">
@@ -400,7 +400,7 @@ export default function CalendarPage() {
                 key={mode}
                 type="button"
                 onClick={() => handleViewChange(mode)}
-                className={`rounded-full px-3 py-2 text-sm font-semibold shadow-xs transition ${view === mode ? "bg-accent-blue text-white shadow-accent-blue/30" : "border border-slate-200 bg-white text-primary hover:-translate-y-px dark:border-slate-700 dark:bg-slate-900"}`}
+                className={`rounded-full px-3 py-2 text-sm font-semibold shadow-xs transition ${view === mode ? "bg-accent-blue text-white shadow-accent-blue/30" : "surface-card border text-primary hover:-translate-y-px"}`}
               >
                 {mode === "week" ? "Week view" : "Month view"}
               </button>
@@ -413,7 +413,7 @@ export default function CalendarPage() {
             <button
               type="button"
               onClick={() => changeWeek(-1)}
-              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+              className="rounded-full surface-card border px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40"
               aria-label="Previous week"
             >
               ←
@@ -424,7 +424,7 @@ export default function CalendarPage() {
             <button
               type="button"
               onClick={() => changeWeek(1)}
-              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40 hover:ring-1 hover:ring-accent-blue/20 dark:border-slate-700 dark:bg-slate-900"
+              className="rounded-full surface-card border px-3 py-1.5 text-sm font-semibold text-primary shadow-xs transition hover:border-accent-blue/40"
               aria-label="Next week"
             >
               →
@@ -454,7 +454,7 @@ export default function CalendarPage() {
 
         <div className="w-full">
           {tasks.isLoading && (
-            <div className="rounded-2xl border border-slate-200/70 bg-white p-4 text-sm text-muted shadow-xs dark:border-slate-700/60 dark:bg-slate-900/70">
+            <div className="rounded-2xl surface-card border p-4 text-sm text-muted shadow-xs">
               Loading calendar...
             </div>
           )}

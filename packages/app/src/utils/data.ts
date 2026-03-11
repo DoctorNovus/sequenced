@@ -54,6 +54,8 @@ export function occursOnDate(task: Task, target: Date): boolean {
   const day = normalizeDay(target);
 
   if (Number.isNaN(start.getTime()) || Number.isNaN(day.getTime())) return false;
+  // Treat epoch (no due date) as unscheduled — never appears on the calendar.
+  if (start.getFullYear() < 2000) return false;
   if (day < start) return false;
 
   switch (task.repeater) {
@@ -68,7 +70,7 @@ export function occursOnDate(task: Task, target: Date): boolean {
     case "monthly":
       return start.getDate() === day.getDate();
     default:
-      return start.getTime() === day.getTime();
+      return matchDate(start, day);
   }
 }
 
@@ -76,8 +78,9 @@ export function isTaskDone(task: Task, activeDate: Date): boolean {
   const day = normalizeDay(activeDate ?? new Date());
 
   // Non-repeating tasks: show as pending until explicitly marked done, regardless of date.
+  // Treat false, null, and undefined all as "not done" — MongoDB may store null instead of false.
   if (!task?.repeater) {
-    return task?.done === false || typeof task?.done === "undefined";
+    return task?.done !== true;
   }
 
   // Repeating tasks only count on their active occurrence day(s).

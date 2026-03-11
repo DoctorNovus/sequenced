@@ -82,7 +82,7 @@ export default function Task() {
     return (
       <div className="w-full h-full text-accent-black">
         <div className="h-full">
-          <div className="flex flex-col items-center gap-4 px-3 md:px-6">
+          <div className="flex flex-col items-center gap-6 px-3 md:px-6">
             <ActiveCalendar skeleton={true} />
             <DayTasks skeleton={true} />
             <TaskContainer title="All Tasks" skeleton={true} />
@@ -99,10 +99,10 @@ export default function Task() {
     <div className="w-full h-full text-accent-black">
       <div className="h-full pb-28">
         <div className="flex w-full justify-center">
-          <div className="flex w-full max-w-4xl flex-col items-center gap-4 px-3 md:px-6">
+          <div className="flex w-full max-w-4xl flex-col items-center gap-6 px-3 md:px-6">
             <ActiveCalendar />
             <div className="w-full flex flex-col gap-2">
-              <div className="flex w-full items-center gap-2 rounded-xl bg-white/90 px-3 py-2 shadow-xs ring-1 ring-accent-blue/10 dark:bg-slate-900/70">
+              <div className="flex w-full items-center gap-2 rounded-xl surface-card border px-3 py-2 shadow-xs">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4 text-slate-400"

@@ -7,6 +7,30 @@
 }
 
 @theme {
+  --color-silver-50: #fafafa;
+  --color-silver-100: #f5f5f5;
+  --color-silver-200: #e6e6e6;
+  --color-silver-300: #bdbdbd;
+  --color-silver-400: #a3a3a3;
+  --color-silver-500: #727272;
+  --color-silver-600: #535353;
+  --color-silver-700: #404040;
+  --color-silver-800: #272727;
+  --color-silver-900: #1a1a1a;
+  --color-silver-950: #0b0b0b;
+
+  --color-vulcan-50: #f5f7fa;
+  --color-vulcan-100: #eaeef4;
+  --color-vulcan-200: #d0d9e7;
+  --color-vulcan-300: #a6b9d3;
+  --color-vulcan-400: #7795b9;
+  --color-vulcan-500: #5577a2;
+  --color-vulcan-600: #425e87;
+  --color-vulcan-700: #364c6e;
+  --color-vulcan-800: #30425c;
+  --color-vulcan-900: #2c3a4e;
+  --color-vulcan-950: #121720;
+
   --color-accent-white-50: #f8f8f8;
   --color-accent-white-100: #f0f0f0;
   --color-accent-white-200: #dcdcdc;
@@ -94,22 +118,22 @@
 /* @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"); */
 
 :root {
-  --app-background: #fcfdfd;
+  --app-background: #f5f5f5;           /* silver-100 */
   --app-text: #0f172a;
-  --muted-text: #475569;
-  --surface-card: rgba(255, 255, 255, 0.92);
-  --surface-border: rgba(48, 122, 207, 0.12);
+  --muted-text: #727272;              /* silver-500 */
+  --surface-card: rgba(255, 255, 255, 0.97); /* white cards on silver bg */
+  --surface-border: #e6e6e6;          /* silver-200 */
   --nav-border: rgba(255, 255, 255, 0.7);
   color-scheme: light;
 }
 
 .dark {
-  --app-background:#0f131e;
+  --app-background: #121720;           /* vulcan-950 */
   --app-text: #e7ebf3;
-  --muted-text: #c7d0dc;
-  --surface-card: rgba(18, 23, 32, 0.92);
-  --surface-border: rgba(96, 113, 133, 0.28);
-  --nav-border: rgba(96, 113, 133, 0.32);
+  --muted-text: #a6b9d3;              /* vulcan-300 */
+  --surface-card: rgba(44, 58, 78, 0.96);   /* vulcan-900 */
+  --surface-border: rgba(54, 76, 110, 0.45); /* vulcan-700 */
+  --nav-border: rgba(54, 76, 110, 0.35);
   color-scheme: dark;
 }
 
@@ -208,12 +232,30 @@ body {
   --tw-ring-color: var(--surface-border) !important;
 }
 
+input,
+textarea,
+select {
+  background-color: #e6e6e6; /* silver-200 — darker than white card in light */
+  color: var(--app-text);
+  border-color: var(--surface-border);
+}
+
+select option {
+  background-color: #f5f5f5; /* silver-100 */
+  color: var(--app-text);
+}
+
 .dark input,
 .dark textarea,
 .dark select {
-  background-color: rgba(15, 23, 42, 0.7);
+  background-color: #121720; /* vulcan-950 — darker than vulcan-900 card in dark */
   color: var(--app-text);
   border-color: var(--surface-border);
+}
+
+.dark select option {
+  background-color: #121720; /* vulcan-950 */
+  color: var(--app-text);
 }
 
 .dark input::placeholder,

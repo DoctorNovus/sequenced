@@ -31,9 +31,9 @@ export default function UserLogin() {
                     {
                         user.data?.id ?
                             (
-                                <div className="flex flex-col gap-2 rounded-xl border border-accent-blue/15 bg-accent-blue-50/50 px-3 py-2 dark:bg-[rgba(99,102,241,0.12)]">
+                                <div className="flex items-center justify-between gap-3 flex-wrap">
                                     <div className="text-primary text-sm">Logged in as <span className="font-semibold">{user.data.email}</span></div>
-                                    <button onClick={logoutUser} className="self-start rounded-lg bg-accent-blue px-4 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition">
+                                    <button onClick={logoutUser} className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition">
                                         Sign Out
                                     </button>
                                 </div>
