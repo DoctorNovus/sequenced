@@ -3,6 +3,7 @@ import TaskInfoMenuItem from "./Shared/TaskInfoMenuItem";
 import TaskInfoMenuUser from "./Shared/TaskInfoUser/TaskInfoMenuUser";
 import TaskInfoMenuTags from "./Shared/TaskInfoMenuTags";
 import TaskInfoMenuSelect from "./Shared/TaskInfoMenuSelect";
+import ExpandableTextarea from "./Shared/ExpandableTextarea";
 
 
 interface MenuFieldsProps {
@@ -141,13 +142,10 @@ export default function MenuFields({
                         </span>
                     )}
 
-                    <TaskInfoMenuItem
+                    <ExpandableTextarea
                         name="Description"
-                        type="textarea"
-                        value={tempData.description}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setTempData({ ...tempData, description: e.target.value })
-                        }
+                        value={tempData.description ?? ""}
+                        onChange={(val) => setTempData({ ...tempData, description: val })}
                     />
 
                     <TaskInfoMenuTags
