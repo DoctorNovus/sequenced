@@ -47,14 +47,20 @@ jobs:
             fi
 
             echo "[5/9] Building images (selective)" && date
+            export DOCKER_BUILDKIT=1
+            pids=()
             if [ "$BUILD_FRONTEND" = true ]; then
-              timeout 35m docker compose --progress=plain build --pull frontend
+              timeout 35m docker compose --progress=plain build frontend &
+              pids+=($!)
             fi
             if [ "$BUILD_API" = true ]; then
-              timeout 35m docker compose --progress=plain build --pull api
+              timeout 35m docker compose --progress=plain build api &
+              pids+=($!)
             fi
-            if [ "$BUILD_FRONTEND" = false ] && [ "$BUILD_API" = false ]; then
+            if [ ${#pids[@]} -eq 0 ]; then
               echo "No app/api build required for this deploy."
+            else
+              for pid in "${pids[@]}"; do wait "$pid"; done
             fi
 
             echo "[6/9] Recreating containers" && date
