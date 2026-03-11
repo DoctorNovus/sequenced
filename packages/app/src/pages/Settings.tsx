@@ -23,7 +23,7 @@ import { useApiKeys, useChangePassword, useExportUserData, useGenerateApiKey, us
 import { SecureToken } from "@/plugins/secureToken";
 import { Capacitor } from "@capacitor/core";
 import { fetchData } from "@/utils/data";
-import { StarIcon } from "@heroicons/react/24/solid";
+import { StarIcon, ChevronDownIcon, SunIcon, MoonIcon, ComputerDesktopIcon, XMarkIcon } from "@heroicons/react/24/solid";
 
 const SUPPORT_EMAIL = import.meta.env.VITE_SUPPORT_EMAIL || "support@tidaltask.app";
 
@@ -352,6 +352,42 @@ export default function SettingsPage() {
     }
   };
 
+  const [collapsed, setCollapsed] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem("settings-collapsed") || "[]"); }
+    catch { return []; }
+  });
+  const toggleSection = (id: string) => {
+    setCollapsed((prev) => {
+      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
+      localStorage.setItem("settings-collapsed", JSON.stringify(next));
+      return next;
+    });
+  };
+  const isClosed = (id: string) => collapsed.includes(id);
+
+  const SectionHeader = ({ id, title, subtitle, badge }: { id: string; title: string; subtitle?: string; badge?: string }) => (
+    <button
+      type="button"
+      onClick={() => toggleSection(id)}
+      className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left bg-silver-200 dark:bg-vulcan-800 hover:bg-silver-300 dark:hover:bg-vulcan-700 transition-colors"
+    >
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-primary">{title}</span>
+          {badge && (
+            <span className="rounded-full bg-accent-blue/10 px-2 py-0.5 text-[11px] font-semibold text-accent-blue dark:bg-[rgba(48,122,207,0.18)] dark:text-accent-blue">
+              {badge}
+            </span>
+          )}
+        </div>
+        {subtitle && <span className="text-xs text-muted">{subtitle}</span>}
+      </div>
+      <ChevronDownIcon
+        className={`h-4 w-4 shrink-0 text-muted transition-transform duration-200 ${isClosed(id) ? "-rotate-90" : ""}`}
+      />
+    </button>
+  );
+
   const handleRemoveApiKey = async (name: string) => {
     setApiKeyMessage("");
     const nextKeys = { ...(tempSettings.apiKeys || {}) };
@@ -366,27 +402,23 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full px-3 md:px-6 lg:px-10 py-4 pb-28 gap-4 items-center overflow-y-auto">
+    <div className="flex flex-col w-full h-full px-3 md:px-6 lg:px-10 py-4 pb-28 gap-6 items-center overflow-y-auto">
       <div className="w-full max-w-3xl">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold text-slate-900">Settings</h1>
-          <p className="text-sm text-slate-600">Control reminders, account status, and other settings.</p>
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-semibold text-primary">Settings</h1>
+          <p className="text-sm text-muted">Control reminders, account status, and other settings.</p>
         </div>
       </div>
-      <div className="w-full max-w-3xl flex flex-col gap-4">
-        <div className="rounded-2xl surface-card border ring-1 ring-accent-blue/10 p-4 flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col gap-1">
-              <h2 className="text-lg font-semibold text-primary">Profile</h2>
-              <p className="text-sm text-muted">Manage your account details and privacy.</p>
-              {user.isSuccess && user.data?.lastLoggedIn && (
-                <span className="text-xs font-semibold text-primary">
-                  Last logged in: {new Date(user.data.lastLoggedIn).toLocaleString()}
-                </span>
-              )}
-            </div>
-            {user.isLoading && <span className="text-xs text-muted">Loading...</span>}
-          </div>
+      <div className="w-full max-w-3xl flex flex-col gap-2">
+        <div className="rounded-2xl surface-card border shadow-sm overflow-hidden">
+          <SectionHeader id="profile" title="Profile" subtitle="Manage your account details and privacy." />
+          {!isClosed("profile") && (
+          <div className="px-4 py-4 flex flex-col gap-4 border-t border-(--surface-border)">
+          {user.isSuccess && user.data?.lastLoggedIn && (
+            <span className="text-xs text-muted pt-1">
+              Last logged in: {new Date(user.data.lastLoggedIn).toLocaleString()}
+            </span>
+          )}
           <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleProfileSubmit}>
             <label className="flex flex-col gap-1 text-sm text-primary">
               First name
@@ -394,7 +426,7 @@ export default function SettingsPage() {
                 type="text"
                 value={profileForm.first}
                 onChange={(e) => setProfileForm({ ...profileForm, first: e.target.value })}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
+                className="rounded-lg border border-(--surface-border) bg-silver-200 dark:bg-vulcan-950 px-3 py-2 text-sm text-primary focus:border-accent-blue focus:outline-hidden"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm text-primary">
@@ -403,7 +435,7 @@ export default function SettingsPage() {
                 type="text"
                 value={profileForm.last}
                 onChange={(e) => setProfileForm({ ...profileForm, last: e.target.value })}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
+                className="rounded-lg border border-(--surface-border) bg-silver-200 dark:bg-vulcan-950 px-3 py-2 text-sm text-primary focus:border-accent-blue focus:outline-hidden"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm text-primary md:col-span-2">
@@ -412,10 +444,10 @@ export default function SettingsPage() {
                 type="email"
                 value={profileForm.email}
                 onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
+                className="rounded-lg border border-(--surface-border) bg-silver-200 dark:bg-vulcan-950 px-3 py-2 text-sm text-primary focus:border-accent-blue focus:outline-hidden"
               />
             </label>
-            <div className="flex items-center gap-2 md:col-span-2">
+            <div className="flex flex-wrap items-center gap-2 md:col-span-2">
               <button
                 type="submit"
                 className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
@@ -423,70 +455,82 @@ export default function SettingsPage() {
               >
                 {updateProfile.isPending ? "Saving..." : "Save changes"}
               </button>
+              <button
+                type="button"
+                onClick={() => { setShowChangePassword(true); setPasswordMessage(""); }}
+                className="rounded-lg border border-(--surface-border) bg-silver-200 dark:bg-vulcan-800 px-3 py-2 text-sm font-semibold text-primary hover:-translate-y-px transition"
+              >
+                Change password
+              </button>
               {profileMessage && <span className="text-sm text-muted">{profileMessage}</span>}
             </div>
           </form>
-          <div className="rounded-xl border border-slate-200/80 p-3 dark:border-slate-800/80 dark:bg-slate-900/40">
-            <button
-              type="button"
-              onClick={() => setShowChangePassword((prev) => !prev)}
-              className="flex w-full items-center justify-between text-left"
-            >
-              <h3 className="text-sm font-semibold text-primary">Change password</h3>
-              <span className="text-xs font-semibold text-accent-blue">
-                {showChangePassword ? "Hide" : "Show"}
-              </span>
-            </button>
 
-            {showChangePassword && (
-              <form className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3" onSubmit={handlePasswordSubmit}>
-                <label className="flex flex-col gap-1 text-sm text-primary">
-                  Current
-                  <input
-                    type="password"
-                    value={passwordForm.current}
-                    onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
-                  />
-                </label>
-                <label className="flex flex-col gap-1 text-sm text-primary">
-                  New
-                  <input
-                    type="password"
-                    value={passwordForm.next}
-                    onChange={(e) => setPasswordForm({ ...passwordForm, next: e.target.value })}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
-                  />
-                </label>
-                <label className="flex flex-col gap-1 text-sm text-primary">
-                  Confirm
-                  <input
-                    type="password"
-                    value={passwordForm.confirm}
-                    onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
-                  />
-                </label>
-                <div className="flex items-center gap-2 md:col-span-3">
+          {showChangePassword && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs px-4"
+              onClick={(e) => { if (e.target === e.currentTarget) { setShowChangePassword(false); setPasswordMessage(""); } }}
+            >
+              <div className="w-full max-w-md rounded-2xl surface-card border shadow-2xl overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-(--surface-border)">
+                  <h3 className="text-base font-semibold text-primary">Change password</h3>
                   <button
-                    type="submit"
-                    className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
-                    disabled={changePassword.isPending}
+                    type="button"
+                    onClick={() => { setShowChangePassword(false); setPasswordMessage(""); }}
+                    className="rounded-lg p-1.5 text-muted transition hover:text-primary hover:bg-black/5 dark:hover:bg-white/10"
                   >
-                    {changePassword.isPending ? "Updating..." : "Update password"}
+                    <XMarkIcon className="h-5 w-5 brightness-0 invert" />
                   </button>
-                  {passwordMessage && <span className="text-sm text-muted">{passwordMessage}</span>}
                 </div>
-              </form>
-            )}
-          </div>
-          <div className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-3 dark:border-slate-800/80 dark:bg-slate-900/50">
-            <h3 className="text-sm font-semibold text-primary mb-2 dark:text-white">Privacy</h3>
+                <form className="flex flex-col gap-4 p-5" onSubmit={async (e) => { await handlePasswordSubmit(e); if (!passwordMessage) setShowChangePassword(false); }}>
+                  <label className="flex flex-col gap-1 text-sm text-primary">
+                    Current password
+                    <input
+                      type="password"
+                      value={passwordForm.current}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
+                      className="rounded-lg border border-(--surface-border) bg-silver-200 dark:bg-vulcan-950 px-3 py-2 text-sm text-primary focus:border-accent-blue focus:outline-hidden"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1 text-sm text-primary">
+                    New password
+                    <input
+                      type="password"
+                      value={passwordForm.next}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, next: e.target.value })}
+                      className="rounded-lg border border-(--surface-border) bg-silver-200 dark:bg-vulcan-950 px-3 py-2 text-sm text-primary focus:border-accent-blue focus:outline-hidden"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1 text-sm text-primary">
+                    Confirm new password
+                    <input
+                      type="password"
+                      value={passwordForm.confirm}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
+                      className="rounded-lg border border-(--surface-border) bg-silver-200 dark:bg-vulcan-950 px-3 py-2 text-sm text-primary focus:border-accent-blue focus:outline-hidden"
+                    />
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                      disabled={changePassword.isPending}
+                    >
+                      {changePassword.isPending ? "Updating..." : "Update password"}
+                    </button>
+                    {passwordMessage && <span className="text-sm text-muted">{passwordMessage}</span>}
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+          <div>
+            <h3 className="text-sm font-semibold text-primary mb-2">Privacy</h3>
             <div className="flex flex-wrap gap-3 items-center">
               <button
                 type="button"
                 onClick={handleDownloadData}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-primary shadow-xs hover:-translate-y-px transition dark:border-slate-600 dark:bg-slate-900 dark:text-white"
+                className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
                 disabled={exportUserData.isPending}
               >
                 {exportUserData.isPending ? "Preparing..." : "Download my data"}
@@ -497,7 +541,7 @@ export default function SettingsPage() {
                   setShowDeleteConfirm((prev) => !prev);
                   setDataMessage("");
                 }}
-                className="rounded-lg border border-red-400 bg-white px-3 py-2 text-sm font-semibold text-red-700 shadow-xs hover:-translate-y-px transition dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-100"
+                className="rounded-lg bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:-translate-y-px transition"
               >
                 {showDeleteConfirm ? "Cancel" : "Confirm deletion"}
               </button>
@@ -513,7 +557,7 @@ export default function SettingsPage() {
                       value={deleteInput}
                       onChange={(e) => setDeleteInput(e.target.value)}
                       placeholder="DELETE"
-                      className="w-full rounded-lg border border-red-300 bg-white px-2 py-2 text-sm shadow-inner focus:border-red-500 focus:outline-hidden dark:border-red-500/60 dark:bg-slate-900 dark:text-white"
+                      className="w-full rounded-lg border border-red-300 bg-silver-200 px-2 py-2 text-sm focus:border-red-500 focus:outline-hidden dark:border-red-500/60 dark:bg-vulcan-950 dark:text-white"
                     />
                     <button
                       type="button"
@@ -529,64 +573,72 @@ export default function SettingsPage() {
               {dataMessage && <span className="text-sm text-muted">{dataMessage}</span>}
             </div>
           </div>
+          </div>
+          )}
         </div>
 
-        <div className="rounded-2xl surface-card border ring-1 ring-accent-blue/10 p-4 flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col gap-1">
-              <h2 className="text-lg font-semibold text-primary">Appearance</h2>
-              <p className="text-sm text-muted">Choose light, dark, or follow your device.</p>
-            </div>
-            <span className="text-xs rounded-full bg-accent-blue-50 px-2 py-1 text-accent-blue-700 dark:bg-[rgba(48,122,207,0.14)] dark:text-primary">
-              {(appState?.theme ?? "auto") === "auto" ? "Automatic" : (appState?.theme ?? "Light")}
-            </span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {[
-              { id: "light", label: "Light", desc: "Bright surfaces" },
-              { id: "dark", label: "Dark", desc: "Dimmed, low-glare" },
-              { id: "auto", label: "Auto", desc: "Match device" },
-            ].map((opt) => {
-              const isActive = (appState?.theme ?? "auto") === opt.id;
-              return (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => setTheme(opt.id as "light" | "dark" | "auto")}
-                  className={`flex items-center gap-3 rounded-2xl border p-3 text-left transition shadow-xs ${
-                    isActive
-                      ? "border-accent-blue/50 ring-1 ring-accent-blue/30 shadow-md"
-                      : "border-slate-200/70 dark:border-slate-600/50 hover:border-accent-blue/40"
-                  }`}
-                >
-                  <span
-                    className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border ${
-                      opt.id === "light"
-                        ? "bg-linear-to-br from-white to-slate-100 text-slate-700"
-                        : opt.id === "dark"
-                          ? "bg-linear-to-br from-slate-800 to-slate-900 text-white"
-                          : "bg-linear-to-br from-slate-200 to-slate-800 text-white"
-                    } ${isActive ? "border-accent-blue/40" : "border-transparent"}`}
+        <div className="flex items-center gap-3 px-1 pt-4">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-muted shrink-0">Preferences</span>
+          <div className="flex-1 border-t border-(--surface-border)" />
+        </div>
+
+        <div className="rounded-2xl surface-card border shadow-sm overflow-hidden">
+          <SectionHeader
+            id="appearance"
+            title="Appearance"
+            subtitle="Choose light, dark, or follow your device."
+            badge={(appState?.theme ?? "auto") === "auto" ? "Auto" : (appState?.theme ?? "Light")}
+          />
+          {!isClosed("appearance") && (
+          <div className="px-4 py-4 border-t border-(--surface-border)">
+            <div className="inline-flex items-center gap-1 rounded-xl bg-silver-200 dark:bg-vulcan-900 p-1">
+              {([
+                { id: "light", label: "Light", Icon: SunIcon },
+                { id: "dark",  label: "Dark",  Icon: MoonIcon },
+                { id: "auto",  label: "Auto",  Icon: ComputerDesktopIcon },
+              ] as const).map(({ id, label, Icon }) => {
+                const isActive = (appState?.theme ?? "auto") === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    title={label}
+                    onClick={() => setTheme(id)}
+                    className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition ${
+                      isActive
+                        ? "bg-accent-blue text-white shadow-xs shadow-accent-blue/30"
+                        : "text-muted hover:text-primary"
+                    }`}
                   >
-                    {opt.id === "auto" ? "A" : opt.label[0]}
-                  </span>
-                  <span className="flex flex-col">
-                    <span className="text-sm font-semibold text-primary">{opt.label}</span>
-                    <span className="text-xs text-muted">{opt.desc}</span>
-                  </span>
-                </button>
-              );
-            })}
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
-        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-          <ServerNotificationSettings />
+          )}
         </div>
 
-        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-          <div className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold text-slate-900">Feedback</h2>
-            <p className="text-sm text-slate-600">Share a quick rating or leave us a note.</p>
+        <div className="rounded-2xl surface-card border shadow-sm overflow-hidden">
+          <SectionHeader id="notifications" title="Notifications" subtitle="Configure reminders and push alerts." />
+          {!isClosed("notifications") && (
+          <div className="px-4 py-4 border-t border-(--surface-border)">
+            <ServerNotificationSettings />
+          </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-3 px-1 pt-4">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-muted shrink-0">Tools</span>
+          <div className="flex-1 border-t border-(--surface-border)" />
+        </div>
+
+        <div className="rounded-2xl surface-card border shadow-sm overflow-hidden">
+          <SectionHeader id="feedback" title="Feedback" subtitle="Share a rating or leave us a note." />
+          {!isClosed("feedback") && (
+          <div className="px-4 py-4 flex flex-col gap-3 border-t border-(--surface-border)">
+          <div className="flex flex-col gap-3 pt-1">
             <form className="flex flex-col gap-3" onSubmit={submitReview}>
               <div className="flex flex-wrap items-center gap-3">
                 <label className="text-sm font-semibold text-primary">Rating</label>
@@ -617,7 +669,7 @@ export default function SettingsPage() {
                   onChange={(e) => setReviewMessage(e.target.value)}
                   rows={3}
                   placeholder="What’s working well? What should we improve?"
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden dark:border-slate-700 dark:bg-slate-900/70"
+                  className="w-full rounded-lg border border-(--surface-border) bg-silver-200 dark:bg-vulcan-950 px-3 py-2 text-sm text-primary focus:border-accent-blue focus:outline-hidden"
                 />
               </label>
               <div className="flex items-center gap-2">
@@ -635,7 +687,7 @@ export default function SettingsPage() {
               <span className="text-xs font-semibold text-primary">Prefer email?</span>
               <button
                 type="button"
-                className="inline-flex w-fit items-center gap-2 rounded-lg border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
+                className="inline-flex w-fit items-center gap-2 rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition"
                 onClick={() => window.open(`mailto:${SUPPORT_EMAIL}?subject=TidalTask%20Feedback`, "_self")}
               >
                 <span className="text-lg">✉️</span>
@@ -643,37 +695,33 @@ export default function SettingsPage() {
               </button>
             </div>
           </div>
+          </div>
+          )}
         </div>
 
-        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-          <div className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold text-slate-900">API Keys</h2>
-            <p className="text-sm text-slate-600">
-              Store integration keys locally on this device. Use the same name to overwrite an existing key.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <label className="flex flex-col gap-1 text-sm text-primary">
-                Name
-                <input
-                  type="text"
-                  value={apiKeyName}
-                  onChange={(e) => setApiKeyName(e.target.value)}
-                  placeholder="OpenAI, Slack, etc."
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-accent-blue focus:outline-none dark:border-slate-700 dark:bg-slate-900/70"
-                />
-              </label>
-              <div className="flex items-center gap-2 md:col-span-3">
-                <button
-                  type="button"
-                  onClick={handleGenerateApiKey}
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:-translate-y-px transition dark:border-slate-700 dark:bg-slate-900/70 dark:text-white"
-                  disabled={generateApiKey.isPending || updateApiKeys.isPending}
-                >
-                  {generateApiKey.isPending ? "Generating..." : "Generate key"}
-                </button>
-                {apiKeyMessage && <span className="text-sm text-muted">{apiKeyMessage}</span>}
-              </div>
+        <div className="rounded-2xl surface-card border shadow-sm overflow-hidden">
+          <SectionHeader id="apikeys" title="API Keys" subtitle="Store integration keys for this device." />
+          {!isClosed("apikeys") && (
+          <div className="px-4 py-4 flex flex-col gap-3 border-t border-(--surface-border)">
+          <div className="flex flex-col gap-3 pt-1">
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={apiKeyName}
+                onChange={(e) => setApiKeyName(e.target.value)}
+                placeholder="Key name (e.g. OpenAI)"
+                className="flex-1 rounded-lg border border-(--surface-border) bg-silver-200 dark:bg-vulcan-950 px-3 py-2 text-sm text-primary focus:border-accent-blue focus:outline-hidden"
+              />
+              <button
+                type="button"
+                onClick={handleGenerateApiKey}
+                className="shrink-0 rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
+                disabled={generateApiKey.isPending || updateApiKeys.isPending}
+              >
+                {generateApiKey.isPending ? "Generating..." : "Generate key"}
+              </button>
             </div>
+            {apiKeyMessage && <span className="text-sm text-muted">{apiKeyMessage}</span>}
             {showApiKeyDialog && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
                 <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800">
@@ -684,7 +732,7 @@ export default function SettingsPage() {
                         This key is shown once. Copy it now and store it somewhere safe.
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono text-slate-800 break-all dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
+                    <div className="rounded-lg surface-card border px-3 py-2 text-sm font-mono text-primary break-all">
                       {apiKeyValue}
                     </div>
                     <div className="flex items-center gap-2">
@@ -698,7 +746,7 @@ export default function SettingsPage() {
                       <button
                         type="button"
                         onClick={closeApiKeyDialog}
-                        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:-translate-y-px transition dark:border-slate-700 dark:bg-slate-900/70 dark:text-white"
+                        className="rounded-lg bg-accent-blue px-3 py-2 text-sm font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition disabled:opacity-70"
                       >
                         Done
                       </button>
@@ -713,7 +761,7 @@ export default function SettingsPage() {
                 {Object.entries(tempSettings.apiKeys).map(([name, value]) => (
                   <div
                     key={name}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-2 text-sm dark:border-slate-700/60 dark:bg-slate-900/50"
+                    className="flex items-center justify-between gap-3 rounded-xl bg-silver-200 dark:bg-vulcan-950 px-3 py-2 text-sm"
                   >
                     <div className="flex min-w-0 flex-1 flex-col">
                       <span className="font-semibold text-primary truncate">{name}</span>
@@ -722,7 +770,7 @@ export default function SettingsPage() {
                     <button
                       type="button"
                       onClick={() => handleRemoveApiKey(name)}
-                      className="flex-shrink-0 rounded-lg border border-red-400 bg-white px-3 py-1 text-xs font-semibold text-red-700 shadow-sm hover:-translate-y-px transition dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-100"
+                      className="shrink-0 rounded-lg bg-red-500 px-3 py-1 text-xs font-semibold text-white shadow-xs hover:-translate-y-px transition"
                     >
                       Remove
                     </button>
@@ -730,7 +778,7 @@ export default function SettingsPage() {
                 ))}
               </div>
             )}
-            <div className="flex flex-col gap-2 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-3 text-sm dark:border-slate-700/60 dark:bg-slate-900/50">
+            <div className="flex flex-col gap-2 text-sm">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex flex-col">
                   <span className="font-semibold text-primary">Siri integration</span>
@@ -739,7 +787,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={handleEnableSiri}
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-primary shadow-sm hover:-translate-y-px transition dark:border-slate-700 dark:bg-slate-900/70 dark:text-white"
+                  className="rounded-lg bg-accent-blue px-3 py-2 text-xs font-semibold text-white shadow-xs shadow-accent-blue/30 hover:-translate-y-px transition"
                 >
                   Enable Siri
                 </button>
@@ -747,117 +795,121 @@ export default function SettingsPage() {
               {siriMessage && <span className="text-xs text-muted">{siriMessage}</span>}
             </div>
           </div>
-        </div>
-
-        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-          <div className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold text-slate-900">Delete Completed Tasks</h2>
-            <p className="text-sm text-slate-600">
-              Remove completed tasks older than a selected window.
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              <label className="text-sm font-semibold text-slate-700">Interval</label>
-              <select
-                className="rounded-lg border border-accent-blue/30 bg-white px-2 py-1 text-sm shadow-inner focus:border-accent-blue focus:outline-hidden"
-                value={cleanupInterval}
-                onChange={(e) => setCleanupInterval(e.target.value)}
-              >
-                <option value="7">Older than 7 days</option>
-                <option value="30">Older than 30 days</option>
-                <option value="90">Older than 90 days</option>
-                <option value="all">All completed tasks</option>
-              </select>
-              <span className="text-sm text-slate-600">
-                {getCompletedTasks().length} ready to delete
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                className="rounded-lg bg-red-500 text-white px-3 py-2 text-sm font-semibold shadow-xs hover:-translate-y-px transition disabled:opacity-60"
-                onClick={handleCleanup}
-                disabled={tasks.isLoading || tasks.isFetching}
-              >
-                Delete completed tasks
-              </button>
-              {tasks.isLoading && <span className="text-sm text-slate-500">Loading tasks...</span>}
-            </div>
-            {cleanupStatus && <span className="text-sm text-slate-600">{cleanupStatus}</span>}
           </div>
+          )}
         </div>
 
-        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-          <div className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold text-slate-900">Follow Ottegi</h2>
-            <p className="text-sm text-slate-600">Stay up to date with releases and progress.</p>
-            <div className="flex flex-wrap gap-3">
-              <a
-                href="https://discord.gg/qeKgAKVhXa"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
-                aria-label="Ottegi on Discord"
-              >
-                <img src={discordIcon} alt="Discord logo" className="h-5 w-5" />
-              </a>
-              <a
-                href="https://twitter.com/OttegiLLC"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
-                aria-label="Ottegi on X"
-              >
-                <img src={xIcon} alt="X logo" className="h-5 w-5 dark:invert" />
-              </a>
-              <a
-                href="https://www.instagram.com/OttegiLLC"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
-                aria-label="Ottegi on Instagram"
-              >
-                <img src={instagramIcon} alt="Instagram logo" className="h-5 w-5 dark:invert" />
-              </a>
-              <a
-                href="https://www.linkedin.com/company/ottegi"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
-                aria-label="Ottegi on LinkedIn"
-              >
-                <span className="text-sm font-semibold">in</span>
-              </a>
-              <a
-                href="https://www.facebook.com/OttegiLLC"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-accent-blue/30 bg-white px-3 py-2 text-sm font-semibold text-accent-blue shadow-xs hover:-translate-y-px transition"
-                aria-label="Ottegi on Facebook"
-              >
-                <img src={facebookIcon} alt="Facebook logo" className="h-5 w-5" />
-              </a>
-            </div>
+        <div className="rounded-2xl surface-card border shadow-sm overflow-hidden">
+          <SectionHeader id="data" title="Delete Completed Tasks" subtitle="Remove completed tasks older than a selected window." />
+          {!isClosed("data") && (
+          <div className="px-4 py-4 flex flex-col gap-3 border-t border-(--surface-border)">
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            <select
+              className="rounded-lg border border-(--surface-border) bg-silver-200 dark:bg-vulcan-950 px-2 py-2 text-sm text-primary focus:border-accent-blue focus:outline-hidden"
+              value={cleanupInterval}
+              onChange={(e) => setCleanupInterval(e.target.value)}
+            >
+              <option value="7">Older than 7 days</option>
+              <option value="30">Older than 30 days</option>
+              <option value="90">Older than 90 days</option>
+              <option value="all">All completed tasks</option>
+            </select>
+            <button
+              type="button"
+              className="rounded-lg bg-red-500 text-white px-3 py-2 text-sm font-semibold shadow-xs hover:-translate-y-px transition disabled:opacity-60"
+              onClick={handleCleanup}
+              disabled={tasks.isLoading || tasks.isFetching}
+            >
+              Delete completed tasks
+            </button>
+            <span className="text-sm text-muted">
+              {tasks.isLoading ? "Loading..." : `${getCompletedTasks().length} ready to delete`}
+            </span>
           </div>
+          {cleanupStatus && <span className="text-sm text-muted">{cleanupStatus}</span>}
+          </div>
+          )}
         </div>
 
-        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
+        <div className="flex items-center gap-3 px-1 pt-4">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-muted shrink-0">Community</span>
+          <div className="flex-1 border-t border-(--surface-border)" />
+        </div>
+
+        <div className="rounded-2xl surface-card border shadow-sm overflow-hidden">
+          <SectionHeader id="community" title="Follow Ottegi" subtitle="Stay up to date with releases and progress." />
+          {!isClosed("community") && (
+          <div className="px-4 py-4 flex flex-col gap-4 border-t border-(--surface-border)">
+          <div className="flex flex-wrap gap-3 pt-1">
+            <a
+              href="https://discord.gg/qeKgAKVhXa"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-silver-300 dark:bg-vulcan-700 px-3 py-2 text-sm font-semibold text-primary shadow-xs hover:-translate-y-px transition"
+              aria-label="Ottegi on Discord"
+            >
+              <img src={discordIcon} alt="Discord logo" className="h-5 w-5 brightness-0 invert" />
+            </a>
+            <a
+              href="https://twitter.com/OttegiLLC"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-silver-300 dark:bg-vulcan-700 px-3 py-2 text-sm font-semibold text-primary shadow-xs hover:-translate-y-px transition"
+              aria-label="Ottegi on X"
+            >
+              <img src={xIcon} alt="X logo" className="h-5 w-5 brightness-0 invert" />
+            </a>
+            <a
+              href="https://www.instagram.com/OttegiLLC"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-silver-300 dark:bg-vulcan-700 px-3 py-2 text-sm font-semibold text-primary shadow-xs hover:-translate-y-px transition"
+              aria-label="Ottegi on Instagram"
+            >
+              <img src={instagramIcon} alt="Instagram logo" className="h-5 w-5 brightness-0 invert" />
+            </a>
+            <a
+              href="https://www.linkedin.com/company/ottegi"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-silver-300 dark:bg-vulcan-700 px-3 py-2 text-sm font-semibold text-primary shadow-xs hover:-translate-y-px transition"
+              aria-label="Ottegi on LinkedIn"
+            >
+              <span className="text-sm font-semibold text-white">in</span>
+            </a>
+            <a
+              href="https://www.facebook.com/OttegiLLC"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-silver-300 dark:bg-vulcan-700 px-3 py-2 text-sm font-semibold text-primary shadow-xs hover:-translate-y-px transition"
+              aria-label="Ottegi on Facebook"
+            >
+              <img src={facebookIcon} alt="Facebook logo" className="h-5 w-5 brightness-0 invert" />
+            </a>
+          </div>
           <WhatsNew />
+          </div>
+          )}
         </div>
 
-        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-          <UserLogin />
+        <div className="flex items-center gap-3 px-1 pt-4">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-muted shrink-0">Account</span>
+          <div className="flex-1 border-t border-(--surface-border)" />
+        </div>
+
+        <div className="rounded-2xl surface-card border shadow-sm overflow-hidden">
+          <SectionHeader id="account" title="Session" subtitle="Manage your active login session." />
+          {!isClosed("account") && (
+          <div className="px-4 py-4 border-t border-(--surface-border)">
+            <UserLogin />
+          </div>
+          )}
         </div>
 
         <DeveloperSettings>
-          <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-            <ControllerUser />
-          </div>
-          <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-            <AnnouncementManager />
-          </div>
-          <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
-            <DeveloperNotificationSender />
-          </div>
+          <ControllerUser />
+          <AnnouncementManager />
+          <DeveloperNotificationSender />
         </DeveloperSettings>
       </div>
     </div>
