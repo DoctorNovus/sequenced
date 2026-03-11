@@ -105,6 +105,7 @@ platform :ios do
 
   desc "Build, upload, wait for processing, then submit the new build for App Review"
   lane :release_app_store do
+    setup_ci if is_ci
     api_key = asc_api_key
     app_identifier = asc_app_identifier
     version_build = next_build_for_current_version(
