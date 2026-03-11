@@ -39,7 +39,8 @@ jobs:
             BUILD_FRONTEND=false
             BUILD_API=false
 
-            if printf '%s\n' "$CHANGED_FILES" | grep -Eq '^(package\.json|package-lock\.json|packages/app/|packages/app/Dockerfile)'; then
+            FRONTEND_APP_CHANGED=$(printf '%s\n' "$CHANGED_FILES" | grep -E '^packages/app/' | grep -Ev '^packages/app/(ios|android)/' || true)
+            if [ -n "$FRONTEND_APP_CHANGED" ] || printf '%s\n' "$CHANGED_FILES" | grep -Eq '^(package\.json|package-lock\.json|packages/app/Dockerfile)'; then
               BUILD_FRONTEND=true
             fi
             if printf '%s\n' "$CHANGED_FILES" | grep -Eq '^(package\.json|package-lock\.json|packages/api/|packages/api/Dockerfile)'; then

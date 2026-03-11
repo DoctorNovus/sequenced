@@ -36,7 +36,7 @@ export default function HomeIntroduction({ skeleton, user, today }: Introduction
                 </div>
                 <a
                     href={`/calendar?scope=today&view=week`}
-                    className="inline-flex w-fit items-center gap-2 rounded-2xl bg-white/12 text-base font-semibold text-white"
+                    className="inline-flex w-fit items-center gap-2 rounded-2xl bg-white/12 px-3 py-1.5 text-base font-semibold text-white"
                 >
                     <span>{getNameByDate(activeDay.getDay() as DaysAsNumbers)},</span>
                     <span>{getNameByMonth(activeDay.getMonth() as MonthsAsNumbers)} {getDateDD(activeDay)}</span>

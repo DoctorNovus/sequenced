@@ -43,6 +43,17 @@ platform :ios do
     ENV.fetch("APP_IDENTIFIER", "com.ottegi.sequenced-app")
   end
 
+  private_lane :build_changelog do
+    notes = ENV["ASC_CHANGELOG"].to_s.strip
+    if notes.empty?
+      last_tag = `git describe --tags --abbrev=0 2>/dev/null`.strip
+      range = last_tag.empty? ? "-15" : "#{last_tag}..HEAD"
+      notes = `git log #{range} --pretty=format:"• %s" --no-merges`.strip
+      notes = "Bug fixes and improvements." if notes.empty?
+    end
+    notes
+  end
+
   private_lane :next_build_for_current_version do |options|
     api_key = options[:api_key]
     app_identifier = options[:app_identifier]
@@ -160,12 +171,15 @@ platform :ios do
       notify_external_testers: false
     )
 
+    changelog = build_changelog
+
     upload_to_app_store(
       api_key: api_key,
       app_identifier: app_identifier,
       app_version: version,
       build_number: next_build.to_s,
-      skip_metadata: true,
+      skip_metadata: false,
+      release_notes: { "en-US" => changelog },
       skip_screenshots: true,
       skip_binary_upload: true,
       submit_for_review: true,

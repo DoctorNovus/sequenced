@@ -10,6 +10,7 @@ import { Logger } from "@/utils/logger";
 import DeveloperSettings from "./(Settings)/DeveloperSettings";
 import ControllerUser from "./(Settings)/ControlledUser";
 import AnnouncementManager from "./(Settings)/AnnouncementManager";
+import WhatsNew from "./(Settings)/WhatsNew";
 import ServerNotificationSettings from "./(Settings)/ServerNotificationSettings";
 import DeveloperNotificationSender from "./(Settings)/DeveloperNotificationSender";
 import { useTasks, useDeleteTask } from "@/hooks/tasks";
@@ -683,7 +684,7 @@ export default function SettingsPage() {
                         This key is shown once. Copy it now and store it somewhere safe.
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono text-slate-800 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
+                    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono text-slate-800 break-all dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
                       {apiKeyValue}
                     </div>
                     <div className="flex items-center gap-2">
@@ -712,16 +713,16 @@ export default function SettingsPage() {
                 {Object.entries(tempSettings.apiKeys).map(([name, value]) => (
                   <div
                     key={name}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-2 text-sm dark:border-slate-700/60 dark:bg-slate-900/50"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-2 text-sm dark:border-slate-700/60 dark:bg-slate-900/50"
                   >
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-primary">{name}</span>
-                      <span className="text-xs text-muted">{maskApiKey(value)}</span>
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <span className="font-semibold text-primary truncate">{name}</span>
+                      <span className="text-xs text-muted truncate">{maskApiKey(value)}</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleRemoveApiKey(name)}
-                      className="rounded-lg border border-red-400 bg-white px-3 py-1 text-xs font-semibold text-red-700 shadow-sm hover:-translate-y-px transition dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-100"
+                      className="flex-shrink-0 rounded-lg border border-red-400 bg-white px-3 py-1 text-xs font-semibold text-red-700 shadow-sm hover:-translate-y-px transition dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-100"
                     >
                       Remove
                     </button>
@@ -837,6 +838,10 @@ export default function SettingsPage() {
               </a>
             </div>
           </div>
+        </div>
+
+        <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">
+          <WhatsNew />
         </div>
 
         <div className="rounded-2xl surface-card border shadow-md ring-1 ring-accent-blue/10 p-4">

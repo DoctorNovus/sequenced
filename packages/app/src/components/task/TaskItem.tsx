@@ -155,7 +155,7 @@ export function TaskItem({ skeleton, item, setIsInspecting, taskFilter, selectio
           <div className="w-full">
             <div className="w-full flex flex-row items-center justify-between">
               <TaskItemTitle text={item.title} />
-              {item.priority && item.priority > 0 && (
+              {!!item.priority && item.priority > 0 && (
                 <span className="ml-1 flex-shrink-0 text-xs font-bold text-red-500">
                   {"!".repeat(item.priority)}
                 </span>
