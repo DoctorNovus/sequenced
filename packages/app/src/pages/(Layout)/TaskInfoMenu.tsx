@@ -156,18 +156,6 @@ export default function TaskInfoMenu({
     }
   }
 
-  const changeAppDate = (date: Date) => {
-    setTempData({
-      ...tempData,
-      date
-    });
-
-    setAppData({
-      ...appData,
-      activeDate: date,
-    });
-  };
-
   const createNotification = async (task: Task) => {
     if (!task || task.reminder == "") return;
 
@@ -377,7 +365,6 @@ export default function TaskInfoMenu({
                   setQuickTasksInput={setQuickTasksInput}
                   isQuickAdd={isQuickAdd}
                   setIsQuickAdd={setIsQuickAdd}
-                  changeAppDate={changeAppDate}
                   appData={appData}
                   setAppData={setAppData}
                   validationError={validationError}
