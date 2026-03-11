@@ -2,7 +2,7 @@
   "name": "@tidaltask_app/app",
   "type": "module",
   "private": true,
-  "version": "1.0.9",
+  "version": "3.1.1",
   "engines": {
     "node": ">=22",
     "npm": ">=10"
@@ -27,7 +27,8 @@
     "run:android": "npx cap run android",
     "build:ios": "npm run build:full && npm run run:ios",
     "build:android": "npm run build:full && npm run run:android",
-    "resources": "capacitor-resources -p android,ios"
+    "resources": "capacitor-resources -p android,ios",
+    "bump-version": "node scripts/bump-version.cjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.0.0",
