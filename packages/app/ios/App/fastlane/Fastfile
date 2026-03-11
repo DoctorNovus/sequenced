@@ -20,7 +20,7 @@ platform :ios do
       UI.user_error!("Missing required App Store Connect credentials: #{missing.join(', ')}")
     end
 
-    if !expanded_key_path.empty? && !File.exist?(expanded_key_path)
+    if key_content.to_s.empty? && !expanded_key_path.empty? && !File.exist?(expanded_key_path)
       UI.user_error!("ASC_KEY_PATH does not exist: #{expanded_key_path}")
     end
 
@@ -129,7 +129,12 @@ platform :ios do
       export_method: "app-store",
       clean: true,
       destination: "generic/platform=iOS",
-      sdk: "iphoneos"
+      sdk: "iphoneos",
+      export_options: {
+        signingStyle: "automatic",
+        method: "app-store-connect"
+      },
+      xcargs: "-allowProvisioningUpdates"
     )
 
     upload_to_testflight(
