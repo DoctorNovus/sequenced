@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:docker": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "build:full": "npm run build && npm run sync",
@@ -17,6 +18,9 @@
     "host": "vite --host",
     "open:ios": "npx cap open ios",
     "open:ios:full": "npm run build:full && npm run open:ios",
+    "fastlane:setup": "cd ios/App && bundle check --path vendor/bundle || bundle install --path vendor/bundle",
+    "upload:ios:asc": "bash scripts/ios-asc.sh upload_app_store_connect",
+    "release:ios:asc": "bash scripts/ios-asc.sh release_app_store",
     "open:android": "npx cap open android",
     "open:android:full": "npm run build:full && npm run open:android",
     "run:ios": "npx cap run ios",

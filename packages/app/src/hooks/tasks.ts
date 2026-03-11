@@ -29,6 +29,7 @@ export interface Task {
   users?: any[];
   tags: string[];
   group?: string;
+  groupPublic?: boolean;
 }
 
 const normalizeTags = (tags?: Array<string | { title?: string; color?: string }>): string[] | undefined => {
@@ -54,8 +55,15 @@ const normalizeTaskFromApi = (task: any): Task => ({
 const serializeTask = (task: Partial<Task>) => {
   const data: any = { ...task };
   if (task.date instanceof Date) {
-    const offsetDate = new Date(task.date.getTime() - task.date.getTimezoneOffset() * 60000);
-    data.date = formatDateTime(offsetDate);
+    // Send null for "no due date" tasks (epoch sentinel) so the backend stores null
+    // and we avoid 1969/1970 ghost dates from timezone-offset math.
+    if (task.date.getTime() <= 0) {
+      data.date = null;
+    } else {
+      // Send local time directly — no offset adjustment, which was double-applying
+      // the timezone and shifting the date 5-6 hours early for US timezones.
+      data.date = formatDateTime(task.date);
+    }
   }
   const tags = normalizeTags(task.tags);
   if (tags !== undefined) data.tags = tags;

@@ -1,6 +1,7 @@
 import { Application } from "@outwalk/firefly";
 import { ExpressPlatform } from "@outwalk/firefly/express";
 import { MongooseDatabase } from "@/_lib/mongoose";
+import { createTokenDocsModel, getDocsBaseUrl, renderTokenDocsHtml } from "@/docs/tokenDocs";
 import { rateLimit } from "express-rate-limit";
 import cors from "cors";
 import session from "express-session";
@@ -30,8 +31,72 @@ database.plugin(leanIdPlugin);
 
 /* setup the platform and global middleware */
 const platform = new ExpressPlatform();
-platform.use(cors({ origin: [appUrl, ], credentials: true }));
+const defaultAllowedOrigins = [
+    "https://dashboard.tidaltask.app",
+    "https://tidaltask.app",
+    "https://sequenced.ottegi.com",
+    "http://localhost:4173",
+    "http://localhost:5173",
+];
+
+const allowedOrigins = new Set([
+    ...defaultAllowedOrigins,
+    ...appUrl.split(",").map((origin) => origin.trim()).filter(Boolean),
+]);
+
+const allowedOriginSuffixes = [
+    ".tidaltask.app",
+    ".sequenced.ottegi.com",
+];
+
+platform.use(cors({
+    credentials: true,
+    origin(origin, callback) {
+        if (!origin) {
+            callback(null, true);
+            return;
+        }
+
+        if (allowedOrigins.has(origin)) {
+            callback(null, true);
+            return;
+        }
+
+        try {
+            const url = new URL(origin);
+            const isHttps = url.protocol === "https:";
+            const hasAllowedSuffix = allowedOriginSuffixes.some((suffix) => url.hostname.endsWith(suffix));
+
+            if (isHttps && hasAllowedSuffix) {
+                callback(null, true);
+                return;
+            }
+        } catch {
+            // Ignore invalid origin values and fail closed below.
+        }
+
+        callback(new Error(`CORS blocked origin: ${origin}`));
+    },
+}));
 platform.set("trust proxy", 4);
+
+const sessionStore = MongoStore.create({
+    /* @ts-ignore - connect-mongo has a type conflict here that is safe to ignore */
+    client: MongooseDatabase.connection.getClient(),
+    collectionName: "session"
+});
+
+const baseTouch = sessionStore.touch.bind(sessionStore);
+sessionStore.touch = ((sid: string, sess: session.SessionData, callback?: any) => {
+    baseTouch(sid, sess, (err?: Error | null) => {
+        if (err?.message === "Unable to find the session to touch") {
+            callback?.();
+            return;
+        }
+
+        callback?.(err ?? undefined);
+    });
+}) as typeof sessionStore.touch;
 
 platform.use(session({
     name: "authorization",
@@ -39,11 +104,7 @@ platform.use(session({
     saveUninitialized: false,
     secret: sessionSecret,
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
-    store: MongoStore.create({
-        /* @ts-ignore - connect-mongo has a type conflict here that is safe to ignore */
-        client: MongooseDatabase.connection.getClient(),
-        collectionName: "session"
-    })
+    store: sessionStore
 }));
 
 platform.use(rateLimit({
@@ -53,6 +114,30 @@ platform.use(rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
 }));
+
+platform.use((req, res, next) => {
+    if (req.method !== "GET") {
+        next();
+        return;
+    }
+
+    if (req.path === "/docs" || req.path === "/docs/") {
+        const baseUrl = getDocsBaseUrl(req);
+        res
+            .status(200)
+            .type("html")
+            .send(renderTokenDocsHtml(baseUrl));
+        return;
+    }
+
+    if (req.path === "/docs.json") {
+        const baseUrl = getDocsBaseUrl(req);
+        res.status(200).json(createTokenDocsModel(baseUrl));
+        return;
+    }
+
+    next();
+});
 
 /* start the application */
 new Application({ platform }).listen();

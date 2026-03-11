@@ -4,6 +4,7 @@ import TaskInfoMenuUser from "./Shared/TaskInfoUser/TaskInfoMenuUser";
 import TaskInfoMenuTags from "./Shared/TaskInfoMenuTags";
 import TaskInfoMenuSelect from "./Shared/TaskInfoMenuSelect";
 
+
 interface MenuFieldsProps {
     type: string | undefined;
     isDeleting: boolean;
@@ -47,7 +48,12 @@ export default function MenuFields({
                                 type="checkbox"
                                 className="h-4 w-4"
                                 checked={isQuickAdd}
-                                onChange={(e) => setIsQuickAdd(e.target.checked)}
+                                onChange={(e) => {
+                                    setIsQuickAdd(e.target.checked);
+                                    if (e.target.checked) {
+                                        setTempData({ group: "", groupPublic: false });
+                                    }
+                                }}
                             />
                             Enable
                         </label>
@@ -64,11 +70,35 @@ export default function MenuFields({
                         />
                     )}
                     {isQuickAdd && (
-                        <TaskInfoMenuTags
-                            helperText="Tags will be applied to every task you add."
-                            tags={tempData.tags ?? []}
-                            onChange={(tags) => setTempData({ ...tempData, tags })}
-                        />
+                        <div className="flex flex-col gap-3">
+                            {/* Date & Time */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-xs font-semibold text-primary px-1">Date &amp; Time</label>
+                                <input
+                                    type="datetime-local"
+                                    className="text-sm px-3 py-2 rounded-xl border border-accent-blue/30 bg-white text-primary shadow-inner focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/30 focus:outline-hidden dark:bg-[rgba(15,23,42,0.85)] dark:border-accent-blue/40"
+                                    value={formatDateTime(tempData.date instanceof Date && tempData.date.getTime() > 0 ? tempData.date : new Date())}
+                                    onChange={(e) => setTempData({ date: new Date(e.target.value) })}
+                                />
+                            </div>
+
+                            {/* Group */}
+                            <TaskInfoMenuItem
+                                name="Group"
+                                value={tempData.group || ""}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                    setTempData({ group: e.target.value.toLowerCase() })
+                                }
+                                placeholder="Optional group label"
+                            />
+
+                            {/* Tags */}
+                            <TaskInfoMenuTags
+                                tags={tempData.tags ?? []}
+                                onChange={(tags) => setTempData({ tags })}
+                                helperText="Tags will be applied to every task you add."
+                            />
+                        </div>
                     )}
                     {isQuickAdd && validationError && (
                         <span className="px-1 text-sm font-semibold text-accent-red-500">
@@ -86,14 +116,27 @@ export default function MenuFields({
                             setTempData({ ...tempData, title: e.target.value })
                         }
                     />
-                    <TaskInfoMenuItem
-                        name="Group"
-                        value={tempData?.group || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setTempData({ ...tempData, group: e.target.value.toLowerCase() })
-                        }
-                        placeholder="Optional group label"
-                    />
+                    <div className="flex flex-col gap-1">
+                        <TaskInfoMenuItem
+                            name="Group"
+                            value={tempData?.group || ""}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setTempData({ ...tempData, group: e.target.value.toLowerCase() })
+                            }
+                            placeholder="Optional group label"
+                        />
+                        {tempData?.group?.trim() && (
+                            <label className="flex items-center gap-2 px-1 mt-1 cursor-pointer w-fit">
+                                <input
+                                    type="checkbox"
+                                    className="h-4 w-4 rounded"
+                                    checked={!!tempData.groupPublic}
+                                    onChange={(e) => setTempData({ ...tempData, groupPublic: e.target.checked })}
+                                />
+                                <span className="text-xs font-semibold text-muted">Team-wide</span>
+                            </label>
+                        )}
+                    </div>
                     {!isQuickAdd && validationError && (
                         <span className="px-1 text-sm font-semibold text-accent-red-500">
                             {validationError}
@@ -132,22 +175,16 @@ export default function MenuFields({
                         Repeating tasks can be completed once per due day; completion is tracked per occurrence.
                     </span>
 
-                    {tempData.date.getTime() != 0 && (
+                    {tempData.date.getTime() > 0 && (
                         <TaskInfoMenuItem
                             name="Due Date"
                             type="datetime-local"
                             value={formatDateTime(tempData.date)}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                changeAppDate(new Date(e.target.value));
-
-                                setAppData({
-                                    ...appData,
-                                    activeDate: new Date(e.target.value)
-                                });
-
+                                const newDate = new Date(e.target.value);
                                 setTempData({
                                     ...tempData,
-                                    date: new Date(e.target.value),
+                                    date: newDate,
                                 });
                             }}
                         />
@@ -158,7 +195,7 @@ export default function MenuFields({
                         <button
                             onClick={() => {
                                 const noDate = new Date(0);
-                                const isRemoving = tempData.date.getTime() != 0;
+                                const isRemoving = tempData.date.getTime() > 0;
 
                                 if (isRemoving) {
                                     setAppData({
@@ -185,13 +222,13 @@ export default function MenuFields({
                                     });
                                 }
                             }}
-                            className={`w-40 text-center rounded-xl px-3 py-2 text-sm font-semibold shadow-xs transition ${tempData.date.getTime() != 0
+                            className={`w-40 text-center rounded-xl px-3 py-2 text-sm font-semibold shadow-xs transition ${tempData.date.getTime() > 0
                                 ? "bg-accent-red-500 text-white hover:-translate-y-px"
                                 : "bg-accent-blue text-white hover:-translate-y-px"
                                 }`}
                         >
-                            {tempData.date.getTime() != 0 && "Remove Due Date"}
-                            {tempData.date.getTime() == 0 && "Add Due Date"}
+                            {tempData.date.getTime() > 0 && "Remove Due Date"}
+                            {tempData.date.getTime() <= 0 && "Add Due Date"}
                         </button>
                     </div>
 

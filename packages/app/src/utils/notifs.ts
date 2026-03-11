@@ -13,9 +13,52 @@ import { fetchData } from "./data";
 import { acknowledgeDeliveredNotifications, pullPendingServerNotifications } from "@/hooks/notifications";
 
 const FALLBACK_BODY = "Stay on track—open TidalTask to see what's due today.";
+const MAX_DELIVERED_SERVER_NOTIFICATION_IDS = 300;
+const NO_TASKS_DUE_SUPPRESSION_MS = 24 * 60 * 60 * 1000;
 
 const isWeb = () => Capacitor.getPlatform() === "web";
 const supportsWebNotifications = () => typeof Notification !== "undefined";
+
+function isNoTasksDueBody(body?: string): boolean {
+  if (!body) return false;
+  const normalized = body.trim().toLowerCase();
+  return (
+    /\bnothing\b.*\bdue today\b/.test(normalized) ||
+    /\bno tasks\b.*\bdue today\b/.test(normalized) ||
+    /\bnothing\b.*\bdue for today\b/.test(normalized)
+  );
+}
+
+async function filterSuppressedNotifications(
+  options: LocalNotificationSchema[]
+): Promise<LocalNotificationSchema[]> {
+  if (!options.length) return options;
+
+  const settings = await getSettings();
+  const now = Date.now();
+  const lastNoTasksDueAt = settings.lastNoTasksDueNotificationAt || 0;
+  let noTasksDueShown = false;
+
+  const allowed = options.filter((opt) => {
+    const body = typeof opt.body === "string" ? opt.body : "";
+    if (!isNoTasksDueBody(body)) return true;
+
+    const recentlyShown = now - lastNoTasksDueAt < NO_TASKS_DUE_SUPPRESSION_MS;
+    if (recentlyShown || noTasksDueShown) {
+      return false;
+    }
+
+    noTasksDueShown = true;
+    return true;
+  });
+
+  if (noTasksDueShown) {
+    settings.lastNoTasksDueNotificationAt = now;
+    await setSettings(settings);
+  }
+
+  return allowed;
+}
 
 export async function getTodayNotificationBody(): Promise<string> {
   try {
@@ -159,6 +202,11 @@ export async function requestPermissions(): Promise<PermissionStatus> {
 export async function scheduleNotification(
   ...options: LocalNotificationSchema[]
 ): Promise<ScheduleResult | undefined> {
+  const allowedOptions = await filterSuppressedNotifications(options);
+  if (!allowedOptions.length) {
+    return undefined;
+  }
+
   await setNotificationConfig();
 
   const checked = await checkPermissions();
@@ -169,7 +217,7 @@ export async function scheduleNotification(
   }
 
   if (isWeb() && supportsWebNotifications()) {
-    options.forEach((opt) => {
+    allowedOptions.forEach((opt) => {
       const delay =
         opt.schedule?.at instanceof Date
           ? Math.max(0, opt.schedule.at.getTime() - Date.now())
@@ -186,7 +234,7 @@ export async function scheduleNotification(
   }
 
   const notif = await LocalNotifications.schedule({
-    notifications: [...options],
+    notifications: [...allowedOptions],
   });
 
   return notif;
@@ -215,6 +263,21 @@ function hashNotificationId(value: string): number {
   return (normalized % 2147483646) + 1;
 }
 
+function getDeliveredServerNotificationIds(settings: Awaited<ReturnType<typeof getSettings>>): Set<string> {
+  return new Set((settings.deliveredServerNotificationIds || []).filter(Boolean));
+}
+
+async function markDeliveredServerNotificationIds(ids: string[]): Promise<void> {
+  if (!ids.length) return;
+
+  const settings = await getSettings();
+  const delivered = getDeliveredServerNotificationIds(settings);
+  ids.forEach((id) => delivered.add(id));
+
+  settings.deliveredServerNotificationIds = Array.from(delivered).slice(-MAX_DELIVERED_SERVER_NOTIFICATION_IDS);
+  await setSettings(settings);
+}
+
 export async function syncServerNotifications(): Promise<number> {
   const result = await syncServerNotificationsDetailed();
   return result.delivered;
@@ -232,6 +295,8 @@ export async function syncServerNotificationsDetailed(): Promise<{
       return { pending: 0, delivered: 0, permission: permission.display };
     }
 
+    const settings = await getSettings();
+    const alreadyDelivered = getDeliveredServerNotificationIds(settings);
     const permission = await checkPermissions();
     if (permission.display !== "granted") {
       Logger.logWarning("Notification permission is not granted; pending notifications were not acknowledged.");
@@ -240,6 +305,11 @@ export async function syncServerNotificationsDetailed(): Promise<{
 
     const deliveredIds: string[] = [];
     for (const item of pending) {
+      if (alreadyDelivered.has(item.id)) {
+        deliveredIds.push(item.id);
+        continue;
+      }
+
       const scheduled = await scheduleNotification({
         id: hashNotificationId(item.id),
         title: item.title || "TidalTask",
@@ -253,6 +323,7 @@ export async function syncServerNotificationsDetailed(): Promise<{
     }
 
     if (deliveredIds.length > 0) {
+      await markDeliveredServerNotificationIds(deliveredIds);
       await acknowledgeDeliveredNotifications(deliveredIds);
     }
 
