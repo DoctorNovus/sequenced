@@ -17,7 +17,7 @@ export default function TaskInfoMenuSelect({ name, value, onChange, options }: T
         <div className="flex flex-col gap-2">
           <label className="text-lg text-primary">{name}</label>
           <select
-            className="appearance-none w-full h-full text-base px-2 py-2 bg-white border border-accent-black-500 rounded-md text-primary overflow-x-hidden overflow-y-scroll hover:bg-accent-black-600 dark:bg-[rgba(15,23,42,0.7)]"
+            className="appearance-none w-full h-full text-base px-2 py-2 bg-silver-200 border border-accent-blue/20 rounded-xl text-primary overflow-x-hidden overflow-y-scroll dark:bg-vulcan-950"
             value={value}
             onChange={onChange}
           >

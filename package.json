@@ -15,6 +15,10 @@
     "build:api": "npm run buildx:init && docker buildx build --no-cache --platform linux/amd64 -t registry.digitalocean.com/tidaltask-registry/tidaltask-api:latest -f packages/api/Dockerfile --push .",
     "build:local": "npm run build:app:local && npm run build:api:local",
     "build:app:local": "docker build -t tidaltask-frontend:local -f packages/app/Dockerfile .",
-    "build:api:local": "docker build -t tidaltask-api:local -f packages/api/Dockerfile ."
+    "build:api:local": "docker build -t tidaltask-api:local -f packages/api/Dockerfile .",
+    "build:habitat": "habitat build"
+  },
+  "dependencies": {
+    "@outwalk/habitat": "file:outwalk-habitat-0.0.1.tgz"
   }
 }

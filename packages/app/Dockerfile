@@ -5,7 +5,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY packages/app/package*.json packages/app/
 COPY packages/api/package*.json packages/api/
-RUN npm ci --workspaces
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --workspaces
 
 COPY . .
 
