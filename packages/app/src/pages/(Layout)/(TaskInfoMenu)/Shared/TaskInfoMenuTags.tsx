@@ -65,7 +65,7 @@ export default function TaskInfoMenuTags({
           </button>
         )}
       </div>
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-accent-blue/20 bg-silver-200 p-2 shadow-inner focus-within:border-accent-blue dark:bg-vulcan-950">
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-accent-blue/20 bg-silver-200 p-2 shadow-inner focus-within:border-accent-blue dark:bg-[#253350]">
         {tags.length === 0 && (
           <span className="text-sm text-muted px-1">No tags yet</span>
         )}

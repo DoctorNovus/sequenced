@@ -20,7 +20,7 @@ export default function TaskInfoMenuItem({
       id={name.toLowerCase()}
       name={name.toLowerCase()}
       type={type}
-      className="text-base px-3 py-2 rounded-xl border border-accent-blue/20 bg-silver-200 text-primary shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-vulcan-950"
+      className="text-base px-3 py-2 rounded-lg border border-accent-blue/20 bg-silver-200 text-primary shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[#253350]"
       placeholder={placeholder ?? `${name}...`}
       value={value as any}
       onChange={onChange}
@@ -33,7 +33,7 @@ export default function TaskInfoMenuItem({
       <textarea
         id={name.toLowerCase()}
         name={name.toLowerCase()}
-        className="resize-none text-base px-3 py-2 rounded-xl border border-accent-blue/20 bg-silver-200 text-primary shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-vulcan-950"
+        className="resize-none text-base px-3 py-2 rounded-lg border border-accent-blue/20 bg-silver-200 text-primary shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[#253350]"
         placeholder={placeholder ?? `${name}...`}
         value={value as any}
         onChange={onChange}
@@ -46,7 +46,7 @@ export default function TaskInfoMenuItem({
         id={name.toLowerCase()}
         name={name.toLowerCase()}
         type={type}
-        className="text-base px-3 py-2 rounded-xl border border-accent-blue/30 bg-silver-200 text-primary shadow-inner focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/30 focus:outline-hidden dark:bg-vulcan-950 dark:border-accent-blue/40"
+        className="text-base px-3 py-2 rounded-lg border border-accent-blue/30 bg-silver-200 text-primary shadow-inner focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/30 focus:outline-hidden dark:bg-[#253350] dark:border-accent-blue/40"
         placeholder={placeholder ?? `${name}...`}
         value={value as any}
         onChange={onChange}

@@ -6,13 +6,33 @@ interface NavItemProps {
     title: string;
     children: ReactNode;
     disabled?: boolean;
+    sidebar?: boolean;
 }
 
-export default function NavItem({ to, title, children, disabled }: NavItemProps) {
+export default function NavItem({ to, title, children, disabled, sidebar }: NavItemProps) {
     const { pathname } = useLocation();
-
     const isActive = pathname == to;
-    const hasLabel = Boolean(title);
+
+    if (sidebar) {
+        return (
+            <Link
+                to={to}
+                aria-current={isActive ? "page" : undefined}
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors w-full ${
+                    disabled ? "pointer-events-none opacity-50" : ""
+                } ${
+                    isActive
+                        ? "bg-accent-blue/10 text-accent-blue-700 fill-accent-blue-700 dark:bg-[rgba(99,102,241,0.18)]"
+                        : "text-muted fill-muted hover:text-primary hover:fill-primary hover:bg-silver-200 dark:hover:bg-vulcan-800"
+                }`}
+            >
+                <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                    {children}
+                </div>
+                <span>{title}</span>
+            </Link>
+        );
+    }
 
     return (
         <Link
@@ -35,7 +55,7 @@ export default function NavItem({ to, title, children, disabled }: NavItemProps)
                     {children}
                 </div>
             </div>
-            {hasLabel && <span className="">{title}</span>}
+            <span>{title}</span>
         </Link>
-    )
+    );
 }
