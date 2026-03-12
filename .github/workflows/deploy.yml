@@ -22,50 +22,12 @@ jobs:
           script_stop: true
           script: |
             set -euo pipefail
-            set -x
             cd /root/sequenced
-            echo "[1/9] Fetching main" && date
             git fetch origin main
-            echo "[2/9] Checking out main" && date
             git checkout main
-            PREV_HEAD=$(git rev-parse HEAD)
-            echo "[3/9] Pulling latest" && date
             git pull --rebase origin main
-            NEW_HEAD=$(git rev-parse HEAD)
-            CHANGED_FILES=$(git diff --name-only "$PREV_HEAD" "$NEW_HEAD" || true)
-            echo "[4/9] Changed files" && date
-            printf '%s\n' "$CHANGED_FILES"
-
-            BUILD_FRONTEND=false
-            BUILD_API=false
-
-            FRONTEND_APP_CHANGED=$(printf '%s\n' "$CHANGED_FILES" | grep -E '^packages/app/' | grep -Ev '^packages/app/(ios|android)/' || true)
-            if [ -n "$FRONTEND_APP_CHANGED" ] || printf '%s\n' "$CHANGED_FILES" | grep -Eq '^(package\.json|package-lock\.json|packages/app/Dockerfile)'; then
-              BUILD_FRONTEND=true
-            fi
-            if printf '%s\n' "$CHANGED_FILES" | grep -Eq '^(package\.json|package-lock\.json|packages/api/|packages/api/Dockerfile)'; then
-              BUILD_API=true
-            fi
-
-            echo "[5/9] Building images (selective)" && date
-            export DOCKER_BUILDKIT=1
-            if [ "$BUILD_FRONTEND" = true ]; then
-              timeout 35m docker compose --progress=plain build frontend
-            fi
-            if [ "$BUILD_API" = true ]; then
-              timeout 35m docker compose --progress=plain build api
-            fi
-            if [ "$BUILD_FRONTEND" = false ] && [ "$BUILD_API" = false ]; then
-              echo "No app/api build required for this deploy."
-            fi
-
-            echo "[6/9] Recreating containers" && date
-            timeout 10m docker compose up -d --remove-orphans
-            echo "[7/9] Pruning dangling images" && date
-            timeout 10m docker image prune -f
-            echo "[8/9] Container status" && date
-            docker compose ps
-            echo "[9/9] Deploy complete" && date
+            docker compose -f .habitat/docker-compose.yml up -d --build
+            docker image prune -f
 
   # ── iOS build + App Store submission ────────────────────────────────────────
   ios-release:
