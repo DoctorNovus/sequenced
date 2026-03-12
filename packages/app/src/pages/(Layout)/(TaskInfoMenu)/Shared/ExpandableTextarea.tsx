@@ -36,7 +36,7 @@ export default function ExpandableTextarea({ name, value, onChange, placeholder 
             <div className="relative">
                 <textarea
                     ref={ref}
-                    className="w-full resize-none overflow-hidden text-base px-3 py-2 rounded-xl border border-accent-blue/20 bg-silver-200 text-primary shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-vulcan-950 transition-[height] duration-200"
+                    className="w-full resize-none overflow-hidden text-base px-3 py-2 rounded-lg border border-accent-blue/20 bg-silver-200 text-primary shadow-inner focus:border-accent-blue focus:outline-hidden dark:bg-[#253350] transition-[height] duration-200"
                     placeholder={placeholder ?? `${name}...`}
                     value={value}
                     onChange={(e) => onChange(e.target.value)}

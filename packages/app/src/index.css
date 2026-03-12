@@ -252,13 +252,13 @@ select option {
 .dark input,
 .dark textarea,
 .dark select {
-  background-color: #121720; /* vulcan-950 — darker than vulcan-900 card in dark */
+  background-color: #253350;
   color: var(--app-text);
   border-color: var(--surface-border);
 }
 
 .dark select option {
-  background-color: #121720; /* vulcan-950 */
+  background-color: #253350;
   color: var(--app-text);
 }
 

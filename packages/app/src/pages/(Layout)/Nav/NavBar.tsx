@@ -16,7 +16,7 @@ export function NavBar() {
   const [isAdding, setIsAdding] = useState(false);
 
   const renderMobileBar = (isInteractive: boolean) => (
-    <div className="pointer-events-none fixed inset-x-0 bottom-[env(safe-area-inset-bottom)] z-40 flex justify-center px-4 md:hidden">
+    <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-40 flex justify-center px-4 md:!hidden">
       <div className="pointer-events-auto nav-pad w-full max-w-2xl h-19 rounded-3xl border ring-0 bg-(--surface-card) border-(--nav-border) backdrop-blur-xl shadow-[0_24px_60px_rgba(15,23,42,0.18)]">
         <div className="relative flex h-full items-center justify-between px-3 py-3">
           <div className="flex flex-1 items-center justify-evenly gap-2">
@@ -53,52 +53,49 @@ export function NavBar() {
     </div>
   );
 
-  const renderDesktopBar = (isInteractive: boolean) => (
-    <div className="hidden md:!flex fixed inset-x-0 top-4 z-40 justify-center px-6">
-      <div
-        className="flex w-full max-w-5xl items-center gap-4 rounded-3xl border ring-1 backdrop-blur-xl bg-white/90 px-5 py-3 shadow-[0_14px_40px_rgba(15,23,42,0.12)] dark:bg-slate-900/85"
-        style={{ borderColor: "var(--nav-border)" }}
-      >
-        <div className="flex items-center gap-3 pr-4">
-          <div className="h-10 w-10 rounded-lg bg-linear-to-br text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-accent-blue/25">
-            <img src={icon} className="w-full h-full rounded-lg" />
-          </div>
-          {/* <span className="h-10 w-10 rounded-2xl bg-linear-to-br from-accent-blue-700 to-accent-blue-500 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-accent-blue/25">
-            S
-          </span> */}
-          <div className="flex flex-col leading-tight">
-            <span className="text-sm font-semibold text-primary">TidalTask</span>
-            <span className="text-xs text-muted">Plan • Track • Repeat</span>
-          </div>
+  const renderSidebar = (isInteractive: boolean) => (
+    <div className="flex max-md:hidden fixed inset-y-0 left-0 w-56 flex-col z-40 border-r bg-silver-100 dark:bg-[#121720]" style={{ borderColor: "var(--surface-border)" }}>
+      {/* Logo */}
+      <div className="flex items-center gap-3 px-4 py-5 border-b" style={{ borderColor: "var(--surface-border)" }}>
+        <img src={icon} className="w-9 h-9 rounded-xl shadow-sm" />
+        <div className="flex flex-col leading-tight">
+          <span className="text-sm font-bold text-primary">TidalTask</span>
+          <span className="text-xs text-muted">Plan • Track • Repeat</span>
         </div>
+      </div>
 
-        <div className="flex flex-1 items-center gap-2">
-          <NavItem to="/" title="Home">
-            <HomeIcon />
-          </NavItem>
-          <NavItem to="/tasks" title="Tasks">
-            <TasksIcon />
-          </NavItem>
-          <NavItem to="/calendar" title="Calendar">
-            <CalendarViewIcon />
-          </NavItem>
-          <NavItem to="/settings" title="Settings">
-            <SettingsIcon />
-          </NavItem>
-        </div>
+      {/* New Task */}
+      <div className="px-3 py-4">
+        <button
+          disabled={!isInteractive}
+          onClick={isInteractive ? () => setIsAdding(true) : undefined}
+          className="flex w-full items-center gap-3 rounded-xl bg-linear-to-r from-accent-blue-700 to-accent-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-accent-blue/25 transition hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 flex-shrink-0">
+            <AddIcon />
+          </div>
+          New Task
+        </button>
+      </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            disabled={!isInteractive}
-            onClick={isInteractive ? () => setIsAdding(true) : undefined}
-            className="flex h-11 items-center justify-center rounded-full bg-linear-to-r from-accent-blue-700 to-accent-blue-500 px-4 text-sm font-semibold text-white shadow-lg shadow-accent-blue/25 ring-1 ring-white transition hover:-translate-y-0.5 hover:scale-[1.02] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/15">
-              <AddIcon />
-            </div>
-            New Task
-          </button>
-        </div>
+      {/* Nav */}
+      <nav className="flex flex-col gap-0.5 px-3 flex-1">
+        <NavItem to="/" title="Home" sidebar>
+          <HomeIcon />
+        </NavItem>
+        <NavItem to="/tasks" title="Tasks" sidebar>
+          <TasksIcon />
+        </NavItem>
+        <NavItem to="/calendar" title="Calendar" sidebar>
+          <CalendarViewIcon />
+        </NavItem>
+      </nav>
+
+      {/* Settings pinned to bottom */}
+      <div className="px-3 pb-5 pt-3 border-t" style={{ borderColor: "var(--surface-border)" }}>
+        <NavItem to="/settings" title="Settings" sidebar>
+          <SettingsIcon />
+        </NavItem>
       </div>
     </div>
   );
@@ -112,7 +109,7 @@ export function NavBar() {
       {showBar && (
         <>
           {renderMobileBar(isAuthed)}
-          {renderDesktopBar(isAuthed)}
+          {renderSidebar(isAuthed)}
           <TaskInfoMenu type="add" isOpen={isAdding} setIsOpen={setIsAdding} />
         </>
       )}
