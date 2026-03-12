@@ -102,7 +102,7 @@ export default function Task() {
           <div className="flex w-full max-w-4xl flex-col items-center gap-6 px-3 md:px-6">
             <ActiveCalendar />
             <div className="w-full flex flex-col gap-2">
-              <div className="flex w-full items-center gap-2 rounded-xl surface-card border px-3 py-2 shadow-xs">
+              <div className="flex w-full items-center gap-2 rounded-xl bg-silver-200 dark:bg-vulcan-950 border border-(--surface-border) px-3 py-2 shadow-xs">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4 text-slate-400"

@@ -232,6 +232,10 @@ body {
   --tw-ring-color: var(--surface-border) !important;
 }
 
+button {
+  cursor: pointer;
+}
+
 input,
 textarea,
 select {

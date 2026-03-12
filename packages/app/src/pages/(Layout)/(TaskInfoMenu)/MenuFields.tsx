@@ -75,7 +75,7 @@ export default function MenuFields({
                                 <label className="text-xs font-semibold text-primary px-1">Date &amp; Time</label>
                                 <input
                                     type="datetime-local"
-                                    className="text-sm px-3 py-2 rounded-xl border border-accent-blue/30 bg-white text-primary shadow-inner focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/30 focus:outline-hidden dark:bg-[rgba(15,23,42,0.85)] dark:border-accent-blue/40"
+                                    className="text-sm px-3 py-2 rounded-xl border border-accent-blue/30 bg-silver-200 text-primary shadow-inner focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/30 focus:outline-hidden dark:bg-vulcan-950 dark:border-accent-blue/40"
                                     value={formatDateTime(tempData.date instanceof Date && tempData.date.getTime() > 0 ? tempData.date : new Date())}
                                     onChange={(e) => setTempData({ date: new Date(e.target.value) })}
                                 />
@@ -247,7 +247,7 @@ export default function MenuFields({
                                             className={`rounded-xl px-3 py-2 text-sm font-semibold shadow-xs ring-1 transition ${
                                                 isActive
                                                     ? `bg-linear-to-r ${opt.color} text-white ring-transparent`
-                                                : "bg-white text-primary ring-accent-blue/20 hover:ring-accent-blue/40 dark:bg-[rgba(15,23,42,0.7)]"
+                                                : "bg-silver-200 text-primary ring-accent-blue/20 hover:ring-accent-blue/40 dark:bg-vulcan-950"
                                             }`}
                                             onClick={() => setTempData({ ...tempData, priority: opt.value })}
                                         >
