@@ -1,5 +1,5 @@
 {
-  "name": "@tidaltask_app/app",
+  "name": "app",
   "type": "module",
   "private": true,
   "version": "3.2.0",

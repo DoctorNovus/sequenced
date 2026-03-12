@@ -1,0 +1,19 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: .habitat/api/dockerfile
+    container_name: api
+    ports:
+      - 3000
+    env_file:
+      - api/.env
+  app:
+    build:
+      context: ..
+      dockerfile: .habitat/app/dockerfile
+    container_name: app
+    ports:
+      - 3001
+    env_file:
+      - app/.env
