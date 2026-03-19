@@ -34,17 +34,10 @@ ENV NODE_ENV=production
 RUN npm run build --workspace=app
 
 # ---------- runtime ----------
-FROM node:22-alpine AS runtime
-WORKDIR /app
+FROM nginx:1.27-alpine AS runtime
 
-# configure environment variables
-ENV NODE_ENV=production
-
-# copy only what is needed at runtime
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/packages/app/package.json ./package.json
-COPY --from=build /app/packages/app/dist ./dist
-COPY --from=build /app/packages/app/public ./public
+COPY --from=build /app/packages/app/dist /usr/share/nginx/html
+COPY packages/app/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 3000
-CMD ["npm","run","sync"]
+CMD ["nginx", "-g", "daemon off;"]
